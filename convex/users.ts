@@ -18,6 +18,45 @@ export const current = query({
     },
 });
 
+export const ensureProfile = mutation({
+    args: {},
+    handler: async (ctx) => {
+        const userId = await auth.getUserId(ctx);
+        if (userId === null) return null;
+
+        // Check if profile already exists
+        const existing = await ctx.db
+            .query("profiles")
+            .withIndex("by_clerkId", (q) => q.eq("clerkId", userId))
+            .first();
+        
+        if (existing) return existing;
+
+        // Get user data from auth table
+        const user = await ctx.db.get(userId);
+        const email = user?.email || "";
+        const fullName = user?.name || "Colaborador";
+
+        const isWebmaster = email === "cabuyacreativa@gmail.com";
+        const assignedRole = isWebmaster ? "Admin" : "RSP";
+
+        const profileId = await ctx.db.insert("profiles", {
+            clerkId: userId,
+            email,
+            fullName,
+            role: assignedRole,
+            base: "San Juan",
+            totalTrips: 0,
+            medals: [],
+            companyName: undefined,
+            businessId: undefined,
+        });
+
+        console.log("Auto-provisioned profile for", email, "with role", assignedRole);
+        return await ctx.db.get(profileId);
+    },
+});
+
 // Mock to check if auth is active or authorized
 export const isAuthorized = query({
     args: { email: v.string() },

@@ -45,6 +45,15 @@ export default function Home() {
   const [isSettingsOpen, setIsSettingsOpen] = useState(false);
 
   const updateRole = useMutation(api.users.updateRole);
+  const ensureProfile = useMutation(api.users.ensureProfile);
+
+  // Auto-provision profile if user is authenticated but has no profile
+  const [profileProvisioned, setProfileProvisioned] = useState(false);
+  useEffect(() => {
+    if (isLoaded && user && !profile && !profileProvisioned) {
+      ensureProfile().then(() => setProfileProvisioned(true));
+    }
+  }, [isLoaded, user, profile, profileProvisioned, ensureProfile]);
 
   // Accordion state for benefits
   const [expandedBenefitId, setExpandedBenefitId] = useState<string | null>(null);
