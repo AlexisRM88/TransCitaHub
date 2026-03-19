@@ -329,16 +329,20 @@ export default function Home() {
                 {user?.image ? (
                   <img src={user.image} alt="Profile" className="size-full object-cover" />
                 ) : (
-                  <div className="size-full flex items-center justify-center text-gray-300 bg-gray-50"><User size={48} /></div>
+                  <div className="size-full flex items-center justify-center bg-gradient-to-br from-emerald-400 to-green-600">
+                    <span className="text-white font-black text-4xl tracking-tight">
+                      {(profile?.fullName || user?.name || "U").split(" ").map((n: string) => n[0]).join("").toUpperCase().slice(0, 2)}
+                    </span>
+                  </div>
                 )}
               </div>
 
               <div className="text-center w-full space-y-1 mb-8">
                 <p className="text-[10px] font-black text-primary uppercase tracking-widest">Colaborador TransCita</p>
-                <h2 className="text-2xl font-black text-gray-900 leading-tight">{user?.name || "Alexis Roman"}</h2>
+                <h2 className="text-2xl font-black text-gray-900 leading-tight">{profile?.fullName || user?.name || "Colaborador"}</h2>
                 <div className="flex items-center justify-center gap-2 mt-2">
-                  <span className="bg-green-50 text-primary text-[10px] font-black px-3 py-1 rounded-full border border-green-100">BASE MAYAGÜEZ</span>
-                  <span className="bg-gray-50 text-gray-400 text-[10px] font-black px-3 py-1 rounded-full border border-gray-100">RSP-9921</span>
+                  <span className="bg-green-50 text-primary text-[10px] font-black px-3 py-1 rounded-full border border-green-100">BASE {(profile?.base || "San Juan").toUpperCase()}</span>
+                  <span className="bg-gray-50 text-gray-400 text-[10px] font-black px-3 py-1 rounded-full border border-gray-100">{role === "Admin" ? "ADMIN" : "RSP"}-{String(user?._id || "").slice(-4).toUpperCase()}</span>
                 </div>
               </div>
 
@@ -399,13 +403,17 @@ export default function Home() {
             {user?.image ? (
               <img src={user.image} alt="Profile" className="size-12 rounded-full border-2 border-primary object-cover" />
             ) : (
-              <div className="size-12 rounded-full border-2 border-primary bg-gray-200" />
+              <div className="size-12 rounded-full border-2 border-primary bg-gradient-to-br from-emerald-400 to-green-600 flex items-center justify-center">
+                <span className="text-white font-black text-sm tracking-tight">
+                  {(profile?.fullName || user?.name || "U").split(" ").map((n: string) => n[0]).join("").toUpperCase().slice(0, 2)}
+                </span>
+              </div>
             )}
             <div className="absolute bottom-0 right-0 size-3 bg-primary rounded-full border-2 border-white"></div>
           </div>
           <div>
             <p className="text-xs font-bold text-gray-400 leading-tight">Hola,</p>
-            <h2 className="font-black text-gray-900 leading-tight hover:text-primary transition-colors">{user?.name?.split(' ')[0] || "Compañero"} 👋</h2>
+            <h2 className="font-black text-gray-900 leading-tight hover:text-primary transition-colors">{(profile?.fullName || user?.name || "Compañero").split(" ")[0]} 👋</h2>
           </div>
         </div>
         <button
