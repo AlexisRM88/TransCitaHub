@@ -1,5 +1,22 @@
 import { query, mutation } from "./_generated/server";
 import { v } from "convex/values";
+import { auth } from "./auth";
+
+export const current = query({
+    args: {},
+    handler: async (ctx) => {
+        const userId = await auth.getUserId(ctx);
+        if (userId === null) return null;
+        
+        let profile = await ctx.db
+            .query("profiles")
+            .withIndex("by_clerkId", (q) => q.eq("clerkId", userId))
+            .first();
+
+        const user = await ctx.db.get(userId);
+        return { user, profile };
+    },
+});
 
 // Mock to check if auth is active or authorized
 export const isAuthorized = query({

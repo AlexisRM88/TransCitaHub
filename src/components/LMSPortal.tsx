@@ -5,7 +5,6 @@ import { TRAINING_PROGRAMS, TrainingProgram } from "../data/onboardingData";
 import { LMSSectionViewer, OnboardingSection } from "./LMSSectionViewer";
 import { useQuery, useMutation } from "convex/react";
 import { api } from "../../convex/_generated/api";
-import { useUser } from "@clerk/nextjs";
 import {
     CheckCircle2,
     Circle,
@@ -23,11 +22,10 @@ import { BusinessDashboard } from "./BusinessDashboard";
 import { PatronoEvaluation } from "./PatronoEvaluation";
 
 export function LMSPortal() {
-    const { user } = useUser();
-    const clerkId = user?.id;
-
-    const userProfile = useQuery(api.users.getProfile, clerkId ? { clerkId } : "skip");
-    const userRole = userProfile?.role || "RSP";
+    const currentData = useQuery(api.users.current);
+    const user = currentData?.user;
+    const clerkId = user?._id;
+    const userRole = currentData?.profile?.role || "RSP";
 
     const [selectedProgram, setSelectedProgram] = useState<TrainingProgram | null>(null);
     const [viewingSection, setViewingSection] = useState<OnboardingSection | null>(null);

@@ -1,6 +1,6 @@
 "use client";
 
-import { useAuth, useUser, SignInButton, SignOutButton } from "@clerk/nextjs";
+import { useAuthActions } from "@convex-dev/auth/react";
 import { useState, useEffect } from "react";
 import Link from "next/link";
 import {
@@ -32,14 +32,18 @@ import { useMutation, useQuery } from "convex/react";
 import { api } from "../../convex/_generated/api";
 
 export default function Home() {
-  const { isLoaded, userId } = useAuth();
-  const { user } = useUser();
+  const { signOut } = useAuthActions();
+  const currentData = useQuery(api.users.current);
+  
+  const isLoaded = currentData !== undefined;
+  const user = currentData?.user;
+  const profile = currentData?.profile;
+  const userId = user?._id;
+  const role = profile?.role;
+
   const [activeTab, setActiveTab] = useState("comunidad");
   const [isSettingsOpen, setIsSettingsOpen] = useState(false);
 
-  // Fetch user profile from Convex
-  const profile = useQuery(api.users.getProfile, userId ? { clerkId: userId } : "skip");
-  const role = profile?.role;
   const updateRole = useMutation(api.users.updateRole);
 
   // Accordion state for benefits
@@ -164,8 +168,8 @@ export default function Home() {
     if (userId && user) {
       syncUser({
         clerkId: userId,
-        email: user.primaryEmailAddress?.emailAddress || "",
-        fullName: user.fullName || ""
+        email: user.email || "",
+        fullName: user.name || ""
       }).catch(err => console.error("Sync error:", err));
     }
   }, [userId, user, syncUser]);
@@ -189,7 +193,7 @@ export default function Home() {
     );
   }
 
-  const userEmail = user?.primaryEmailAddress?.emailAddress || "";
+  const userEmail = user?.email || "";
   const isTranscitaEmail = userEmail.endsWith("@transcita.com");
   const isWebmaster = userEmail === "cabuyacreativa@gmail.com";
   const hasAccess = isTranscitaEmail || isWebmaster;
@@ -234,14 +238,14 @@ export default function Home() {
           <div className="w-full max-w-sm bg-white rounded-[2.5rem] shadow-2xl relative z-10 overflow-hidden animate-in zoom-in-95 duration-500">
             <div className="p-8 text-center">
               <div className="size-20 rounded-full bg-gray-100 mx-auto mb-4 overflow-hidden border-4 border-gray-50">
-                {user?.imageUrl ? (
-                  <img src={user.imageUrl} alt="Profile" className="size-full object-cover" />
+                {user?.image ? (
+                  <img src={user.image} alt="Profile" className="size-full object-cover" />
                 ) : (
                   <div className="size-full flex items-center justify-center text-gray-300"><User size={32} /></div>
                 )}
               </div>
-              <h3 className="text-xl font-black text-gray-900">{user?.fullName}</h3>
-              <p className="text-sm text-gray-500 font-medium mb-8">{user?.primaryEmailAddress?.emailAddress}</p>
+              <h3 className="text-xl font-black text-gray-900">{user?.name}</h3>
+              <p className="text-sm text-gray-500 font-medium mb-8">{user?.email}</p>
 
               <div className="space-y-3">
                 <div className="p-4 bg-gray-50 rounded-2xl text-left">
@@ -260,7 +264,7 @@ export default function Home() {
                 <div className="h-px bg-gray-100 my-4" />
 
                 {/* Dev Role Switcher */}
-                {user?.primaryEmailAddress?.emailAddress === "cabuyacreativa@gmail.com" && (
+                {user?.email === "cabuyacreativa@gmail.com" && (
                   <div className="p-4 bg-green-50 rounded-2xl text-left border border-green-100 mb-4 focus-within:ring-2 ring-primary/20 transition-all">
                     <p className="text-[10px] font-black text-primary uppercase tracking-widest mb-2 flex items-center gap-2">
                        <ShieldCheck size={12} />
@@ -288,12 +292,13 @@ export default function Home() {
                   </div>
                 )}
 
-                <SignOutButton>
-                  <button className="w-full p-4 bg-red-50 text-red-500 rounded-2xl font-black text-sm uppercase tracking-widest flex items-center justify-center gap-2 hover:bg-red-100 transition-colors">
-                    <LogOut size={18} />
-                    Cerrar Sesión
-                  </button>
-                </SignOutButton>
+                <button 
+                  onClick={() => void signOut()}
+                  className="w-full p-4 bg-red-50 text-red-500 rounded-2xl font-black text-sm uppercase tracking-widest flex items-center justify-center gap-2 hover:bg-red-100 transition-colors"
+                >
+                  <LogOut size={18} />
+                  Cerrar Sesión
+                </button>
 
                 <button
                   onClick={() => setIsSettingsOpen(false)}
@@ -321,8 +326,8 @@ export default function Home() {
             {/* License Content - SCROLLABLE */}
             <div className="p-6 pt-4 flex-1 flex flex-col items-center overflow-y-auto custom-scrollbar pb-24">
               <div className="size-32 rounded-2xl bg-gray-100 mb-6 overflow-hidden border-4 border-gray-50 flex-shrink-0">
-                {user?.imageUrl ? (
-                  <img src={user.imageUrl} alt="Profile" className="size-full object-cover" />
+                {user?.image ? (
+                  <img src={user.image} alt="Profile" className="size-full object-cover" />
                 ) : (
                   <div className="size-full flex items-center justify-center text-gray-300 bg-gray-50"><User size={48} /></div>
                 )}
@@ -330,7 +335,7 @@ export default function Home() {
 
               <div className="text-center w-full space-y-1 mb-8">
                 <p className="text-[10px] font-black text-primary uppercase tracking-widest">Colaborador TransCita</p>
-                <h2 className="text-2xl font-black text-gray-900 leading-tight">{user?.fullName || "Alexis Roman"}</h2>
+                <h2 className="text-2xl font-black text-gray-900 leading-tight">{user?.name || "Alexis Roman"}</h2>
                 <div className="flex items-center justify-center gap-2 mt-2">
                   <span className="bg-green-50 text-primary text-[10px] font-black px-3 py-1 rounded-full border border-green-100">BASE MAYAGÜEZ</span>
                   <span className="bg-gray-50 text-gray-400 text-[10px] font-black px-3 py-1 rounded-full border border-gray-100">RSP-9921</span>
@@ -391,8 +396,8 @@ export default function Home() {
       <header className="flex items-center justify-between p-5 pb-4 bg-white sticky top-0 z-50 shadow-sm">
         <div className="flex items-center gap-3 cursor-pointer" onClick={() => setIsProfileOpen(true)}>
           <div className="relative">
-            {user?.imageUrl ? (
-              <img src={user.imageUrl} alt="Profile" className="size-12 rounded-full border-2 border-primary object-cover" />
+            {user?.image ? (
+              <img src={user.image} alt="Profile" className="size-12 rounded-full border-2 border-primary object-cover" />
             ) : (
               <div className="size-12 rounded-full border-2 border-primary bg-gray-200" />
             )}
@@ -400,7 +405,7 @@ export default function Home() {
           </div>
           <div>
             <p className="text-xs font-bold text-gray-400 leading-tight">Hola,</p>
-            <h2 className="font-black text-gray-900 leading-tight hover:text-primary transition-colors">{user?.firstName || "Compañero"} 👋</h2>
+            <h2 className="font-black text-gray-900 leading-tight hover:text-primary transition-colors">{user?.name?.split(' ')[0] || "Compañero"} 👋</h2>
           </div>
         </div>
         <button
@@ -495,8 +500,8 @@ export default function Home() {
 
                 <div className="bg-white rounded-[2.5rem] p-6 border border-gray-100 shadow-sm border-b-4 border-b-primary flex flex-col items-center">
                   <div className="size-16 relative mb-4">
-                    {user?.imageUrl ? (
-                      <img src={user.imageUrl} alt="Profile" className="size-full rounded-2xl object-cover" />
+                    {user?.image ? (
+                      <img src={user.image} alt="Profile" className="size-full rounded-2xl object-cover" />
                     ) : (
                       <div className="size-full rounded-2xl bg-gray-100" />
                     )}
