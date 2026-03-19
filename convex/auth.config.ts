@@ -1,7 +1,7 @@
 export default {
     providers: [
         {
-            domain: "https://pumped-prawn-58.clerk.accounts.dev",
+            domain: process.env.CONVEX_SITE_URL,
             applicationID: "convex",
         },
     ]
