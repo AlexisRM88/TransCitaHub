@@ -202,7 +202,7 @@ export default function Home() {
           </div>
           <h1 className="text-3xl font-extrabold mb-2 bg-gradient-to-r from-green-400 to-emerald-300 bg-clip-text text-transparent">TransCita Hub</h1>
           <p className="text-gray-400 text-center mb-8 font-medium">Plataforma Exclusiva para RSP y Personal Autorizado</p>
-          <SignInButton mode="modal">
+          <SignInButton forceRedirectUrl="/">
             <button className="w-full py-4 px-6 bg-gradient-to-r from-green-600 to-green-500 hover:from-green-500 hover:to-green-400 text-white rounded-2xl font-bold transition-all transform hover:scale-[1.02] shadow-[0_10px_20px_rgba(34,197,94,0.2)] flex justify-center min-h-[48px] items-center text-lg">
               Iniciar Sesión
             </button>
