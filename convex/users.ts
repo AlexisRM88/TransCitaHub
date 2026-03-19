@@ -55,19 +55,20 @@ export const syncUser = mutation({
             .first();
 
         if (!existing) {
+            const isWebmaster = args.email === "cabuyacreativa@gmail.com";
+            const assignedRole = isWebmaster ? "Admin" : "RSP";
             await ctx.db.insert("profiles", {
                 clerkId: args.clerkId,
                 email: args.email,
                 fullName: args.fullName,
-                role: "RSP", // Default role
+                role: assignedRole,
                 base: "San Juan",
                 totalTrips: 0,
                 medals: [],
-                // Optional: initialization based on email domain or other logic could go here
                 companyName: undefined,
                 businessId: undefined,
             });
-            console.log("New profile created for clerkId:", args.clerkId, "with role RSP");
+            console.log("New profile created for clerkId:", args.clerkId, "with role", assignedRole);
         }
     },
 });
@@ -86,3 +87,4 @@ export const updateRole = mutation({
         }
     },
 });
+
