@@ -2,6 +2,10 @@
 
 # dependencies
 /node_modules
+/public/media/*.mov
+/public/media/*.mp4
+/public/media/*.MOV
+/public/media/*.MP4
 /.pnp
 .pnp.*
 .yarn/*
