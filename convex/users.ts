@@ -86,3 +86,26 @@ export const updateRole = mutation({
         }
     },
 });
+
+export const deleteAccount = mutation({
+    args: { email: v.string() },
+    handler: async (ctx, args) => {
+        const user = await ctx.db.query("users").withIndex("email", q => q.eq("email", args.email)).first();
+        if (!user) return "Usuario no existe. Puedes crear la cuenta.";
+        
+        // Delete related accounts
+        const authAccounts = await ctx.db.query("authAccounts").withIndex("userIdAndProvider", q => q.eq("userId", user._id)).collect();
+        for (const acc of authAccounts) {
+            await ctx.db.delete(acc._id);
+        }
+        
+        // Delete profile
+        const profile = await ctx.db.query("profiles").withIndex("by_clerkId", q => q.eq("clerkId", user._id)).first();
+        if (profile) await ctx.db.delete(profile._id);
+        
+        // Delete user
+        await ctx.db.delete(user._id);
+        
+        return "Cuenta borrada exitosamente. Ya puedes registrarte de nuevo.";
+    }
+});
