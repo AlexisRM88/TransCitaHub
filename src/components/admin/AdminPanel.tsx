@@ -228,11 +228,13 @@ function UsuariosSection() {
 function BeneficiosSection() {
   const benefits = useQuery(api.benefits.getAllBenefitsAdmin);
   const adminCreate = useMutation(api.benefits.adminCreateBenefit);
+  const adminUpdate = useMutation(api.benefits.adminUpdateBenefit);
   const adminToggle = useMutation(api.benefits.adminToggleBenefitLive);
   const adminDelete = useMutation(api.benefits.adminDeleteBenefit);
   const generateUploadUrl = useMutation(api.benefits.generateUploadUrl);
 
   const [showForm, setShowForm] = useState(false);
+  const [editingId, setEditingId] = useState<string | null>(null); // null = create, string = edit
   const [saving, setSaving] = useState(false);
   const [uploading, setUploading] = useState(false);
   const [imagePreview, setImagePreview] = useState<string | null>(null);
@@ -252,7 +254,6 @@ function BeneficiosSection() {
   const handleImageChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (!file) return;
-    // Preview local
     setImagePreview(URL.createObjectURL(file));
     setUploading(true);
     try {
@@ -273,14 +274,35 @@ function BeneficiosSection() {
     setForm({ merchantName: "", offerLabel: "", category: "Comida", maxUses: 1, isLive: true, type: "descuento", eventDate: "", eventTime: "", eventLocation: "" });
     setImagePreview(null);
     setImageStorageId(null);
+    setEditingId(null);
   };
 
-  const handleCreate = async () => {
+  const openCreate = () => { resetForm(); setShowForm(true); };
+
+  const openEdit = (b: any) => {
+    setEditingId(b._id);
+    setForm({
+      merchantName: b.merchantName,
+      offerLabel: b.offerLabel,
+      category: b.category,
+      maxUses: b.maxUses ?? 1,
+      isLive: b.isLive ?? false,
+      type: (b.type ?? "descuento") as BenefitType,
+      eventDate: b.eventDate ?? "",
+      eventTime: b.eventTime ?? "",
+      eventLocation: b.eventLocation ?? "",
+    });
+    setImagePreview(b.imageUrl ?? null);
+    setImageStorageId(null); // only set if a new image is uploaded
+    setShowForm(true);
+  };
+
+  const handleSave = async () => {
     if (!form.merchantName.trim() || !form.offerLabel.trim()) return;
     setSaving(true);
     try {
       const uses = Math.max(1, form.maxUses || 1);
-      await adminCreate({
+      const shared = {
         merchantName: form.merchantName.trim(),
         offerLabel: form.offerLabel.trim(),
         category: form.type === "actividad" ? "Actividad" : form.category,
@@ -288,13 +310,16 @@ function BeneficiosSection() {
         maxUses: uses,
         isLive: form.isLive,
         type: form.type,
-        ...(form.type === "actividad" ? {
-          eventDate: form.eventDate || undefined,
-          eventTime: form.eventTime || undefined,
-          eventLocation: form.eventLocation || undefined,
-        } : {}),
+        eventDate: form.eventDate || undefined,
+        eventTime: form.eventTime || undefined,
+        eventLocation: form.eventLocation || undefined,
         imageStorageId: imageStorageId as any ?? undefined,
-      });
+      };
+      if (editingId) {
+        await adminUpdate({ benefitId: editingId, ...shared });
+      } else {
+        await adminCreate(shared);
+      }
       resetForm();
       setShowForm(false);
     } finally {
@@ -309,7 +334,7 @@ function BeneficiosSection() {
           {benefits?.length ?? 0} beneficios totales · {benefits?.filter(b => b.isLive).length ?? 0} en vivo
         </p>
         <button
-          onClick={() => setShowForm(true)}
+          onClick={openCreate}
           className="flex items-center gap-1.5 bg-primary text-white px-3 py-2 rounded-xl font-black text-xs uppercase tracking-widest active:scale-95 transition-all"
         >
           <Plus size={14} /> Nuevo
@@ -323,40 +348,50 @@ function BeneficiosSection() {
       )}
 
       <div className="space-y-2">
-        {benefits?.map((b) => (
-          <div key={b._id} className={`bg-white rounded-[1.5rem] border-2 p-4 flex items-center gap-3 transition-all ${b.isLive ? "border-green-100" : "border-gray-100"}`}>
-            {b.imageUrl ? (
-              <img src={b.imageUrl} alt={b.merchantName} className="size-11 rounded-xl object-cover flex-shrink-0" />
-            ) : (
-              <div className={`size-11 rounded-xl flex items-center justify-center flex-shrink-0 ${b.isLive ? "bg-green-50 text-primary" : "bg-gray-50 text-gray-300"}`}>
-                {(b as any).type === "actividad" ? <span className="text-lg">🏃</span> : <Tag size={16} />}
+        {benefits?.map((b) => {
+          const imgUrl = (b as any).imageUrl as string | null;
+          return (
+            <div
+              key={b._id}
+              onClick={() => openEdit(b)}
+              className={`bg-white rounded-[1.5rem] border-2 p-4 flex items-center gap-3 transition-all cursor-pointer active:scale-[0.98] hover:shadow-md ${b.isLive ? "border-green-100" : "border-gray-100"}`}
+            >
+              {imgUrl ? (
+                <img src={imgUrl} alt={b.merchantName} className="size-11 rounded-xl object-cover flex-shrink-0" />
+              ) : (
+                <div className={`size-11 rounded-xl flex items-center justify-center flex-shrink-0 ${b.isLive ? "bg-green-50 text-primary" : "bg-gray-50 text-gray-300"}`}>
+                  {(b as any).type === "actividad" ? <span className="text-lg">🏃</span> : <Tag size={16} />}
+                </div>
+              )}
+              <div className="flex-1 min-w-0">
+                <p className="font-black text-gray-900 text-xs leading-tight truncate">{b.merchantName}</p>
+                <p className="text-[10px] text-gray-400 font-medium truncate">{b.offerLabel}</p>
+                <div className="flex gap-1.5 mt-1 flex-wrap">
+                  <span className="text-[8px] font-black uppercase tracking-wider bg-gray-100 text-gray-400 px-1.5 py-0.5 rounded-full">{b.category}</span>
+                  <span className="text-[8px] font-black uppercase tracking-wider bg-blue-50 text-blue-400 px-1.5 py-0.5 rounded-full">
+                    {b.maxUses ?? 1} {(b.maxUses ?? 1) === 1 ? "uso" : "usos"}
+                  </span>
+                  {b.ownerId && <span className="text-[8px] font-black uppercase tracking-wider bg-orange-50 text-orange-400 px-1.5 py-0.5 rounded-full">Negocio</span>}
+                  {!b.ownerId && <span className="text-[8px] font-black uppercase tracking-wider bg-green-50 text-green-500 px-1.5 py-0.5 rounded-full">Global</span>}
+                </div>
               </div>
-            )}
-            <div className="flex-1 min-w-0">
-              <p className="font-black text-gray-900 text-xs leading-tight truncate">{b.merchantName}</p>
-              <p className="text-[10px] text-gray-400 font-medium truncate">{b.offerLabel}</p>
-              <div className="flex gap-1.5 mt-1">
-                <span className="text-[8px] font-black uppercase tracking-wider bg-gray-100 text-gray-400 px-1.5 py-0.5 rounded-full">{b.category}</span>
-                {b.ownerId && <span className="text-[8px] font-black uppercase tracking-wider bg-orange-50 text-orange-400 px-1.5 py-0.5 rounded-full">Negocio</span>}
-                {!b.ownerId && <span className="text-[8px] font-black uppercase tracking-wider bg-blue-50 text-blue-400 px-1.5 py-0.5 rounded-full">Global</span>}
+              <div className="flex items-center gap-1.5 flex-shrink-0" onClick={(e) => e.stopPropagation()}>
+                <button
+                  onClick={() => adminToggle({ benefitId: b._id })}
+                  className={`size-9 rounded-xl flex items-center justify-center transition-all active:scale-90 ${b.isLive ? "bg-green-500 text-white shadow-sm shadow-green-200" : "bg-gray-100 text-gray-400 hover:bg-green-50 hover:text-green-500"}`}
+                >
+                  {b.isLive ? <Zap size={15} fill="currentColor" /> : <ZapOff size={15} />}
+                </button>
+                <button
+                  onClick={() => adminDelete({ benefitId: b._id })}
+                  className="size-9 rounded-xl flex items-center justify-center bg-red-50 text-red-400 hover:bg-red-100 transition-all active:scale-90"
+                >
+                  <Trash2 size={14} />
+                </button>
               </div>
             </div>
-            <div className="flex items-center gap-1.5 flex-shrink-0">
-              <button
-                onClick={() => adminToggle({ benefitId: b._id })}
-                className={`size-9 rounded-xl flex items-center justify-center transition-all active:scale-90 ${b.isLive ? "bg-green-500 text-white shadow-sm shadow-green-200" : "bg-gray-100 text-gray-400 hover:bg-green-50 hover:text-green-500"}`}
-              >
-                {b.isLive ? <Zap size={15} fill="currentColor" /> : <ZapOff size={15} />}
-              </button>
-              <button
-                onClick={() => adminDelete({ benefitId: b._id })}
-                className="size-9 rounded-xl flex items-center justify-center bg-red-50 text-red-400 hover:bg-red-100 transition-all active:scale-90"
-              >
-                <Trash2 size={14} />
-              </button>
-            </div>
-          </div>
-        ))}
+          );
+        })}
       </div>
 
       {/* Create modal */}
@@ -369,7 +404,7 @@ function BeneficiosSection() {
             <div className="px-6 pt-5 pb-4 flex-shrink-0">
               <div className="w-10 h-1.5 bg-gray-200 rounded-full mx-auto mb-4" />
               <div className="flex items-center justify-between">
-                <h3 className="text-lg font-black text-gray-900">Nuevo Beneficio Global</h3>
+                <h3 className="text-lg font-black text-gray-900">{editingId ? "Editar Beneficio" : "Nuevo Beneficio Global"}</h3>
                 <button onClick={() => { setShowForm(false); resetForm(); }} className="size-9 bg-gray-100 rounded-2xl flex items-center justify-center text-gray-400">
                   <X size={18} />
                 </button>
@@ -526,15 +561,15 @@ function BeneficiosSection() {
             {/* Fixed footer */}
             <div className="px-6 py-4 flex-shrink-0 border-t border-gray-50">
               <button
-                onClick={handleCreate}
-                disabled={saving || !form.merchantName.trim() || !form.offerLabel.trim()}
+                onClick={handleSave}
+                disabled={saving || uploading || !form.merchantName.trim() || !form.offerLabel.trim()}
                 className={`w-full py-4 rounded-2xl font-black text-sm uppercase tracking-widest shadow-lg active:scale-95 transition-all disabled:opacity-50 flex items-center justify-center gap-2 text-white ${
                   form.type === "actividad" ? "bg-purple-500 shadow-purple-200" : "bg-primary shadow-green-500/20"
                 }`}
               >
                 {saving
                   ? <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white" />
-                  : <><CheckCircle size={16} />{form.type === "actividad" ? "Crear Actividad" : "Crear Beneficio"}</>
+                  : <><CheckCircle size={16} />{editingId ? "Guardar Cambios" : (form.type === "actividad" ? "Crear Actividad" : "Crear Beneficio")}</>
                 }
               </button>
             </div>

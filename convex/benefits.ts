@@ -140,6 +140,43 @@ export const adminToggleBenefitLive = mutation({
     },
 });
 
+// ── Admin: update any benefit ────────────────────────────────────────────────
+export const adminUpdateBenefit = mutation({
+    args: {
+        benefitId: v.string(),
+        merchantName: v.string(),
+        offerLabel: v.string(),
+        category: v.string(),
+        isSingleUse: v.boolean(),
+        maxUses: v.number(),
+        isLive: v.boolean(),
+        type: v.optional(v.union(v.literal("descuento"), v.literal("actividad"))),
+        eventDate: v.optional(v.string()),
+        eventTime: v.optional(v.string()),
+        eventLocation: v.optional(v.string()),
+        eventCapacity: v.optional(v.number()),
+        imageStorageId: v.optional(v.id("_storage")),
+    },
+    handler: async (ctx, args) => {
+        const id = ctx.db.normalizeId("benefits", args.benefitId);
+        if (!id) throw new Error("Benefit not found");
+        await ctx.db.patch(id, {
+            merchantName: args.merchantName,
+            offerLabel: args.offerLabel,
+            category: args.category,
+            isSingleUse: args.isSingleUse,
+            maxUses: args.maxUses,
+            isLive: args.isLive,
+            type: args.type,
+            eventDate: args.eventDate,
+            eventTime: args.eventTime,
+            eventLocation: args.eventLocation,
+            eventCapacity: args.eventCapacity,
+            ...(args.imageStorageId ? { imageStorageId: args.imageStorageId } : {}),
+        });
+    },
+});
+
 // ── Admin: delete any benefit ────────────────────────────────────────────────
 export const adminDeleteBenefit = mutation({
     args: { benefitId: v.string() },
