@@ -1,6 +1,36 @@
 import { mutation } from "./_generated/server";
 import { v } from "convex/values";
 
+// Run once to add the 5K activity without wiping existing data
+export const add5KEvent = mutation({
+    handler: async (ctx) => {
+        // Avoid duplicates
+        const existing = await ctx.db.query("benefits")
+            .filter(q => q.eq(q.field("merchantName"), "5K TransCita Run"))
+            .first();
+        if (existing) return "Already exists";
+
+        await ctx.db.insert("benefits", {
+            merchantName: "5K TransCita Run",
+            offerLabel: "Carrera solidaria 5K - camiseta y medalla incluida",
+            lat: 18.4655,
+            lng: -66.1057,
+            category: "Actividad",
+            isSponsored: true,
+            activeDays: ["Sab"],
+            isSingleUse: true,
+            maxUses: 1,
+            isLive: true,
+            type: "actividad",
+            eventDate: "2026-05-10",
+            eventTime: "6:00 AM",
+            eventLocation: "Parque Luis Muñoz Marín, San Juan",
+            eventCapacity: 200,
+        });
+        return "5K event added!";
+    },
+});
+
 export const seed = mutation({
     handler: async (ctx) => {
         // Add authorized domain/email
