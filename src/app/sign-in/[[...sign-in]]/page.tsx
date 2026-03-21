@@ -3,7 +3,7 @@
 import { useState } from "react";
 import { useAuthActions } from "@convex-dev/auth/react";
 import { useQuery } from "convex/react";
-import { ShieldCheck, Mail, Lock, AlertCircle, ArrowRight } from "lucide-react";
+import { ShieldCheck, Mail, Lock, AlertCircle, ArrowRight, Car, MousePointer2 } from "lucide-react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 
@@ -116,15 +116,15 @@ export default function SignInPage() {
         {/* Collab attribution */}
         <div className="flex items-center justify-center gap-3 mt-6">
           <span className="flex items-center gap-1.5 text-[11px] font-bold text-gray-500">
-            <span className="size-6 bg-white/5 border border-white/10 rounded-lg flex items-center justify-center text-white">
-              🚗
+            <span className="size-6 bg-white/10 border border-white/10 rounded-lg flex items-center justify-center">
+              <Car size={13} className="text-white" />
             </span>
             TransCita
           </span>
           <span className="text-gray-700 text-xs font-black">×</span>
           <span className="flex items-center gap-1.5 text-[11px] font-bold text-gray-500">
-            <span className="size-6 bg-white/5 border border-white/10 rounded-lg flex items-center justify-center text-white">
-              🖱️
+            <span className="size-6 bg-white/10 border border-white/10 rounded-lg flex items-center justify-center">
+              <MousePointer2 size={13} className="text-white" />
             </span>
             CabuyaCreativa
           </span>
