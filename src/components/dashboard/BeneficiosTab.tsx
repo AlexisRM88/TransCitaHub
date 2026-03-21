@@ -51,6 +51,11 @@ export function BeneficiosTab({ userId }: BeneficiosTabProps) {
       const mapped = dbBenefits.map((b) => {
         const meta = BENEFITS_META[b.merchantName] || {};
         const isActivity = b.type === "actividad";
+        // Convex Storage URL takes priority; fall back to BENEFITS_META, then generic
+        const convexImageUrl = (b as any).imageUrl as string | null;
+        const fallbackUrl = isActivity
+          ? ACTIVITY_IMAGE
+          : (meta.imageUrl || "https://images.unsplash.com/photo-1506784983877-455b4fedfd40");
         return {
           id: b._id,
           title: b.merchantName,
@@ -59,7 +64,7 @@ export function BeneficiosTab({ userId }: BeneficiosTabProps) {
           distance: isActivity ? (b.eventLocation || "Ver detalles") : (meta.distance || "N/A"),
           rating: meta.rating || "5.0",
           category: b.category,
-          imageUrl: isActivity ? ACTIVITY_IMAGE : (meta.imageUrl || "https://images.unsplash.com/photo-1506784983877-455b4fedfd40"),
+          imageUrl: convexImageUrl || fallbackUrl,
           usesLeft: b.usesLeft ?? (b.status === "used" && b.isSingleUse ? 0 : 1),
           isSingleUse: b.isSingleUse || (b.maxUses ? b.maxUses === 1 : false),
           type: b.type ?? "descuento",

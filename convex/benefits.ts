@@ -61,11 +61,14 @@ export const getBenefitsWithStatus = query({
             .withIndex("by_userId", (q) => q.eq("userId", profile._id))
             .collect();
 
-        return benefits.map((benefit) => {
+        return Promise.all(benefits.map(async (benefit) => {
             const userRedemptions = redemptions.filter((r) => r.benefitId === benefit._id);
             const totalRedemptions = userRedemptions.length;
             const max = benefit.maxUses || (benefit.isSingleUse ? 1 : 1);
             const usesLeft = Math.max(0, max - totalRedemptions);
+            const imageUrl = benefit.imageStorageId
+                ? await ctx.storage.getUrl(benefit.imageStorageId)
+                : null;
 
             return {
                 ...benefit,
@@ -73,8 +76,9 @@ export const getBenefitsWithStatus = query({
                 usesLeft: usesLeft,
                 totalRedemptions: totalRedemptions,
                 type: benefit.type ?? "descuento",
+                imageUrl,
             };
-        });
+        }));
     },
 });
 
