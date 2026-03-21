@@ -113,8 +113,24 @@ export default function SignInPage() {
           </div>
         </div>
         
-        <p className="text-center text-xs text-gray-600 mt-6 font-medium">
-          Sistema Seguro TransCita • Solo Personal Autorizado
+        {/* Collab attribution */}
+        <div className="flex items-center justify-center gap-3 mt-6">
+          <span className="flex items-center gap-1.5 text-[11px] font-bold text-gray-500">
+            <span className="size-6 bg-white/5 border border-white/10 rounded-lg flex items-center justify-center text-white">
+              🚗
+            </span>
+            TransCita
+          </span>
+          <span className="text-gray-700 text-xs font-black">×</span>
+          <span className="flex items-center gap-1.5 text-[11px] font-bold text-gray-500">
+            <span className="size-6 bg-white/5 border border-white/10 rounded-lg flex items-center justify-center text-white">
+              🖱️
+            </span>
+            CabuyaCreativa
+          </span>
+        </div>
+        <p className="text-center text-[10px] text-gray-700 mt-2 font-medium tracking-wide">
+          Un proyecto de TransCita • Solo Personal Autorizado
         </p>
       </div>
     </div>
