@@ -7,8 +7,10 @@ import {
   Users, Tag, FileText, LayoutDashboard,
   ShieldCheck, Zap, ZapOff, Trash2, Plus,
   CheckCircle, X, ChevronRight, Search,
-  TrendingUp, AlertCircle
+  TrendingUp, AlertCircle, Calendar, Clock, MapPin
 } from "lucide-react";
+
+type BenefitType = "descuento" | "actividad";
 import { AdminDocumentManager } from "@/components/AdminDocumentManager";
 
 type AdminTab = "resumen" | "usuarios" | "beneficios" | "documentos";
@@ -235,24 +237,34 @@ function BeneficiosSection() {
     merchantName: "",
     offerLabel: "",
     category: "Comida",
-    isSingleUse: true,
     maxUses: 1,
     isLive: true,
+    type: "descuento" as BenefitType,
+    eventDate: "",
+    eventTime: "",
+    eventLocation: "",
   });
 
   const handleCreate = async () => {
     if (!form.merchantName.trim() || !form.offerLabel.trim()) return;
     setSaving(true);
     try {
+      const uses = Math.max(1, form.maxUses || 1);
       await adminCreate({
         merchantName: form.merchantName.trim(),
         offerLabel: form.offerLabel.trim(),
-        category: form.category,
-        isSingleUse: form.isSingleUse,
-        maxUses: form.isSingleUse ? 1 : form.maxUses,
+        category: form.type === "actividad" ? "Actividad" : form.category,
+        isSingleUse: uses === 1,
+        maxUses: uses,
         isLive: form.isLive,
+        type: form.type,
+        ...(form.type === "actividad" ? {
+          eventDate: form.eventDate || undefined,
+          eventTime: form.eventTime || undefined,
+          eventLocation: form.eventLocation || undefined,
+        } : {}),
       });
-      setForm({ merchantName: "", offerLabel: "", category: "Comida", isSingleUse: true, maxUses: 1, isLive: true });
+      setForm({ merchantName: "", offerLabel: "", category: "Comida", maxUses: 1, isLive: true, type: "descuento", eventDate: "", eventTime: "", eventLocation: "" });
       setShowForm(false);
     } finally {
       setSaving(false);
@@ -316,9 +328,11 @@ function BeneficiosSection() {
       {showForm && (
         <div className="fixed inset-0 z-[130] bg-black/60 backdrop-blur-md flex items-end justify-center animate-in fade-in duration-300">
           <div className="absolute inset-0" onClick={() => setShowForm(false)} />
-          <div className="w-full max-w-lg bg-white rounded-t-[2.5rem] shadow-2xl relative z-10 animate-in slide-in-from-bottom duration-500">
-            <div className="p-6 space-y-4">
-              <div className="w-10 h-1.5 bg-gray-200 rounded-full mx-auto" />
+          <div className="w-full max-w-lg bg-white rounded-t-[2.5rem] shadow-2xl relative z-10 animate-in slide-in-from-bottom duration-500 flex flex-col max-h-[90vh]">
+
+            {/* Fixed header */}
+            <div className="px-6 pt-5 pb-4 flex-shrink-0">
+              <div className="w-10 h-1.5 bg-gray-200 rounded-full mx-auto mb-4" />
               <div className="flex items-center justify-between">
                 <h3 className="text-lg font-black text-gray-900">Nuevo Beneficio Global</h3>
                 <button onClick={() => setShowForm(false)} className="size-9 bg-gray-100 rounded-2xl flex items-center justify-center text-gray-400">
@@ -326,21 +340,47 @@ function BeneficiosSection() {
                 </button>
               </div>
 
-              <div className="space-y-3">
-                <input
-                  type="text"
-                  value={form.merchantName}
-                  onChange={(e) => setForm((f) => ({ ...f, merchantName: e.target.value }))}
-                  placeholder="Nombre del negocio"
-                  className="w-full bg-gray-50 border border-gray-100 rounded-2xl px-4 py-3 text-sm font-bold text-gray-900 focus:outline-none focus:ring-2 focus:ring-primary/20"
-                />
-                <input
-                  type="text"
-                  value={form.offerLabel}
-                  onChange={(e) => setForm((f) => ({ ...f, offerLabel: e.target.value }))}
-                  placeholder="Descripción de la oferta"
-                  className="w-full bg-gray-50 border border-gray-100 rounded-2xl px-4 py-3 text-sm font-bold text-gray-900 focus:outline-none focus:ring-2 focus:ring-primary/20"
-                />
+              {/* Tipo — siempre visible */}
+              <div className="flex gap-2 mt-4">
+                <button
+                  type="button"
+                  onClick={() => setForm((f) => ({ ...f, type: "descuento" }))}
+                  className={`flex-1 py-3.5 rounded-2xl text-xs font-black uppercase tracking-widest transition-all flex items-center justify-center gap-2 ${
+                    form.type === "descuento" ? "bg-primary text-white shadow-md shadow-green-200" : "bg-gray-100 text-gray-400"
+                  }`}
+                >
+                  <Tag size={14} />Descuento
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setForm((f) => ({ ...f, type: "actividad" }))}
+                  className={`flex-1 py-3.5 rounded-2xl text-xs font-black uppercase tracking-widest transition-all flex items-center justify-center gap-2 ${
+                    form.type === "actividad" ? "bg-purple-500 text-white shadow-md shadow-purple-200" : "bg-gray-100 text-gray-400"
+                  }`}
+                >
+                  <Calendar size={14} />Actividad
+                </button>
+              </div>
+            </div>
+
+            {/* Scrollable body */}
+            <div className="overflow-y-auto flex-1 px-6 pb-2 space-y-3">
+              <input
+                type="text"
+                value={form.merchantName}
+                onChange={(e) => setForm((f) => ({ ...f, merchantName: e.target.value }))}
+                placeholder={form.type === "actividad" ? "Nombre del evento" : "Nombre del negocio"}
+                className="w-full bg-gray-50 border border-gray-100 rounded-2xl px-4 py-3 text-sm font-bold text-gray-900 focus:outline-none focus:ring-2 focus:ring-primary/20"
+              />
+              <input
+                type="text"
+                value={form.offerLabel}
+                onChange={(e) => setForm((f) => ({ ...f, offerLabel: e.target.value }))}
+                placeholder={form.type === "actividad" ? "Descripción del evento" : "Descripción de la oferta"}
+                className="w-full bg-gray-50 border border-gray-100 rounded-2xl px-4 py-3 text-sm font-bold text-gray-900 focus:outline-none focus:ring-2 focus:ring-primary/20"
+              />
+
+              {form.type === "descuento" && (
                 <select
                   value={form.category}
                   onChange={(e) => setForm((f) => ({ ...f, category: e.target.value }))}
@@ -348,30 +388,79 @@ function BeneficiosSection() {
                 >
                   {CATEGORIES.map((c) => <option key={c} value={c}>{c}</option>)}
                 </select>
+              )}
 
-                {/* Toggles */}
-                {[
-                  { label: "Un solo uso por empleado", key: "isSingleUse" as const, value: form.isSingleUse },
-                  { label: "Publicar en vivo inmediatamente", key: "isLive" as const, value: form.isLive },
-                ].map(({ label, key, value }) => (
-                  <div key={key} className="flex items-center justify-between bg-gray-50 rounded-2xl px-4 py-3 border border-gray-100">
-                    <p className="text-sm font-black text-gray-900">{label}</p>
-                    <button
-                      onClick={() => setForm((f) => ({ ...f, [key]: !f[key] }))}
-                      className={`w-12 h-6 rounded-full transition-all relative ${value ? "bg-primary" : "bg-gray-200"}`}
-                    >
-                      <span className={`absolute top-0.5 size-5 bg-white rounded-full shadow transition-all ${value ? "left-[calc(100%-1.375rem)]" : "left-0.5"}`} />
-                    </button>
-                  </div>
-                ))}
+              {/* Usos — stepper */}
+              <div>
+                <label className="text-[10px] font-black uppercase tracking-widest text-gray-400 block mb-1.5">
+                  {form.type === "actividad" ? "Inscripciones por persona" : "Usos por empleado"}
+                </label>
+                <div className="flex items-center gap-3">
+                  <button type="button" onClick={() => setForm((f) => ({ ...f, maxUses: Math.max(1, f.maxUses - 1) }))}
+                    className="size-11 rounded-2xl bg-gray-100 text-gray-600 font-black text-xl flex items-center justify-center active:scale-90 transition-all">−</button>
+                  <input
+                    type="number" min={1} value={form.maxUses}
+                    onChange={(e) => setForm((f) => ({ ...f, maxUses: Math.max(1, parseInt(e.target.value) || 1) }))}
+                    className="flex-1 bg-gray-50 border border-gray-100 rounded-2xl px-4 py-3 text-sm font-black text-gray-900 text-center focus:outline-none focus:ring-2 focus:ring-primary/20"
+                  />
+                  <button type="button" onClick={() => setForm((f) => ({ ...f, maxUses: f.maxUses + 1 }))}
+                    className="size-11 rounded-2xl bg-gray-100 text-gray-600 font-black text-xl flex items-center justify-center active:scale-90 transition-all">+</button>
+                </div>
+                <p className="text-[10px] text-gray-300 mt-1.5 text-center">
+                  {form.maxUses === 1 ? "Una sola vez por empleado" : `${form.maxUses} veces por empleado`}
+                </p>
               </div>
 
+              {/* Campos de actividad */}
+              {form.type === "actividad" && (
+                <>
+                  <div className="grid grid-cols-2 gap-3">
+                    <div>
+                      <label className="text-[10px] font-black uppercase tracking-widest text-gray-400 block mb-1.5 flex items-center gap-1"><Calendar size={9} />Fecha</label>
+                      <input type="date" value={form.eventDate}
+                        onChange={(e) => setForm((f) => ({ ...f, eventDate: e.target.value }))}
+                        className="w-full bg-purple-50 border border-purple-100 rounded-2xl px-3 py-3 text-sm font-bold text-gray-900 focus:outline-none focus:ring-2 focus:ring-purple-200" />
+                    </div>
+                    <div>
+                      <label className="text-[10px] font-black uppercase tracking-widest text-gray-400 block mb-1.5 flex items-center gap-1"><Clock size={9} />Hora</label>
+                      <input type="time" value={form.eventTime}
+                        onChange={(e) => setForm((f) => ({ ...f, eventTime: e.target.value }))}
+                        className="w-full bg-purple-50 border border-purple-100 rounded-2xl px-3 py-3 text-sm font-bold text-gray-900 focus:outline-none focus:ring-2 focus:ring-purple-200" />
+                    </div>
+                  </div>
+                  <div>
+                    <label className="text-[10px] font-black uppercase tracking-widest text-gray-400 block mb-1.5 flex items-center gap-1"><MapPin size={9} />Ubicación</label>
+                    <input type="text" value={form.eventLocation}
+                      onChange={(e) => setForm((f) => ({ ...f, eventLocation: e.target.value }))}
+                      placeholder="Ej: Parque Luis Muñoz Marín, SJ"
+                      className="w-full bg-purple-50 border border-purple-100 rounded-2xl px-4 py-3 text-sm font-bold text-gray-900 focus:outline-none focus:ring-2 focus:ring-purple-200" />
+                  </div>
+                </>
+              )}
+
+              {/* Toggle publicar en vivo */}
+              <div className="flex items-center justify-between bg-gray-50 rounded-2xl px-4 py-3 border border-gray-100">
+                <p className="text-sm font-black text-gray-900">Publicar en vivo inmediatamente</p>
+                <button onClick={() => setForm((f) => ({ ...f, isLive: !f.isLive }))}
+                  className={`w-12 h-6 rounded-full transition-all relative ${form.isLive ? "bg-primary" : "bg-gray-200"}`}>
+                  <span className={`absolute top-0.5 size-5 bg-white rounded-full shadow transition-all ${form.isLive ? "left-[calc(100%-1.375rem)]" : "left-0.5"}`} />
+                </button>
+              </div>
+            </div>
+
+            {/* Fixed footer */}
+            <div className="px-6 py-4 flex-shrink-0 border-t border-gray-50">
               <button
                 onClick={handleCreate}
                 disabled={saving || !form.merchantName.trim() || !form.offerLabel.trim()}
-                className="w-full py-4 bg-primary text-white rounded-2xl font-black text-sm uppercase tracking-widest shadow-lg shadow-green-500/20 active:scale-95 transition-all disabled:opacity-50 flex items-center justify-center gap-2"
+                className={`w-full py-4 rounded-2xl font-black text-sm uppercase tracking-widest shadow-lg active:scale-95 transition-all disabled:opacity-50 flex items-center justify-center gap-2 text-white ${
+                  form.type === "actividad" ? "bg-purple-500 shadow-purple-200" : "bg-primary shadow-green-500/20"
+                }`}
               >
-                {saving ? <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white" /> : <><CheckCircle size={16} /> Crear Beneficio</>}
+                {saving
+                  ? <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white" />
+                  : <><CheckCircle size={16} />{form.type === "actividad" ? "Crear Actividad" : "Crear Beneficio"}</>
+                }
               </button>
             </div>
           </div>
