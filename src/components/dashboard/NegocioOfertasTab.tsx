@@ -189,11 +189,13 @@ export function NegocioOfertasTab({ userId }: NegocioOfertasTabProps) {
       {showForm && (
         <div className="fixed inset-0 z-[120] bg-black/60 backdrop-blur-md flex items-end justify-center animate-in fade-in duration-300">
           <div className="absolute inset-0" onClick={() => setShowForm(false)} />
-          <div className="w-full max-w-lg bg-white rounded-t-[2.5rem] shadow-2xl relative z-10 animate-in slide-in-from-bottom duration-500">
-            <div className="p-6 space-y-5">
-              {/* Handle */}
-              <div className="w-10 h-1.5 bg-gray-200 rounded-full mx-auto mb-2" />
 
+          {/* Sheet — scrollable, max 90vh */}
+          <div className="w-full max-w-lg bg-white rounded-t-[2.5rem] shadow-2xl relative z-10 animate-in slide-in-from-bottom duration-500 flex flex-col max-h-[90vh]">
+
+            {/* Fixed header */}
+            <div className="px-6 pt-5 pb-4 flex-shrink-0">
+              <div className="w-10 h-1.5 bg-gray-200 rounded-full mx-auto mb-4" />
               <div className="flex items-center justify-between">
                 <h3 className="text-lg font-black text-gray-900">Nueva Oferta</h3>
                 <button onClick={() => setShowForm(false)} className="size-9 bg-gray-100 rounded-2xl flex items-center justify-center text-gray-400">
@@ -201,156 +203,179 @@ export function NegocioOfertasTab({ userId }: NegocioOfertasTabProps) {
                 </button>
               </div>
 
-              {/* Type selector */}
-              <div className="flex gap-2">
+              {/* Type selector — always visible */}
+              <div className="flex gap-2 mt-4">
                 <button
                   type="button"
                   onClick={() => setForm((f) => ({ ...f, type: "descuento" }))}
-                  className={`flex-1 py-3 rounded-2xl text-xs font-black uppercase tracking-widest transition-all ${
+                  className={`flex-1 py-3.5 rounded-2xl text-xs font-black uppercase tracking-widest transition-all flex items-center justify-center gap-2 ${
                     form.type === "descuento"
                       ? "bg-primary text-white shadow-md shadow-green-200"
-                      : "bg-gray-50 text-gray-400 border border-gray-100"
+                      : "bg-gray-100 text-gray-400"
                   }`}
                 >
-                  <Tag size={14} className="inline mr-1.5 -mt-0.5" />Descuento
+                  <Tag size={15} />Descuento
                 </button>
                 <button
                   type="button"
                   onClick={() => setForm((f) => ({ ...f, type: "actividad", category: "Actividad" }))}
-                  className={`flex-1 py-3 rounded-2xl text-xs font-black uppercase tracking-widest transition-all ${
+                  className={`flex-1 py-3.5 rounded-2xl text-xs font-black uppercase tracking-widest transition-all flex items-center justify-center gap-2 ${
                     form.type === "actividad"
                       ? "bg-purple-500 text-white shadow-md shadow-purple-200"
-                      : "bg-gray-50 text-gray-400 border border-gray-100"
+                      : "bg-gray-100 text-gray-400"
                   }`}
                 >
-                  <Calendar size={14} className="inline mr-1.5 -mt-0.5" />Actividad
+                  <Calendar size={15} />Actividad
                 </button>
               </div>
+            </div>
 
-              <div className="space-y-3">
+            {/* Scrollable body */}
+            <div className="overflow-y-auto flex-1 px-6 pb-2 space-y-4">
+
+              <div>
+                <label className="text-[10px] font-black uppercase tracking-widest text-gray-400 block mb-1.5">
+                  {form.type === "actividad" ? "Nombre del Evento" : "Nombre del Negocio"}
+                </label>
+                <input
+                  type="text"
+                  value={form.merchantName}
+                  onChange={(e) => setForm((f) => ({ ...f, merchantName: e.target.value }))}
+                  placeholder={form.type === "actividad" ? "Ej: 5K TransCita Run" : "Ej: Friend's Café PR"}
+                  className="w-full bg-gray-50 border border-gray-100 rounded-2xl px-4 py-3 text-sm font-bold text-gray-900 focus:outline-none focus:ring-2 focus:ring-primary/20"
+                />
+              </div>
+
+              <div>
+                <label className="text-[10px] font-black uppercase tracking-widest text-gray-400 block mb-1.5">
+                  {form.type === "actividad" ? "Descripción" : "Descripción de la Oferta"}
+                </label>
+                <input
+                  type="text"
+                  value={form.offerLabel}
+                  onChange={(e) => setForm((f) => ({ ...f, offerLabel: e.target.value }))}
+                  placeholder={form.type === "actividad" ? "Ej: Carrera 5K - camiseta incluida" : "Ej: 10% de descuento en cualquier compra"}
+                  className="w-full bg-gray-50 border border-gray-100 rounded-2xl px-4 py-3 text-sm font-bold text-gray-900 focus:outline-none focus:ring-2 focus:ring-primary/20"
+                />
+              </div>
+
+              {form.type === "descuento" && (
                 <div>
                   <label className="text-[10px] font-black uppercase tracking-widest text-gray-400 block mb-1.5">
-                    {form.type === "actividad" ? "Nombre del Evento" : "Nombre del Negocio"}
+                    Categoría
                   </label>
-                  <input
-                    type="text"
-                    value={form.merchantName}
-                    onChange={(e) => setForm((f) => ({ ...f, merchantName: e.target.value }))}
-                    placeholder={form.type === "actividad" ? "Ej: 5K TransCita Run" : "Ej: Friend's Café PR"}
-                    className="w-full bg-gray-50 border border-gray-100 rounded-2xl px-4 py-3 text-sm font-bold text-gray-900 focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary/30"
-                  />
+                  <select
+                    value={form.category}
+                    onChange={(e) => setForm((f) => ({ ...f, category: e.target.value }))}
+                    className="w-full bg-gray-50 border border-gray-100 rounded-2xl px-4 py-3 text-sm font-bold text-gray-900 focus:outline-none focus:ring-2 focus:ring-primary/20"
+                  >
+                    {CATEGORIES.filter(c => c !== "Actividad").map((c) => <option key={c} value={c}>{c}</option>)}
+                  </select>
                 </div>
+              )}
 
-                <div>
-                  <label className="text-[10px] font-black uppercase tracking-widest text-gray-400 block mb-1.5">
-                    {form.type === "actividad" ? "Descripción del Evento" : "Descripción de la Oferta"}
-                  </label>
-                  <input
-                    type="text"
-                    value={form.offerLabel}
-                    onChange={(e) => setForm((f) => ({ ...f, offerLabel: e.target.value }))}
-                    placeholder={form.type === "actividad" ? "Ej: Carrera 5K solidaria - camiseta incluida" : "Ej: 10% de descuento en cualquier compra"}
-                    className="w-full bg-gray-50 border border-gray-100 rounded-2xl px-4 py-3 text-sm font-bold text-gray-900 focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary/30"
-                  />
-                </div>
-
-                {form.type === "descuento" && (
-                  <div>
-                    <label className="text-[10px] font-black uppercase tracking-widest text-gray-400 block mb-1.5">
-                      Categoría
-                    </label>
-                    <select
-                      value={form.category}
-                      onChange={(e) => setForm((f) => ({ ...f, category: e.target.value }))}
-                      className="w-full bg-gray-50 border border-gray-100 rounded-2xl px-4 py-3 text-sm font-bold text-gray-900 focus:outline-none focus:ring-2 focus:ring-primary/20"
-                    >
-                      {CATEGORIES.map((c) => <option key={c} value={c}>{c}</option>)}
-                    </select>
-                  </div>
-                )}
-
-                {/* Max uses — always visible, defaults to 1 */}
-                <div>
-                  <label className="text-[10px] font-black uppercase tracking-widest text-gray-400 block mb-1.5">
-                    {form.type === "actividad" ? "Inscripciones por persona" : "Usos por empleado"}
-                  </label>
+              {/* Usos — siempre visible, default 1 */}
+              <div>
+                <label className="text-[10px] font-black uppercase tracking-widest text-gray-400 block mb-1.5">
+                  {form.type === "actividad" ? "Inscripciones por persona" : "Usos por empleado"}
+                </label>
+                <div className="flex items-center gap-3">
+                  <button
+                    type="button"
+                    onClick={() => setForm((f) => ({ ...f, maxUses: Math.max(1, f.maxUses - 1) }))}
+                    className="size-11 rounded-2xl bg-gray-100 text-gray-600 font-black text-xl flex items-center justify-center active:scale-90 transition-all"
+                  >−</button>
                   <input
                     type="number"
                     min={1}
                     value={form.maxUses}
                     onChange={(e) => setForm((f) => ({ ...f, maxUses: Math.max(1, parseInt(e.target.value) || 1) }))}
-                    className="w-full bg-gray-50 border border-gray-100 rounded-2xl px-4 py-3 text-sm font-bold text-gray-900 focus:outline-none focus:ring-2 focus:ring-primary/20"
+                    className="flex-1 bg-gray-50 border border-gray-100 rounded-2xl px-4 py-3 text-sm font-black text-gray-900 text-center focus:outline-none focus:ring-2 focus:ring-primary/20"
                   />
-                  <p className="text-[10px] text-gray-300 mt-1 ml-1">Predeterminado: 1</p>
+                  <button
+                    type="button"
+                    onClick={() => setForm((f) => ({ ...f, maxUses: f.maxUses + 1 }))}
+                    className="size-11 rounded-2xl bg-gray-100 text-gray-600 font-black text-xl flex items-center justify-center active:scale-90 transition-all"
+                  >+</button>
                 </div>
-
-                {/* Activity-specific fields */}
-                {form.type === "actividad" && (
-                  <>
-                    <div className="grid grid-cols-2 gap-3">
-                      <div>
-                        <label className="text-[10px] font-black uppercase tracking-widest text-gray-400 block mb-1.5">
-                          <Calendar size={10} className="inline mr-1 -mt-0.5" />Fecha
-                        </label>
-                        <input
-                          type="date"
-                          value={form.eventDate}
-                          onChange={(e) => setForm((f) => ({ ...f, eventDate: e.target.value }))}
-                          className="w-full bg-gray-50 border border-gray-100 rounded-2xl px-4 py-3 text-sm font-bold text-gray-900 focus:outline-none focus:ring-2 focus:ring-purple-200"
-                        />
-                      </div>
-                      <div>
-                        <label className="text-[10px] font-black uppercase tracking-widest text-gray-400 block mb-1.5">
-                          <Clock size={10} className="inline mr-1 -mt-0.5" />Hora
-                        </label>
-                        <input
-                          type="time"
-                          value={form.eventTime}
-                          onChange={(e) => setForm((f) => ({ ...f, eventTime: e.target.value }))}
-                          className="w-full bg-gray-50 border border-gray-100 rounded-2xl px-4 py-3 text-sm font-bold text-gray-900 focus:outline-none focus:ring-2 focus:ring-purple-200"
-                        />
-                      </div>
-                    </div>
-                    <div>
-                      <label className="text-[10px] font-black uppercase tracking-widest text-gray-400 block mb-1.5">
-                        <MapPin size={10} className="inline mr-1 -mt-0.5" />Ubicación
-                      </label>
-                      <input
-                        type="text"
-                        value={form.eventLocation}
-                        onChange={(e) => setForm((f) => ({ ...f, eventLocation: e.target.value }))}
-                        placeholder="Ej: Parque del Tercer Milenio, San Juan"
-                        className="w-full bg-gray-50 border border-gray-100 rounded-2xl px-4 py-3 text-sm font-bold text-gray-900 focus:outline-none focus:ring-2 focus:ring-purple-200"
-                      />
-                    </div>
-                    <div>
-                      <label className="text-[10px] font-black uppercase tracking-widest text-gray-400 block mb-1.5">
-                        <Users size={10} className="inline mr-1 -mt-0.5" />Capacidad máxima (opcional)
-                      </label>
-                      <input
-                        type="number"
-                        min={0}
-                        value={form.eventCapacity || ""}
-                        onChange={(e) => setForm((f) => ({ ...f, eventCapacity: parseInt(e.target.value) || 0 }))}
-                        placeholder="Sin límite"
-                        className="w-full bg-gray-50 border border-gray-100 rounded-2xl px-4 py-3 text-sm font-bold text-gray-900 focus:outline-none focus:ring-2 focus:ring-purple-200"
-                      />
-                    </div>
-                  </>
-                )}
+                <p className="text-[10px] text-gray-300 mt-1.5 text-center">
+                  {form.maxUses === 1 ? "Una sola vez por empleado" : `${form.maxUses} veces por empleado`}
+                </p>
               </div>
 
+              {/* Campos extra para actividad */}
+              {form.type === "actividad" && (
+                <>
+                  <div className="grid grid-cols-2 gap-3">
+                    <div>
+                      <label className="text-[10px] font-black uppercase tracking-widest text-gray-400 block mb-1.5 flex items-center gap-1">
+                        <Calendar size={9} />Fecha
+                      </label>
+                      <input
+                        type="date"
+                        value={form.eventDate}
+                        onChange={(e) => setForm((f) => ({ ...f, eventDate: e.target.value }))}
+                        className="w-full bg-purple-50 border border-purple-100 rounded-2xl px-3 py-3 text-sm font-bold text-gray-900 focus:outline-none focus:ring-2 focus:ring-purple-200"
+                      />
+                    </div>
+                    <div>
+                      <label className="text-[10px] font-black uppercase tracking-widest text-gray-400 block mb-1.5 flex items-center gap-1">
+                        <Clock size={9} />Hora
+                      </label>
+                      <input
+                        type="time"
+                        value={form.eventTime}
+                        onChange={(e) => setForm((f) => ({ ...f, eventTime: e.target.value }))}
+                        className="w-full bg-purple-50 border border-purple-100 rounded-2xl px-3 py-3 text-sm font-bold text-gray-900 focus:outline-none focus:ring-2 focus:ring-purple-200"
+                      />
+                    </div>
+                  </div>
+                  <div>
+                    <label className="text-[10px] font-black uppercase tracking-widest text-gray-400 block mb-1.5 flex items-center gap-1">
+                      <MapPin size={9} />Ubicación
+                    </label>
+                    <input
+                      type="text"
+                      value={form.eventLocation}
+                      onChange={(e) => setForm((f) => ({ ...f, eventLocation: e.target.value }))}
+                      placeholder="Ej: Parque Luis Muñoz Marín, SJ"
+                      className="w-full bg-purple-50 border border-purple-100 rounded-2xl px-4 py-3 text-sm font-bold text-gray-900 focus:outline-none focus:ring-2 focus:ring-purple-200"
+                    />
+                  </div>
+                  <div>
+                    <label className="text-[10px] font-black uppercase tracking-widest text-gray-400 block mb-1.5 flex items-center gap-1">
+                      <Users size={9} />Capacidad (opcional)
+                    </label>
+                    <input
+                      type="number"
+                      min={0}
+                      value={form.eventCapacity || ""}
+                      onChange={(e) => setForm((f) => ({ ...f, eventCapacity: parseInt(e.target.value) || 0 }))}
+                      placeholder="Sin límite"
+                      className="w-full bg-purple-50 border border-purple-100 rounded-2xl px-4 py-3 text-sm font-bold text-gray-900 focus:outline-none focus:ring-2 focus:ring-purple-200"
+                    />
+                  </div>
+                </>
+              )}
+            </div>
+
+            {/* Fixed footer — create button */}
+            <div className="px-6 py-4 flex-shrink-0 border-t border-gray-50">
               <button
                 onClick={handleCreate}
                 disabled={saving || !form.merchantName.trim() || !form.offerLabel.trim()}
-                className="w-full py-4 bg-primary text-white rounded-2xl font-black text-sm uppercase tracking-widest shadow-lg shadow-green-500/20 active:scale-95 transition-all disabled:opacity-50 disabled:scale-100 flex items-center justify-center gap-2"
+                className={`w-full py-4 rounded-2xl font-black text-sm uppercase tracking-widest shadow-lg active:scale-95 transition-all disabled:opacity-50 disabled:scale-100 flex items-center justify-center gap-2 text-white ${
+                  form.type === "actividad"
+                    ? "bg-purple-500 shadow-purple-200"
+                    : "bg-primary shadow-green-500/20"
+                }`}
               >
                 {saving ? (
                   <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white" />
                 ) : (
                   <>
                     <CheckCircle size={16} />
-                    Crear Oferta
+                    {form.type === "actividad" ? "Crear Actividad" : "Crear Oferta"}
                   </>
                 )}
               </button>
