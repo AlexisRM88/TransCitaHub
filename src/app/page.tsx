@@ -45,6 +45,7 @@ export default function Home() {
   const [profileProvisioned, setProfileProvisioned] = useState(false);
 
   const updateRole = useMutation(api.users.updateRole);
+  const updateProfile = useMutation(api.users.updateProfile);
   const ensureProfile = useMutation(api.users.ensureProfile);
   const syncUser = useMutation(api.users.syncUser);
 
@@ -53,6 +54,11 @@ export default function Home() {
       ensureProfile().then(() => setProfileProvisioned(true));
     }
   }, [isLoaded, user, profile, profileProvisioned, ensureProfile]);
+
+  // Sync pueblo from DB profile on load
+  useEffect(() => {
+    if (profile?.base) setUserPueblo(profile.base);
+  }, [profile?.base]);
 
   useEffect(() => {
     if (role === "Negocio") {
@@ -133,7 +139,12 @@ export default function Home() {
           role={role}
           userId={userId}
           userPueblo={userPueblo}
-          onPuebloChange={setUserPueblo}
+          onPuebloChange={async (pueblo) => {
+            setUserPueblo(pueblo);
+            if (userId) {
+              await updateProfile({ userId, base: pueblo as any });
+            }
+          }}
           onUpdateRole={async (r) => {
             await updateRole({ userId: userId!, role: r as any });
             setIsSettingsOpen(false);

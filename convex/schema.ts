@@ -13,7 +13,7 @@ export default defineSchema({
     fullName: v.string(),
     email: v.string(),
     role: v.union(v.literal("RSP"), v.literal("Admin"), v.literal("Staff"), v.literal("Patrono"), v.literal("Negocio")),
-    base: v.union(v.literal("Bayamón"), v.literal("Ponce"), v.literal("Mayagüez"), v.literal("San Juan"), v.literal("Caguas")),
+    base: v.union(v.literal("Bayamón"), v.literal("Ponce"), v.literal("Mayagüez"), v.literal("San Juan"), v.literal("Caguas"), v.literal("Carolina"), v.literal("Guaynabo")),
     photoUrl: v.optional(v.string()),         // string_url (resolved)
     photoStorageId: v.optional(v.id("_storage")), // Convex Storage reference
     totalTrips: v.number(),

@@ -3,15 +3,20 @@
 import { Settings, User } from "lucide-react";
 
 interface DashboardHeaderProps {
-  user: { image?: string; name?: string } | null | undefined;
+  user: { image?: string; name?: string; email?: string } | null | undefined;
   profile: { fullName?: string; photoUrl?: string } | null | undefined;
   onProfileClick: () => void;
   onSettingsClick: () => void;
 }
 
 export function DashboardHeader({ user, profile, onProfileClick, onSettingsClick }: DashboardHeaderProps) {
-  const displayName = (profile?.fullName || user?.name || "Compañero").split(" ")[0];
-  const initials = (profile?.fullName || user?.name || "U")
+  const displayName = (
+    profile?.fullName?.trim() ||
+    user?.name?.trim() ||
+    user?.email?.split("@")[0] ||
+    "Colaborador"
+  ).split(" ")[0];
+  const initials = (profile?.fullName?.trim() || user?.name?.trim() || user?.email?.split("@")[0] || "U")
     .split(" ")
     .map((n: string) => n[0])
     .join("")

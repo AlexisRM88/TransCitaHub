@@ -136,7 +136,7 @@ export const updateProfile = mutation({
         userId: v.string(),
         role: v.optional(v.union(v.literal("RSP"), v.literal("Admin"), v.literal("Staff"), v.literal("Patrono"), v.literal("Negocio"))),
         fullName: v.optional(v.string()),
-        base: v.optional(v.union(v.literal("Bayamón"), v.literal("Ponce"), v.literal("Mayagüez"), v.literal("San Juan"), v.literal("Caguas"))),
+        base: v.optional(v.union(v.literal("Bayamón"), v.literal("Ponce"), v.literal("Mayagüez"), v.literal("San Juan"), v.literal("Caguas"), v.literal("Carolina"), v.literal("Guaynabo"))),
         companyName: v.optional(v.string()),
     },
     handler: async (ctx, args) => {

@@ -4,7 +4,7 @@ import { useEffect, useState } from "react";
 import { BadgeCheck, Map, Moon, Zap } from "lucide-react";
 
 interface ProfileCardModalProps {
-  user: { image?: string; name?: string; _id?: string } | null | undefined;
+  user: { image?: string; name?: string; email?: string; _id?: string } | null | undefined;
   profile: { fullName?: string; base?: string; photoUrl?: string } | null | undefined;
   role: string | undefined;
   onClose: () => void;
@@ -22,7 +22,7 @@ function usePRClock() {
 export function ProfileCardModal({ user, profile, role, onClose }: ProfileCardModalProps) {
   const now = usePRClock();
 
-  const initials = (profile?.fullName || user?.name || "U")
+  const initials = (profile?.fullName?.trim() || user?.name?.trim() || user?.email?.split("@")[0] || "U")
     .split(" ")
     .map((n: string) => n[0])
     .join("")
@@ -82,7 +82,7 @@ export function ProfileCardModal({ user, profile, role, onClose }: ProfileCardMo
           <div className="text-center w-full space-y-1 mb-4">
             <p className="text-[10px] font-black text-primary uppercase tracking-widest">Colaborador TransCita</p>
             <h2 className="text-2xl font-black text-gray-900 leading-tight">
-              {profile?.fullName || user?.name || "Colaborador"}
+              {profile?.fullName?.trim() || user?.name?.trim() || user?.email?.split("@")[0] || "Colaborador"}
             </h2>
             <div className="flex items-center justify-center gap-2 mt-2">
               <span className="bg-green-50 text-primary text-[10px] font-black px-3 py-1 rounded-full border border-green-100">
