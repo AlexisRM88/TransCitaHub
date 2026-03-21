@@ -41,7 +41,7 @@ export function BeneficiosTab({ userId }: BeneficiosTabProps) {
   const [activeRedeemingId, setActiveRedeemingId] = useState<string | null>(null);
   const [benefitsList, setBenefitsList] = useState<any[]>([]);
 
-  const dbBenefits = useQuery(api.benefits.getBenefitsWithStatus, { clerkId: userId });
+  const dbBenefits = useQuery(api.benefits.getBenefitsWithStatus, { userId: userId });
   const redeemBenefit = useMutation(api.benefits.redeemBenefit);
 
   useEffect(() => {
@@ -67,7 +67,7 @@ export function BeneficiosTab({ userId }: BeneficiosTabProps) {
 
   const handleConfirmRedeem = async (benefitId: string) => {
     try {
-      await redeemBenefit({ clerkId: userId, benefitId });
+      await redeemBenefit({ userId: userId, benefitId });
     } catch (err) {
       console.error("DB Redemption error:", err);
     }

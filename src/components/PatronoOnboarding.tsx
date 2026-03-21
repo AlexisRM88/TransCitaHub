@@ -14,8 +14,8 @@ import {
 } from "lucide-react";
 import { useState, useEffect } from "react";
 
-export function PatronoOnboarding({ clerkId }: { clerkId: string }) {
-    const dbCompletedIds = useQuery(api.lms.getProgress, clerkId ? { clerkId } : "skip") || [];
+export function PatronoOnboarding({ userId }: { userId: string }) {
+    const dbCompletedIds = useQuery(api.lms.getProgress, userId ? { userId } : "skip") || [];
     const markComplete = useMutation(api.lms.markComplete);
 
     const [activeModule, setActiveModule] = useState<string | null>(null);
@@ -72,7 +72,7 @@ export function PatronoOnboarding({ clerkId }: { clerkId: string }) {
         setIsProcessing(true);
         try {
             await markComplete({
-                clerkId,
+                userId,
                 programId: 'patrono-interactive-onboarding',
                 moduleId: moduleId,
             });

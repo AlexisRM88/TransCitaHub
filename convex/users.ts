@@ -7,10 +7,10 @@ export const current = query({
     handler: async (ctx) => {
         const userId = await auth.getUserId(ctx);
         if (userId === null) return null;
-        
+
         let profile = await ctx.db
             .query("profiles")
-            .withIndex("by_clerkId", (q) => q.eq("clerkId", userId))
+            .withIndex("by_userId", (q) => q.eq("userId", userId))
             .first();
 
         const user = await ctx.db.get(userId);
@@ -27,9 +27,9 @@ export const ensureProfile = mutation({
         // Check if profile already exists
         const existing = await ctx.db
             .query("profiles")
-            .withIndex("by_clerkId", (q) => q.eq("clerkId", userId))
+            .withIndex("by_userId", (q) => q.eq("userId", userId))
             .first();
-        
+
         if (existing) return existing;
 
         // Get user data from auth table
@@ -41,7 +41,7 @@ export const ensureProfile = mutation({
         const assignedRole = isWebmaster ? "Admin" : "RSP";
 
         const profileId = await ctx.db.insert("profiles", {
-            clerkId: userId,
+            userId: userId,
             email,
             fullName,
             role: assignedRole,
@@ -76,28 +76,28 @@ export const isAuthorized = query({
 });
 
 export const getProfile = query({
-    args: { clerkId: v.string() },
+    args: { userId: v.string() },
     handler: async (ctx, args) => {
         return await ctx.db
             .query("profiles")
-            .withIndex("by_clerkId", (q) => q.eq("clerkId", args.clerkId))
+            .withIndex("by_userId", (q) => q.eq("userId", args.userId))
             .first();
     }
 });
 
 export const syncUser = mutation({
-    args: { clerkId: v.string(), email: v.string(), fullName: v.string() },
+    args: { userId: v.string(), email: v.string(), fullName: v.string() },
     handler: async (ctx, args) => {
         const existing = await ctx.db
             .query("profiles")
-            .withIndex("by_clerkId", (q) => q.eq("clerkId", args.clerkId))
+            .withIndex("by_userId", (q) => q.eq("userId", args.userId))
             .first();
 
         if (!existing) {
             const isWebmaster = args.email === "cabuyacreativa@gmail.com";
             const assignedRole = isWebmaster ? "Admin" : "RSP";
             await ctx.db.insert("profiles", {
-                clerkId: args.clerkId,
+                userId: args.userId,
                 email: args.email,
                 fullName: args.fullName,
                 role: assignedRole,
@@ -107,22 +107,65 @@ export const syncUser = mutation({
                 companyName: undefined,
                 businessId: undefined,
             });
-            console.log("New profile created for clerkId:", args.clerkId, "with role", assignedRole);
+            console.log("New profile created for userId:", args.userId, "with role", assignedRole);
         }
     },
 });
 
+// ── Admin: list all profiles ─────────────────────────────────────────────────
+export const getAllProfiles = query({
+    args: {},
+    handler: async (ctx) => {
+        return ctx.db.query("profiles").collect();
+    },
+});
+
+// ── Admin: update any profile field ─────────────────────────────────────────
+export const updateProfile = mutation({
+    args: {
+        userId: v.string(),
+        role: v.optional(v.union(v.literal("RSP"), v.literal("Admin"), v.literal("Staff"), v.literal("Patrono"), v.literal("Negocio"))),
+        fullName: v.optional(v.string()),
+        base: v.optional(v.union(v.literal("Bayamón"), v.literal("Ponce"), v.literal("Mayagüez"), v.literal("San Juan"), v.literal("Caguas"))),
+        companyName: v.optional(v.string()),
+    },
+    handler: async (ctx, args) => {
+        const profile = await ctx.db
+            .query("profiles")
+            .withIndex("by_userId", (q) => q.eq("userId", args.userId))
+            .first();
+        if (!profile) return;
+        const { userId, ...patch } = args;
+        const filtered = Object.fromEntries(
+            Object.entries(patch).filter(([_, v]) => v !== undefined)
+        );
+        await ctx.db.patch(profile._id, filtered);
+    },
+});
+
+// ── Admin: delete a profile ──────────────────────────────────────────────────
+export const deleteProfile = mutation({
+    args: { userId: v.string() },
+    handler: async (ctx, args) => {
+        const profile = await ctx.db
+            .query("profiles")
+            .withIndex("by_userId", (q) => q.eq("userId", args.userId))
+            .first();
+        if (profile) await ctx.db.delete(profile._id);
+    },
+});
+
 export const updateRole = mutation({
-    args: { clerkId: v.string(), role: v.union(v.literal("RSP"), v.literal("Admin"), v.literal("Staff"), v.literal("Patrono"), v.literal("Negocio")) },
+    args: { userId: v.string(), role: v.union(v.literal("RSP"), v.literal("Admin"), v.literal("Staff"), v.literal("Patrono"), v.literal("Negocio")) },
     handler: async (ctx, args) => {
         const existing = await ctx.db
             .query("profiles")
-            .withIndex("by_clerkId", (q) => q.eq("clerkId", args.clerkId))
+            .withIndex("by_userId", (q) => q.eq("userId", args.userId))
             .first();
 
         if (existing) {
             await ctx.db.patch(existing._id, { role: args.role });
-            console.log(`Role updated to ${args.role} for clerkId: ${args.clerkId}`);
+            console.log(`Role updated to ${args.role} for userId: ${args.userId}`);
         }
     },
 });

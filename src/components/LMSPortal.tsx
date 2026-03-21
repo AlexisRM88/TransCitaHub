@@ -24,13 +24,13 @@ import { PatronoEvaluation } from "./PatronoEvaluation";
 export function LMSPortal() {
     const currentData = useQuery(api.users.current);
     const user = currentData?.user;
-    const clerkId = user?._id;
+    const userId = user?._id;
     const userRole = currentData?.profile?.role || "RSP";
 
     const [selectedProgram, setSelectedProgram] = useState<TrainingProgram | null>(null);
     const [viewingSection, setViewingSection] = useState<OnboardingSection | null>(null);
 
-    const dbCompletedIds = useQuery(api.lms.getProgress, clerkId ? { clerkId } : "skip") || [];
+    const dbCompletedIds = useQuery(api.lms.getProgress, userId ? { userId } : "skip") || [];
     const markComplete = useMutation(api.lms.markComplete);
 
     // Filter out duplicates just in case
@@ -44,9 +44,9 @@ export function LMSPortal() {
     });
 
     const handleComplete = async (id: string) => {
-        console.log("handleComplete triggered for module:", id, "clerkId:", clerkId);
-        if (!clerkId || !selectedProgram) {
-            console.error("Cannot complete: missing clerkId or selectedProgram");
+        console.log("handleComplete triggered for module:", id, "userId:", userId);
+        if (!userId || !selectedProgram) {
+            console.error("Cannot complete: missing userId or selectedProgram");
             return;
         }
 
@@ -62,7 +62,7 @@ export function LMSPortal() {
         try {
             console.log("Invoking markComplete mutation...");
             await markComplete({
-                clerkId,
+                userId,
                 programId: selectedProgram.id,
                 moduleId: id,
             });
@@ -194,12 +194,12 @@ export function LMSPortal() {
         <div className="max-w-2xl mx-auto pb-20 p-5">
             {/* Conditional Dashboards based on Role */}
             <div className="mb-12">
-                {userRole === "Patrono" && clerkId && (
+                {userRole === "Patrono" && userId && (
                     <>
-                        <PatronoEvaluation clerkId={clerkId} />
+                        <PatronoEvaluation userId={userId} />
                     </>
                 )}
-                {userRole === "Negocio" && clerkId && <BusinessDashboard clerkId={clerkId} />}
+                {userRole === "Negocio" && userId && <BusinessDashboard userId={userId} />}
             </div>
 
             <h2 className="text-2xl font-black text-gray-900 mb-2">Desarrollo Profesional</h2>

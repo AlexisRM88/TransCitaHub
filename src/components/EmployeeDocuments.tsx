@@ -2,8 +2,8 @@ import { useQuery } from "convex/react";
 import { api } from "../../convex/_generated/api";
 import { CheckCircle2, Circle, FileText, AlertCircle, BadgeCheck } from "lucide-react";
 
-export function EmployeeDocuments({ clerkId }: { clerkId: string }) {
-    const documents = useQuery(api.documents.getDocuments, { clerkId });
+export function EmployeeDocuments({ userId }: { userId: string }) {
+    const documents = useQuery(api.documents.getDocuments, { userId });
 
     if (!documents) {
         return (

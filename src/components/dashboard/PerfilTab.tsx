@@ -35,7 +35,7 @@ export function PerfilTab({ user, userId, onViewCarnet }: PerfilTabProps) {
         <p className="text-[10px] font-black text-gray-400 uppercase tracking-widest mt-2">650 / 1000 XP para Nivel 15</p>
       </div>
 
-      <EmployeeDocuments clerkId={userId} />
+      <EmployeeDocuments userId={userId} />
 
       <div className="grid grid-cols-2 gap-4">
         <div className="bg-white p-5 rounded-3xl border border-gray-100 shadow-sm transition-all hover:scale-105 active:scale-95">

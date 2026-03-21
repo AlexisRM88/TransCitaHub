@@ -2,13 +2,13 @@ import { v } from "convex/values";
 import { mutation, query } from "./_generated/server";
 
 export const getProgress = query({
-    args: { clerkId: v.optional(v.string()) },
+    args: { userId: v.optional(v.string()) },
     handler: async (ctx, args) => {
-        if (!args.clerkId) return [];
+        if (!args.userId) return [];
 
         const progress = await ctx.db
             .query("lms_progress")
-            .withIndex("by_clerkId", (q) => q.eq("clerkId", args.clerkId as string))
+            .withIndex("by_userId", (q) => q.eq("userId", args.userId as string))
             .collect();
 
         return progress.map(p => p.moduleId);
@@ -17,7 +17,7 @@ export const getProgress = query({
 
 export const markComplete = mutation({
     args: {
-        clerkId: v.string(),
+        userId: v.string(),
         programId: v.string(),
         moduleId: v.string(),
     },
@@ -25,8 +25,8 @@ export const markComplete = mutation({
         // Check if already completed
         const existing = await ctx.db
             .query("lms_progress")
-            .withIndex("by_clerk_module", (q) =>
-                q.eq("clerkId", args.clerkId).eq("moduleId", args.moduleId)
+            .withIndex("by_user_module", (q) =>
+                q.eq("userId", args.userId).eq("moduleId", args.moduleId)
             )
             .first();
 
@@ -35,7 +35,7 @@ export const markComplete = mutation({
         }
 
         return await ctx.db.insert("lms_progress", {
-            clerkId: args.clerkId,
+            userId: args.userId,
             programId: args.programId,
             moduleId: args.moduleId,
             completedAt: Date.now(),
@@ -44,11 +44,11 @@ export const markComplete = mutation({
 });
 
 export const getCompanyProgress = query({
-    args: { clerkId: v.string() },
+    args: { userId: v.string() },
     handler: async (ctx, args) => {
         const patrono = await ctx.db
             .query("profiles")
-            .withIndex("by_clerkId", (q) => q.eq("clerkId", args.clerkId))
+            .withIndex("by_userId", (q) => q.eq("userId", args.userId))
             .first();
 
         if (!patrono || patrono.role !== "Patrono" || !patrono.companyName) {
@@ -66,12 +66,12 @@ export const getCompanyProgress = query({
 
             const progress = await ctx.db
                 .query("lms_progress")
-                .withIndex("by_clerkId", (q) => q.eq("clerkId", emp.clerkId))
+                .withIndex("by_userId", (q) => q.eq("userId", emp.userId))
                 .collect();
 
             results.push({
                 fullName: emp.fullName,
-                clerkId: emp.clerkId,
+                userId: emp.userId,
                 completedModules: progress.map(p => p.moduleId),
             });
         }

@@ -14,6 +14,7 @@ import { ProfileCardModal } from "@/components/dashboard/ProfileCardModal";
 import { BeneficiosTab } from "@/components/dashboard/BeneficiosTab";
 import { PerfilTab } from "@/components/dashboard/PerfilTab";
 import { SocialWallTab } from "@/components/dashboard/SocialWallTab";
+import { NegocioOfertasTab } from "@/components/dashboard/NegocioOfertasTab";
 
 // Heavy tabs loaded on demand
 const GestionTab = lazy(() => import("@/components/dashboard/GestionTab"));
@@ -54,7 +55,9 @@ export default function Home() {
   }, [isLoaded, user, profile, profileProvisioned, ensureProfile]);
 
   useEffect(() => {
-    if (role === "Patrono" || role === "Negocio" || role === "Admin") {
+    if (role === "Negocio") {
+      setActiveTab("gestion");
+    } else if (role === "Patrono" || role === "Admin") {
       setActiveTab("gestion");
     } else {
       setActiveTab("comunidad");
@@ -64,7 +67,7 @@ export default function Home() {
   useEffect(() => {
     if (userId && user) {
       syncUser({
-        clerkId: userId,
+        userId: userId,
         email: user.email || "",
         fullName: user.name || "",
       }).catch((err) => console.error("Sync error:", err));
@@ -121,8 +124,6 @@ export default function Home() {
     );
   }
 
-  const isManagement = role === "Patrono" || role === "Negocio" || role === "Admin";
-
   return (
     <div className="min-h-screen bg-[#f8fafc] text-gray-900 pb-28 font-sans">
 
@@ -134,7 +135,7 @@ export default function Home() {
           userPueblo={userPueblo}
           onPuebloChange={setUserPueblo}
           onUpdateRole={async (r) => {
-            await updateRole({ clerkId: userId!, role: r as any });
+            await updateRole({ userId: userId!, role: r as any });
             setIsSettingsOpen(false);
           }}
           onClose={() => setIsSettingsOpen(false)}
@@ -159,17 +160,23 @@ export default function Home() {
       />
 
       <main className="pt-2">
-        {activeTab === "gestion" && isManagement && userId && (
+        {activeTab === "gestion" && (role === "Patrono" || role === "Negocio" || role === "Admin") && userId && (
           <Suspense fallback={<TabSpinner />}>
             <GestionTab role={role!} userId={userId} />
           </Suspense>
+        )}
+
+        {/* Tab exclusivo Negocio: gestión de ofertas */}
+        {activeTab === "ofertas" && role === "Negocio" && userId && (
+          <NegocioOfertasTab userId={userId} />
         )}
 
         {activeTab === "comunidad" && userId && (
           <BeneficiosTab userId={userId} />
         )}
 
-        {activeTab === "desarrollo" && (
+        {/* Desarrollo solo visible para Patrono, Admin y RSP — nunca para Negocio */}
+        {activeTab === "desarrollo" && role !== "Negocio" && (
           <Suspense fallback={<TabSpinner />}>
             <DesarrolloTab />
           </Suspense>

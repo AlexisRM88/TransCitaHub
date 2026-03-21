@@ -29,16 +29,18 @@ export const getAvailableT_Life = query({
 });
 
 export const getBenefitsWithStatus = query({
-    args: { clerkId: v.string() },
+    args: { userId: v.string() },
     handler: async (ctx, args) => {
         const profile = await ctx.db
             .query("profiles")
-            .withIndex("by_clerkId", (q) => q.eq("clerkId", args.clerkId))
+            .withIndex("by_userId", (q) => q.eq("userId", args.userId))
             .first();
 
         if (!profile) return [];
 
-        const benefits = await ctx.db.query("benefits").collect();
+        // Only show benefits that are explicitly live, or legacy benefits without isLive set
+        const allBenefits = await ctx.db.query("benefits").collect();
+        const benefits = allBenefits.filter(b => b.isLive !== false);
         const redemptions = await ctx.db
             .query("redemptions")
             .withIndex("by_userId", (q) => q.eq("userId", profile._id))
@@ -60,17 +62,133 @@ export const getBenefitsWithStatus = query({
     },
 });
 
+// ── Admin: get ALL benefits ──────────────────────────────────────────────────
+export const getAllBenefitsAdmin = query({
+    args: {},
+    handler: async (ctx) => {
+        return ctx.db.query("benefits").collect();
+    },
+});
+
+// ── Admin: create a global benefit (no owner) ────────────────────────────────
+export const adminCreateBenefit = mutation({
+    args: {
+        merchantName: v.string(),
+        offerLabel: v.string(),
+        category: v.string(),
+        isSingleUse: v.boolean(),
+        maxUses: v.optional(v.number()),
+        isLive: v.boolean(),
+    },
+    handler: async (ctx, args) => {
+        return ctx.db.insert("benefits", {
+            merchantName: args.merchantName,
+            offerLabel: args.offerLabel,
+            category: args.category,
+            isSingleUse: args.isSingleUse,
+            maxUses: args.maxUses,
+            isLive: args.isLive,
+            lat: 18.2208,
+            lng: -66.5901,
+            isSponsored: false,
+            activeDays: ["Lun", "Mar", "Mie", "Jue", "Vie", "Sab", "Dom"],
+        });
+    },
+});
+
+// ── Admin: toggle any benefit live ──────────────────────────────────────────
+export const adminToggleBenefitLive = mutation({
+    args: { benefitId: v.string() },
+    handler: async (ctx, args) => {
+        const id = ctx.db.normalizeId("benefits", args.benefitId);
+        if (!id) throw new Error("Benefit not found");
+        const benefit = await ctx.db.get(id);
+        if (!benefit) throw new Error("Benefit not found");
+        await ctx.db.patch(id, { isLive: !benefit.isLive });
+    },
+});
+
+// ── Admin: delete any benefit ────────────────────────────────────────────────
+export const adminDeleteBenefit = mutation({
+    args: { benefitId: v.string() },
+    handler: async (ctx, args) => {
+        const id = ctx.db.normalizeId("benefits", args.benefitId);
+        if (!id) throw new Error("Benefit not found");
+        await ctx.db.delete(id);
+    },
+});
+
+// ── Negocio: get own offers ──────────────────────────────────────────────────
+export const getMyOffers = query({
+    args: { ownerId: v.string() },
+    handler: async (ctx, args) => {
+        return ctx.db
+            .query("benefits")
+            .withIndex("by_ownerId", (q) => q.eq("ownerId", args.ownerId))
+            .collect();
+    },
+});
+
+// ── Negocio: create a new offer ──────────────────────────────────────────────
+export const createOffer = mutation({
+    args: {
+        ownerId: v.string(),
+        merchantName: v.string(),
+        offerLabel: v.string(),
+        category: v.string(),
+        isSingleUse: v.boolean(),
+        maxUses: v.optional(v.number()),
+    },
+    handler: async (ctx, args) => {
+        return ctx.db.insert("benefits", {
+            ownerId: args.ownerId,
+            merchantName: args.merchantName,
+            offerLabel: args.offerLabel,
+            category: args.category,
+            isSingleUse: args.isSingleUse,
+            maxUses: args.maxUses,
+            lat: 18.2208,   // Puerto Rico center — placeholder
+            lng: -66.5901,
+            isSponsored: false,
+            activeDays: ["Lun", "Mar", "Mie", "Jue", "Vie", "Sab", "Dom"],
+            isLive: false,
+        });
+    },
+});
+
+// ── Negocio: toggle isLive ───────────────────────────────────────────────────
+export const toggleOfferLive = mutation({
+    args: { benefitId: v.string() },
+    handler: async (ctx, args) => {
+        const id = ctx.db.normalizeId("benefits", args.benefitId);
+        if (!id) throw new Error("Offer not found");
+        const benefit = await ctx.db.get(id);
+        if (!benefit) throw new Error("Offer not found");
+        await ctx.db.patch(id, { isLive: !benefit.isLive });
+    },
+});
+
+// ── Negocio: delete an offer ─────────────────────────────────────────────────
+export const deleteOffer = mutation({
+    args: { benefitId: v.string() },
+    handler: async (ctx, args) => {
+        const id = ctx.db.normalizeId("benefits", args.benefitId);
+        if (!id) throw new Error("Offer not found");
+        await ctx.db.delete(id);
+    },
+});
+
 export const redeemBenefit = mutation({
-    args: { clerkId: v.string(), benefitId: v.string() },
+    args: { userId: v.string(), benefitId: v.string() },
     handler: async (ctx, args) => {
         // 1. Find user profile
         const profile = await ctx.db
             .query("profiles")
-            .withIndex("by_clerkId", (q) => q.eq("clerkId", args.clerkId))
+            .withIndex("by_userId", (q) => q.eq("userId", args.userId))
             .first();
 
         if (!profile) {
-            console.error("Profile not found for clerkId:", args.clerkId);
+            console.error("Profile not found for userId:", args.userId);
             return;
         }
 

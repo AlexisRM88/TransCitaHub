@@ -2,11 +2,11 @@ import { query, mutation } from "./_generated/server";
 import { v } from "convex/values";
 
 export const getDocuments = query({
-  args: { clerkId: v.string() },
+  args: { userId: v.string() },
   handler: async (ctx, args) => {
     let docs = await ctx.db
       .query("employee_documents")
-      .withIndex("by_clerkId", (q) => q.eq("clerkId", args.clerkId))
+      .withIndex("by_userId", (q) => q.eq("userId", args.userId))
       .first();
 
     if (!docs) {
@@ -29,7 +29,7 @@ export const getDocuments = query({
 
 export const toggleDocument = mutation({
   args: {
-    clerkId: v.string(),
+    userId: v.string(),
     documentKey: v.union(
       v.literal("ley300"),
       v.literal("cpr"),
@@ -43,13 +43,13 @@ export const toggleDocument = mutation({
     // Only Admin or Patrono should do this in a real scenario, but we just verify they exist
     let docs = await ctx.db
       .query("employee_documents")
-      .withIndex("by_clerkId", (q) => q.eq("clerkId", args.clerkId))
+      .withIndex("by_userId", (q) => q.eq("userId", args.userId))
       .first();
 
     if (!docs) {
       // Create it with the toggled field as true
       await ctx.db.insert("employee_documents", {
-        clerkId: args.clerkId,
+        userId: args.userId,
         ley300: args.documentKey === "ley300",
         cpr: args.documentKey === "cpr",
         recordChoferil: args.documentKey === "recordChoferil",

@@ -9,7 +9,7 @@ export default defineSchema({
   }).index("by_email", ["email"]),
 
   profiles: defineTable({
-    clerkId: v.string(),
+    userId: v.string(),
     fullName: v.string(),
     email: v.string(),
     role: v.union(v.literal("RSP"), v.literal("Admin"), v.literal("Staff"), v.literal("Patrono"), v.literal("Negocio")),
@@ -19,7 +19,7 @@ export default defineSchema({
     medals: v.array(v.string()),
     companyName: v.optional(v.string()), // For Patrono/Employees
     businessId: v.optional(v.string()),  // For Negocio
-  }).index("by_clerkId", ["clerkId"])
+  }).index("by_userId", ["userId"])
     .index("by_base_totalTrips", ["base", "totalTrips"])
     .index("by_company", ["companyName"]),
 
@@ -47,13 +47,14 @@ export default defineSchema({
   }).index("by_userId", ["userId"]),
 
   lms_progress: defineTable({
-    clerkId: v.string(),
+    userId: v.optional(v.string()),
+    clerkId: v.optional(v.string()), // legacy field, will be removed after migration
     programId: v.string(),
     moduleId: v.string(),
     completedAt: v.number(),
   })
-    .index("by_clerkId", ["clerkId"])
-    .index("by_clerk_module", ["clerkId", "moduleId"]),
+    .index("by_userId", ["userId"])
+    .index("by_user_module", ["userId", "moduleId"]),
 
   benefits: defineTable({
     merchantName: v.string(),
@@ -66,7 +67,9 @@ export default defineSchema({
     activeDays: v.array(v.string()),
     isSingleUse: v.optional(v.boolean()),
     maxUses: v.optional(v.number()),
-  }),
+    isLive: v.optional(v.boolean()),   // visible to RSPs when true
+    ownerId: v.optional(v.string()),   // userId of the Negocio that created it
+  }).index("by_ownerId", ["ownerId"]),
 
   redemptions: defineTable({
     userId: v.id("profiles"), // id_ref
@@ -76,12 +79,13 @@ export default defineSchema({
   }).index("by_userId", ["userId"]).index("by_benefitId", ["benefitId"]),
 
   employee_documents: defineTable({
-    clerkId: v.string(),
+    userId: v.optional(v.string()),
+    clerkId: v.optional(v.string()), // legacy field, will be removed after migration
     ley300: v.boolean(),
     cpr: v.boolean(),
     recordChoferil: v.boolean(),
     antecedentes: v.boolean(),
     licenciaCat4: v.boolean(),
     autorizacionOperador: v.optional(v.boolean()),
-  }).index("by_clerkId", ["clerkId"]),
+  }).index("by_userId", ["userId"]),
 });

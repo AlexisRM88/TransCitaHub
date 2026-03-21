@@ -15,7 +15,7 @@ import {
 } from "lucide-react";
 import { motion } from "framer-motion";
 
-export function BusinessDashboard({ clerkId }: { clerkId: string }) {
+export function BusinessDashboard({ userId }: { userId: string }) {
     // In a real scenario, we would fetch real analytics from Convex/Google Analytics
     // For now, we simulate the data as planned
     const stats = [

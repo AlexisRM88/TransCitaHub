@@ -7,7 +7,7 @@ export const seed = mutation({
         await ctx.db.insert("authorized_emails", { email: "admin@transcita.com" });
         await ctx.db.insert("authorized_emails", { email: "cabuyacreativa@gmail.com" });
 
-        // Clear existing benefits and redemptions to avoid duplicates in dev
+        // Clear existing data to avoid duplicates and schema mismatches in dev
         const oldBenefits = await ctx.db.query("benefits").collect();
         for (const b of oldBenefits) {
             await ctx.db.delete(b._id);
@@ -16,6 +16,21 @@ export const seed = mutation({
         const oldRedemptions = await ctx.db.query("redemptions").collect();
         for (const r of oldRedemptions) {
             await ctx.db.delete(r._id);
+        }
+
+        const oldDocuments = await ctx.db.query("employee_documents").collect();
+        for (const d of oldDocuments) {
+            await ctx.db.delete(d._id);
+        }
+
+        const oldProgress = await ctx.db.query("lms_progress").collect();
+        for (const p of oldProgress) {
+            await ctx.db.delete(p._id);
+        }
+
+        const oldProfiles = await ctx.db.query("profiles").collect();
+        for (const p of oldProfiles) {
+            await ctx.db.delete(p._id);
         }
 
         // Add initial benefits matching UI hardcoded IDs
@@ -68,7 +83,7 @@ export const seed = mutation({
         const testNegocioId = "user_negocio_test";
 
         await ctx.db.insert("profiles", {
-            clerkId: testPatronoId,
+            userId: testPatronoId,
             fullName: "Alexis Patrono",
             email: "patrono@transcita.com",
             role: "Patrono",
@@ -79,7 +94,7 @@ export const seed = mutation({
         });
 
         await ctx.db.insert("profiles", {
-            clerkId: testEmployeeId,
+            userId: testEmployeeId,
             fullName: "Juan Empleado",
             email: "empleado@transcita.com",
             role: "RSP",
@@ -90,7 +105,7 @@ export const seed = mutation({
         });
 
         await ctx.db.insert("profiles", {
-            clerkId: testNegocioId,
+            userId: testNegocioId,
             fullName: "Gerente Snap Fitness",
             email: "snap@fitness.com",
             role: "Negocio",
@@ -102,14 +117,14 @@ export const seed = mutation({
 
         // Seed some progress for the employee
         await ctx.db.insert("lms_progress", {
-            clerkId: testEmployeeId,
+            userId: testEmployeeId,
             programId: "onboarding",
             moduleId: "bienvenida",
             completedAt: Date.now(),
         });
 
         await ctx.db.insert("lms_progress", {
-            clerkId: testEmployeeId,
+            userId: testEmployeeId,
             programId: "onboarding",
             moduleId: "mision",
             completedAt: Date.now(),

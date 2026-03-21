@@ -15,17 +15,17 @@ import { motion } from "framer-motion";
 import { useState } from "react";
 import { AdminDocumentManager } from "./AdminDocumentManager";
 
-export function PatronoEvaluation({ clerkId }: { clerkId: string }) {
-    const employeeProgress = useQuery(api.lms.getCompanyProgress, { clerkId }) || [];
+export function PatronoEvaluation({ userId }: { userId: string }) {
+    const employeeProgress = useQuery(api.lms.getCompanyProgress, { userId }) || [];
     const [searchTerm, setSearchTerm] = useState("");
     const [expandedEmpId, setExpandedEmpId] = useState<string | null>(null);
 
     // FALLBACK DE DEMOSTRACIÓN:
     // Si la base de datos está vacía, usamos estos empleados ficticios para que la presentación nunca falle.
     const mockEmployees = [
-        { clerkId: "demo-user-1", fullName: "Luis Pérez", completedModules: ["bienvenida", "mision", "valores"] },
-        { clerkId: "demo-user-2", fullName: "María Santiago", completedModules: ["bienvenida", "mision", "valores", "comunicacion-efectiva", "seguridad-vial"] },
-        { clerkId: "demo-user-3", fullName: "Carlos Rivera", completedModules: [] },
+        { userId: "demo-user-1", fullName: "Luis Pérez", completedModules: ["bienvenida", "mision", "valores"] },
+        { userId: "demo-user-2", fullName: "María Santiago", completedModules: ["bienvenida", "mision", "valores", "comunicacion-efectiva", "seguridad-vial"] },
+        { userId: "demo-user-3", fullName: "Carlos Rivera", completedModules: [] },
     ];
 
     const displayEmployees = employeeProgress.length > 0 ? employeeProgress : mockEmployees;
@@ -77,11 +77,11 @@ export function PatronoEvaluation({ clerkId }: { clerkId: string }) {
                 ) : (
                     filteredEmployees.map((emp, i) => (
                         <motion.div
-                            key={emp.clerkId}
+                            key={emp.userId}
                             initial={{ opacity: 0, x: -10 }}
                             animate={{ opacity: 1, x: 0 }}
                             transition={{ delay: i * 0.05 }}
-                            onClick={() => setExpandedEmpId(expandedEmpId === emp.clerkId ? null : emp.clerkId)}
+                            onClick={() => setExpandedEmpId(expandedEmpId === emp.userId ? null : emp.userId)}
                             className="bg-white p-5 rounded-3xl border border-gray-100 shadow-sm hover:border-green-200 transition-all group cursor-pointer"
                         >
                             <div className="flex items-center gap-5">
@@ -106,7 +106,7 @@ export function PatronoEvaluation({ clerkId }: { clerkId: string }) {
                                     </div>
                                 </div>
                                 <div className={`size-10 rounded-full flex items-center justify-center transition-all ${
-                                    expandedEmpId === emp.clerkId 
+                                    expandedEmpId === emp.userId
                                         ? "bg-green-500 text-white rotate-90" 
                                         : "bg-gray-50 text-gray-300 group-hover:bg-green-500 group-hover:text-white"
                                 }`}>
@@ -124,7 +124,7 @@ export function PatronoEvaluation({ clerkId }: { clerkId: string }) {
                                 ))}
                             </div>
 
-                            {expandedEmpId === emp.clerkId && (
+                            {expandedEmpId === emp.userId && (
                                 <div className="animate-in fade-in slide-in-from-top-2 duration-300">
                                     <div className="mt-6 pt-4 border-t border-gray-100">
                                         <h4 className="text-[10px] font-black uppercase tracking-widest text-gray-500 mb-3 flex items-center gap-2">
@@ -142,7 +142,7 @@ export function PatronoEvaluation({ clerkId }: { clerkId: string }) {
                                             </div>
                                         )}
                                     </div>
-                                    <AdminDocumentManager clerkId={emp.clerkId} />
+                                    <AdminDocumentManager userId={emp.userId} />
                                 </div>
                             )}
                         </motion.div>

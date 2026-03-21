@@ -2,8 +2,8 @@ import { useQuery, useMutation } from "convex/react";
 import { api } from "../../convex/_generated/api";
 import { Check, X, FileText } from "lucide-react";
 
-export function AdminDocumentManager({ clerkId }: { clerkId: string }) {
-    const documents = useQuery(api.documents.getDocuments, { clerkId });
+export function AdminDocumentManager({ userId }: { userId: string }) {
+    const documents = useQuery(api.documents.getDocuments, { userId });
     const toggleDoc = useMutation(api.documents.toggleDocument);
 
     if (!documents) {
@@ -26,7 +26,7 @@ export function AdminDocumentManager({ clerkId }: { clerkId: string }) {
     const autorizacion = { key: "autorizacionOperador", label: "Autorización de Operador de Cuidado Médico", value: documents.autorizacionOperador };
 
     const handleToggle = (key: any) => {
-        toggleDoc({ clerkId, documentKey: key });
+        toggleDoc({ userId, documentKey: key });
     };
 
     return (
