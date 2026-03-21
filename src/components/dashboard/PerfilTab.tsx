@@ -1,15 +1,55 @@
 "use client";
 
-import { Award, ShieldCheck, Star, Zap } from "lucide-react";
+import { useRef, useState } from "react";
+import { Award, Camera, ShieldCheck, Star, Zap } from "lucide-react";
 import { EmployeeDocuments } from "@/components/EmployeeDocuments";
+import { useMutation } from "convex/react";
+import { api } from "../../../convex/_generated/api";
 
 interface PerfilTabProps {
-  user: { image?: string } | null | undefined;
+  user: { image?: string; name?: string } | null | undefined;
+  profile: { fullName?: string; photoUrl?: string } | null | undefined;
   userId: string;
   onViewCarnet: () => void;
 }
 
-export function PerfilTab({ user, userId, onViewCarnet }: PerfilTabProps) {
+export function PerfilTab({ user, profile, userId, onViewCarnet }: PerfilTabProps) {
+  const fileInputRef = useRef<HTMLInputElement>(null);
+  const [uploading, setUploading] = useState(false);
+
+  const generateUploadUrl = useMutation(api.users.generateProfilePhotoUploadUrl);
+  const updatePhoto = useMutation(api.users.updateProfilePhoto);
+
+  // Priority: Convex Storage photo > auth provider photo > initials
+  const photoUrl = profile?.photoUrl || user?.image;
+  const initials = (profile?.fullName || user?.name || "U")
+    .split(" ")
+    .map((n: string) => n[0])
+    .join("")
+    .toUpperCase()
+    .slice(0, 2);
+
+  const handlePhotoChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    setUploading(true);
+    try {
+      const uploadUrl = await generateUploadUrl();
+      const res = await fetch(uploadUrl, {
+        method: "POST",
+        headers: { "Content-Type": file.type },
+        body: file,
+      });
+      const { storageId } = await res.json();
+      await updatePhoto({ storageId });
+    } catch (err) {
+      console.error("Photo upload error:", err);
+    } finally {
+      setUploading(false);
+      if (fileInputRef.current) fileInputRef.current.value = "";
+    }
+  };
+
   return (
     <div className="animate-in fade-in slide-in-from-bottom-4 duration-500 p-5 space-y-6">
       <header className="mb-4">
@@ -18,15 +58,37 @@ export function PerfilTab({ user, userId, onViewCarnet }: PerfilTabProps) {
       </header>
 
       <div className="bg-white rounded-[2.5rem] p-6 border border-gray-100 shadow-sm border-b-4 border-b-primary flex flex-col items-center">
-        <div className="size-16 relative mb-4">
-          {user?.image ? (
-            <img src={user.image} alt="Profile" className="size-full rounded-2xl object-cover" />
+        {/* Avatar with upload button */}
+        <div className="size-20 relative mb-4">
+          {photoUrl ? (
+            <img src={photoUrl} alt="Profile" className="size-full rounded-2xl object-cover" />
           ) : (
-            <div className="size-full rounded-2xl bg-gray-100" />
+            <div className="size-full rounded-2xl bg-gradient-to-br from-emerald-400 to-green-600 flex items-center justify-center">
+              <span className="text-white font-black text-2xl">{initials}</span>
+            </div>
           )}
           <div className="absolute -top-2 -right-2 bg-primary text-white size-8 rounded-full border-4 border-white flex items-center justify-center">
             <Star size={12} fill="currentColor" />
           </div>
+          {/* Upload button */}
+          <button
+            onClick={() => fileInputRef.current?.click()}
+            disabled={uploading}
+            className="absolute -bottom-2 -right-2 size-8 bg-gray-900 text-white rounded-full border-2 border-white flex items-center justify-center shadow-lg active:scale-90 transition-all disabled:opacity-50"
+          >
+            {uploading ? (
+              <div className="size-3 border border-white border-t-transparent rounded-full animate-spin" />
+            ) : (
+              <Camera size={14} />
+            )}
+          </button>
+          <input
+            ref={fileInputRef}
+            type="file"
+            accept="image/*"
+            className="hidden"
+            onChange={handlePhotoChange}
+          />
         </div>
         <h3 className="text-lg font-black text-gray-900">Nivel 14</h3>
         <div className="w-full h-2 bg-gray-100 rounded-full mt-4 overflow-hidden border border-gray-50">

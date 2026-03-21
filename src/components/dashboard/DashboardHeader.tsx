@@ -4,7 +4,7 @@ import { Settings, User } from "lucide-react";
 
 interface DashboardHeaderProps {
   user: { image?: string; name?: string } | null | undefined;
-  profile: { fullName?: string } | null | undefined;
+  profile: { fullName?: string; photoUrl?: string } | null | undefined;
   onProfileClick: () => void;
   onSettingsClick: () => void;
 }
@@ -18,12 +18,15 @@ export function DashboardHeader({ user, profile, onProfileClick, onSettingsClick
     .toUpperCase()
     .slice(0, 2);
 
+  // Priority: Convex Storage photo > auth provider photo
+  const photoUrl = profile?.photoUrl || user?.image;
+
   return (
     <header className="flex items-center justify-between p-5 pb-4 bg-white sticky top-0 z-50 shadow-sm">
       <div className="flex items-center gap-3 cursor-pointer" onClick={onProfileClick}>
         <div className="relative">
-          {user?.image ? (
-            <img src={user.image} alt="Profile" className="size-12 rounded-full border-2 border-primary object-cover" />
+          {photoUrl ? (
+            <img src={photoUrl} alt="Profile" className="size-12 rounded-full border-2 border-primary object-cover" />
           ) : (
             <div className="size-12 rounded-full border-2 border-primary bg-gradient-to-br from-emerald-400 to-green-600 flex items-center justify-center">
               <span className="text-white font-black text-sm tracking-tight">{initials}</span>

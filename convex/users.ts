@@ -8,13 +8,23 @@ export const current = query({
         const userId = await auth.getUserId(ctx);
         if (userId === null) return null;
 
-        let profile = await ctx.db
+        const profile = await ctx.db
             .query("profiles")
             .withIndex("by_userId", (q) => q.eq("userId", userId))
             .first();
 
         const user = await ctx.db.get(userId);
-        return { user, profile };
+
+        // Resolve Convex Storage photo URL if available
+        let resolvedPhotoUrl: string | null = null;
+        if (profile?.photoStorageId) {
+            resolvedPhotoUrl = await ctx.storage.getUrl(profile.photoStorageId);
+        }
+
+        return {
+            user,
+            profile: profile ? { ...profile, photoUrl: resolvedPhotoUrl ?? profile.photoUrl } : null,
+        };
     },
 });
 
@@ -167,6 +177,30 @@ export const updateRole = mutation({
             await ctx.db.patch(existing._id, { role: args.role });
             console.log(`Role updated to ${args.role} for userId: ${args.userId}`);
         }
+    },
+});
+
+// ── Profile photo upload ─────────────────────────────────────────────────────
+export const generateProfilePhotoUploadUrl = mutation({
+    args: {},
+    handler: async (ctx) => {
+        return await ctx.storage.generateUploadUrl();
+    },
+});
+
+export const updateProfilePhoto = mutation({
+    args: { storageId: v.id("_storage") },
+    handler: async (ctx, args) => {
+        const userId = await auth.getUserId(ctx);
+        if (!userId) throw new Error("Not authenticated");
+
+        const profile = await ctx.db
+            .query("profiles")
+            .withIndex("by_userId", (q) => q.eq("userId", userId))
+            .first();
+        if (!profile) throw new Error("Profile not found");
+
+        await ctx.db.patch(profile._id, { photoStorageId: args.storageId });
     },
 });
 

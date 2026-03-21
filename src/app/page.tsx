@@ -185,6 +185,7 @@ export default function Home() {
         {activeTab === "perfil" && userId && (
           <PerfilTab
             user={user}
+            profile={profile}
             userId={userId}
             onViewCarnet={() => setIsProfileOpen(true)}
           />
