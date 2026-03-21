@@ -5,6 +5,8 @@ import { CouponTimer } from "@/components/CouponTimer";
 import { useMutation, useQuery } from "convex/react";
 import { api } from "../../../convex/_generated/api";
 
+const ACTIVITY_IMAGE = "https://images.unsplash.com/photo-1571008887538-b36bb32f4571?q=80&w=1000&auto=format&fit=crop";
+
 const BENEFITS_META: Record<string, { emoji: string; distance: string; rating: string; imageUrl: string }> = {
   "Friend's Cafe PR": {
     emoji: "☕",
@@ -48,17 +50,23 @@ export function BeneficiosTab({ userId }: BeneficiosTabProps) {
     if (dbBenefits) {
       const mapped = dbBenefits.map((b) => {
         const meta = BENEFITS_META[b.merchantName] || {};
+        const isActivity = b.type === "actividad";
         return {
           id: b._id,
           title: b.merchantName,
           subtitle: b.offerLabel,
-          emoji: meta.emoji || "🎁",
-          distance: meta.distance || "N/A",
+          emoji: isActivity ? "🏃" : (meta.emoji || "🎁"),
+          distance: isActivity ? (b.eventLocation || "Ver detalles") : (meta.distance || "N/A"),
           rating: meta.rating || "5.0",
           category: b.category,
-          imageUrl: meta.imageUrl || "https://images.unsplash.com/photo-1506784983877-455b4fedfd40",
+          imageUrl: isActivity ? ACTIVITY_IMAGE : (meta.imageUrl || "https://images.unsplash.com/photo-1506784983877-455b4fedfd40"),
           usesLeft: b.usesLeft ?? (b.status === "used" && b.isSingleUse ? 0 : 1),
           isSingleUse: b.isSingleUse || (b.maxUses ? b.maxUses === 1 : false),
+          type: b.type ?? "descuento",
+          eventDate: b.eventDate,
+          eventTime: b.eventTime,
+          eventLocation: b.eventLocation,
+          eventCapacity: b.eventCapacity,
         };
       });
       setBenefitsList(mapped);
@@ -80,8 +88,72 @@ export function BeneficiosTab({ userId }: BeneficiosTabProps) {
         <p className="text-sm text-gray-500 font-medium tracking-tight">Exclusivos para el equipo TransCita.</p>
       </header>
 
+      {/* Activities Section */}
+      {benefitsList.filter(b => b.type === "actividad").length > 0 && (
+        <div className="mb-8">
+          <h3 className="text-xs font-black uppercase tracking-widest text-purple-500 mb-4 flex items-center gap-2">
+            <span className="size-5 bg-purple-50 rounded-lg flex items-center justify-center">🏃</span>
+            Actividades
+          </h3>
+          <div className="space-y-3">
+            {benefitsList.filter(b => b.type === "actividad").map((activity) => (
+              <div key={activity.id} className="bg-gradient-to-br from-purple-50 to-white rounded-[1.5rem] border-2 border-purple-100 p-5 shadow-sm">
+                <div className="flex items-start justify-between mb-3">
+                  <div>
+                    <p className="font-black text-gray-900 text-base">{activity.title}</p>
+                    <p className="text-sm text-gray-500 font-medium mt-0.5">{activity.subtitle}</p>
+                  </div>
+                  <span className={`text-[9px] font-black uppercase tracking-widest px-2.5 py-1 rounded-full ${
+                    activity.usesLeft > 0 ? "bg-purple-500 text-white" : "bg-gray-200 text-gray-400"
+                  }`}>
+                    {activity.usesLeft > 0 ? "Disponible" : "Inscrito"}
+                  </span>
+                </div>
+                <div className="flex flex-wrap gap-3 text-xs text-gray-500 font-medium">
+                  {activity.eventDate && (
+                    <span className="flex items-center gap-1.5 bg-white rounded-xl px-3 py-1.5 border border-purple-100">
+                      📅 {new Date(activity.eventDate + "T00:00:00").toLocaleDateString("es-PR", { weekday: "short", month: "short", day: "numeric" })}
+                    </span>
+                  )}
+                  {activity.eventTime && (
+                    <span className="flex items-center gap-1.5 bg-white rounded-xl px-3 py-1.5 border border-purple-100">
+                      🕐 {activity.eventTime}
+                    </span>
+                  )}
+                  {activity.eventLocation && (
+                    <span className="flex items-center gap-1.5 bg-white rounded-xl px-3 py-1.5 border border-purple-100">
+                      📍 {activity.eventLocation}
+                    </span>
+                  )}
+                  {activity.eventCapacity && (
+                    <span className="flex items-center gap-1.5 bg-white rounded-xl px-3 py-1.5 border border-purple-100">
+                      👥 Cupo: {activity.eventCapacity}
+                    </span>
+                  )}
+                </div>
+                {activity.usesLeft > 0 && (
+                  <button
+                    onClick={() => handleConfirmRedeem(activity.id)}
+                    className="mt-4 w-full py-3 bg-purple-500 text-white rounded-2xl font-black text-xs uppercase tracking-widest shadow-lg shadow-purple-200 active:scale-95 transition-all"
+                  >
+                    Inscribirme
+                  </button>
+                )}
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
+
+      {/* Discounts Section */}
+      {benefitsList.filter(b => b.type !== "actividad").length > 0 && (
+        <h3 className="text-xs font-black uppercase tracking-widest text-primary mb-4 flex items-center gap-2">
+          <span className="size-5 bg-green-50 rounded-lg flex items-center justify-center">🎁</span>
+          Descuentos
+        </h3>
+      )}
       <div className="space-y-4">
-        {benefitsList.map((benefit) => (
+        {benefitsList.filter(b => b.type !== "actividad").map((benefit) => (
           <CouponTimer
             key={benefit.id}
             benefit={benefit}

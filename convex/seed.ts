@@ -74,7 +74,27 @@ export const seed = mutation({
             category: "Comida",
             isSponsored: true,
             activeDays: ["Todos los días"],
-            maxUses: 5
+            maxUses: 5,
+            type: "descuento",
+        });
+
+        // Example: Activity-type benefit (5K race)
+        await ctx.db.insert("benefits", {
+            merchantName: "5K TransCita Run",
+            offerLabel: "Carrera solidaria 5K - camiseta y medalla incluida",
+            lat: 18.4655,
+            lng: -66.1057,
+            category: "Actividad",
+            isSponsored: true,
+            activeDays: ["Sab"],
+            isSingleUse: true,
+            maxUses: 1,
+            isLive: true,
+            type: "actividad",
+            eventDate: "2026-05-10",
+            eventTime: "6:00 AM",
+            eventLocation: "Parque Luis Muñoz Marín, San Juan",
+            eventCapacity: 200,
         });
 
         // Seed Profiles for testing

@@ -66,9 +66,14 @@ export default defineSchema({
     amazonAffiliateUrl: v.optional(v.string()), // string_url
     activeDays: v.array(v.string()),
     isSingleUse: v.optional(v.boolean()),
-    maxUses: v.optional(v.number()),
-    isLive: v.optional(v.boolean()),   // visible to RSPs when true
-    ownerId: v.optional(v.string()),   // userId of the Negocio that created it
+    maxUses: v.optional(v.number()),       // default 1
+    isLive: v.optional(v.boolean()),       // visible to RSPs when true
+    ownerId: v.optional(v.string()),       // userId of the Negocio that created it
+    type: v.optional(v.union(v.literal("descuento"), v.literal("actividad"))), // "descuento" default
+    eventDate: v.optional(v.string()),     // ISO date for activities e.g. "2026-05-10"
+    eventTime: v.optional(v.string()),     // e.g. "6:00 AM"
+    eventLocation: v.optional(v.string()), // e.g. "Parque del Tercer Milenio, San Juan"
+    eventCapacity: v.optional(v.number()), // max participants
   }).index("by_ownerId", ["ownerId"]),
 
   redemptions: defineTable({

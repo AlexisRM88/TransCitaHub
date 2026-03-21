@@ -3,13 +3,14 @@
 import { useState } from "react";
 import { useMutation, useQuery } from "convex/react";
 import { api } from "../../../convex/_generated/api";
-import { Plus, Zap, ZapOff, Trash2, Tag, Store, X, CheckCircle } from "lucide-react";
+import { Plus, Zap, ZapOff, Trash2, Tag, Store, X, CheckCircle, Calendar, MapPin, Clock, Users } from "lucide-react";
 
 interface NegocioOfertasTabProps {
   userId: string;
 }
 
-const CATEGORIES = ["Comida", "Gasolina", "Fitness", "Salud", "Entretenimiento", "Otro"];
+const CATEGORIES = ["Comida", "Gasolina", "Fitness", "Salud", "Entretenimiento", "Actividad", "Otro"];
+type BenefitType = "descuento" | "actividad";
 
 export function NegocioOfertasTab({ userId }: NegocioOfertasTabProps) {
   const offers = useQuery(api.benefits.getMyOffers, { ownerId: userId });
@@ -25,23 +26,35 @@ export function NegocioOfertasTab({ userId }: NegocioOfertasTabProps) {
     merchantName: "",
     offerLabel: "",
     category: "Comida",
-    isSingleUse: true,
     maxUses: 1,
+    type: "descuento" as BenefitType,
+    eventDate: "",
+    eventTime: "",
+    eventLocation: "",
+    eventCapacity: 0,
   });
 
   const handleCreate = async () => {
     if (!form.merchantName.trim() || !form.offerLabel.trim()) return;
     setSaving(true);
     try {
+      const uses = Math.max(1, form.maxUses || 1);
       await createOffer({
         ownerId: userId,
         merchantName: form.merchantName.trim(),
         offerLabel: form.offerLabel.trim(),
-        category: form.category,
-        isSingleUse: form.isSingleUse,
-        maxUses: form.isSingleUse ? 1 : form.maxUses,
+        category: form.type === "actividad" ? "Actividad" : form.category,
+        isSingleUse: uses === 1,
+        maxUses: uses,
+        type: form.type,
+        ...(form.type === "actividad" ? {
+          eventDate: form.eventDate || undefined,
+          eventTime: form.eventTime || undefined,
+          eventLocation: form.eventLocation || undefined,
+          eventCapacity: form.eventCapacity > 0 ? form.eventCapacity : undefined,
+        } : {}),
       });
-      setForm({ merchantName: "", offerLabel: "", category: "Comida", isSingleUse: true, maxUses: 1 });
+      setForm({ merchantName: "", offerLabel: "", category: "Comida", maxUses: 1, type: "descuento", eventDate: "", eventTime: "", eventLocation: "", eventCapacity: 0 });
       setShowForm(false);
     } finally {
       setSaving(false);
@@ -123,16 +136,26 @@ export function NegocioOfertasTab({ userId }: NegocioOfertasTabProps) {
             <div className="flex-1 min-w-0">
               <p className="font-black text-gray-900 text-sm leading-tight truncate">{offer.merchantName}</p>
               <p className="text-xs text-gray-400 font-medium mt-0.5 truncate">{offer.offerLabel}</p>
-              <div className="flex items-center gap-2 mt-1.5">
+              <div className="flex items-center gap-2 mt-1.5 flex-wrap">
                 <span className="text-[9px] font-black uppercase tracking-widest bg-gray-100 text-gray-400 px-2 py-0.5 rounded-full">
                   {offer.category}
                 </span>
-                {offer.isSingleUse && (
-                  <span className="text-[9px] font-black uppercase tracking-widest bg-blue-50 text-blue-400 px-2 py-0.5 rounded-full">
-                    1 uso
+                <span className="text-[9px] font-black uppercase tracking-widest bg-blue-50 text-blue-400 px-2 py-0.5 rounded-full">
+                  {offer.maxUses ?? 1} {(offer.maxUses ?? 1) === 1 ? "uso" : "usos"}
+                </span>
+                {(offer as any).type === "actividad" && (
+                  <span className="text-[9px] font-black uppercase tracking-widest bg-purple-50 text-purple-500 px-2 py-0.5 rounded-full">
+                    Evento
                   </span>
                 )}
               </div>
+              {(offer as any).type === "actividad" && (offer as any).eventDate && (
+                <div className="flex items-center gap-3 mt-2 text-[10px] text-gray-400 font-medium">
+                  <span className="flex items-center gap-1"><Calendar size={10} />{(offer as any).eventDate}</span>
+                  {(offer as any).eventTime && <span className="flex items-center gap-1"><Clock size={10} />{(offer as any).eventTime}</span>}
+                  {(offer as any).eventLocation && <span className="flex items-center gap-1 truncate"><MapPin size={10} />{(offer as any).eventLocation}</span>}
+                </div>
+              )}
             </div>
 
             <div className="flex items-center gap-2 flex-shrink-0">
@@ -178,76 +201,142 @@ export function NegocioOfertasTab({ userId }: NegocioOfertasTabProps) {
                 </button>
               </div>
 
+              {/* Type selector */}
+              <div className="flex gap-2">
+                <button
+                  type="button"
+                  onClick={() => setForm((f) => ({ ...f, type: "descuento" }))}
+                  className={`flex-1 py-3 rounded-2xl text-xs font-black uppercase tracking-widest transition-all ${
+                    form.type === "descuento"
+                      ? "bg-primary text-white shadow-md shadow-green-200"
+                      : "bg-gray-50 text-gray-400 border border-gray-100"
+                  }`}
+                >
+                  <Tag size={14} className="inline mr-1.5 -mt-0.5" />Descuento
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setForm((f) => ({ ...f, type: "actividad", category: "Actividad" }))}
+                  className={`flex-1 py-3 rounded-2xl text-xs font-black uppercase tracking-widest transition-all ${
+                    form.type === "actividad"
+                      ? "bg-purple-500 text-white shadow-md shadow-purple-200"
+                      : "bg-gray-50 text-gray-400 border border-gray-100"
+                  }`}
+                >
+                  <Calendar size={14} className="inline mr-1.5 -mt-0.5" />Actividad
+                </button>
+              </div>
+
               <div className="space-y-3">
                 <div>
                   <label className="text-[10px] font-black uppercase tracking-widest text-gray-400 block mb-1.5">
-                    Nombre del Negocio
+                    {form.type === "actividad" ? "Nombre del Evento" : "Nombre del Negocio"}
                   </label>
                   <input
                     type="text"
                     value={form.merchantName}
                     onChange={(e) => setForm((f) => ({ ...f, merchantName: e.target.value }))}
-                    placeholder="Ej: Friend's Café PR"
+                    placeholder={form.type === "actividad" ? "Ej: 5K TransCita Run" : "Ej: Friend's Café PR"}
                     className="w-full bg-gray-50 border border-gray-100 rounded-2xl px-4 py-3 text-sm font-bold text-gray-900 focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary/30"
                   />
                 </div>
 
                 <div>
                   <label className="text-[10px] font-black uppercase tracking-widest text-gray-400 block mb-1.5">
-                    Descripción de la Oferta
+                    {form.type === "actividad" ? "Descripción del Evento" : "Descripción de la Oferta"}
                   </label>
                   <input
                     type="text"
                     value={form.offerLabel}
                     onChange={(e) => setForm((f) => ({ ...f, offerLabel: e.target.value }))}
-                    placeholder="Ej: 10% de descuento en cualquier compra"
+                    placeholder={form.type === "actividad" ? "Ej: Carrera 5K solidaria - camiseta incluida" : "Ej: 10% de descuento en cualquier compra"}
                     className="w-full bg-gray-50 border border-gray-100 rounded-2xl px-4 py-3 text-sm font-bold text-gray-900 focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary/30"
                   />
                 </div>
 
-                <div>
-                  <label className="text-[10px] font-black uppercase tracking-widest text-gray-400 block mb-1.5">
-                    Categoría
-                  </label>
-                  <select
-                    value={form.category}
-                    onChange={(e) => setForm((f) => ({ ...f, category: e.target.value }))}
-                    className="w-full bg-gray-50 border border-gray-100 rounded-2xl px-4 py-3 text-sm font-bold text-gray-900 focus:outline-none focus:ring-2 focus:ring-primary/20"
-                  >
-                    {CATEGORIES.map((c) => <option key={c} value={c}>{c}</option>)}
-                  </select>
-                </div>
-
-                <div className="flex items-center justify-between bg-gray-50 rounded-2xl px-4 py-3 border border-gray-100">
-                  <div>
-                    <p className="text-sm font-black text-gray-900">Un solo uso por empleado</p>
-                    <p className="text-[10px] text-gray-400 font-medium">El empleado puede canjear una sola vez</p>
-                  </div>
-                  <button
-                    onClick={() => setForm((f) => ({ ...f, isSingleUse: !f.isSingleUse }))}
-                    className={`w-12 h-6 rounded-full transition-all relative ${
-                      form.isSingleUse ? "bg-primary" : "bg-gray-200"
-                    }`}
-                  >
-                    <span className={`absolute top-0.5 size-5 bg-white rounded-full shadow transition-all ${
-                      form.isSingleUse ? "left-[calc(100%-1.375rem)]" : "left-0.5"
-                    }`} />
-                  </button>
-                </div>
-
-                {!form.isSingleUse && (
+                {form.type === "descuento" && (
                   <div>
                     <label className="text-[10px] font-black uppercase tracking-widest text-gray-400 block mb-1.5">
-                      Cantidad de usos por empleado
+                      Categoría
                     </label>
-                    <input
-                      type="number"
-                      min={2}
-                      value={form.maxUses}
-                      onChange={(e) => setForm((f) => ({ ...f, maxUses: Math.max(2, parseInt(e.target.value) || 2) }))}
+                    <select
+                      value={form.category}
+                      onChange={(e) => setForm((f) => ({ ...f, category: e.target.value }))}
                       className="w-full bg-gray-50 border border-gray-100 rounded-2xl px-4 py-3 text-sm font-bold text-gray-900 focus:outline-none focus:ring-2 focus:ring-primary/20"
-                    />
+                    >
+                      {CATEGORIES.map((c) => <option key={c} value={c}>{c}</option>)}
+                    </select>
                   </div>
+                )}
+
+                {/* Max uses — always visible, defaults to 1 */}
+                <div>
+                  <label className="text-[10px] font-black uppercase tracking-widest text-gray-400 block mb-1.5">
+                    {form.type === "actividad" ? "Inscripciones por persona" : "Usos por empleado"}
+                  </label>
+                  <input
+                    type="number"
+                    min={1}
+                    value={form.maxUses}
+                    onChange={(e) => setForm((f) => ({ ...f, maxUses: Math.max(1, parseInt(e.target.value) || 1) }))}
+                    className="w-full bg-gray-50 border border-gray-100 rounded-2xl px-4 py-3 text-sm font-bold text-gray-900 focus:outline-none focus:ring-2 focus:ring-primary/20"
+                  />
+                  <p className="text-[10px] text-gray-300 mt-1 ml-1">Predeterminado: 1</p>
+                </div>
+
+                {/* Activity-specific fields */}
+                {form.type === "actividad" && (
+                  <>
+                    <div className="grid grid-cols-2 gap-3">
+                      <div>
+                        <label className="text-[10px] font-black uppercase tracking-widest text-gray-400 block mb-1.5">
+                          <Calendar size={10} className="inline mr-1 -mt-0.5" />Fecha
+                        </label>
+                        <input
+                          type="date"
+                          value={form.eventDate}
+                          onChange={(e) => setForm((f) => ({ ...f, eventDate: e.target.value }))}
+                          className="w-full bg-gray-50 border border-gray-100 rounded-2xl px-4 py-3 text-sm font-bold text-gray-900 focus:outline-none focus:ring-2 focus:ring-purple-200"
+                        />
+                      </div>
+                      <div>
+                        <label className="text-[10px] font-black uppercase tracking-widest text-gray-400 block mb-1.5">
+                          <Clock size={10} className="inline mr-1 -mt-0.5" />Hora
+                        </label>
+                        <input
+                          type="time"
+                          value={form.eventTime}
+                          onChange={(e) => setForm((f) => ({ ...f, eventTime: e.target.value }))}
+                          className="w-full bg-gray-50 border border-gray-100 rounded-2xl px-4 py-3 text-sm font-bold text-gray-900 focus:outline-none focus:ring-2 focus:ring-purple-200"
+                        />
+                      </div>
+                    </div>
+                    <div>
+                      <label className="text-[10px] font-black uppercase tracking-widest text-gray-400 block mb-1.5">
+                        <MapPin size={10} className="inline mr-1 -mt-0.5" />Ubicación
+                      </label>
+                      <input
+                        type="text"
+                        value={form.eventLocation}
+                        onChange={(e) => setForm((f) => ({ ...f, eventLocation: e.target.value }))}
+                        placeholder="Ej: Parque del Tercer Milenio, San Juan"
+                        className="w-full bg-gray-50 border border-gray-100 rounded-2xl px-4 py-3 text-sm font-bold text-gray-900 focus:outline-none focus:ring-2 focus:ring-purple-200"
+                      />
+                    </div>
+                    <div>
+                      <label className="text-[10px] font-black uppercase tracking-widest text-gray-400 block mb-1.5">
+                        <Users size={10} className="inline mr-1 -mt-0.5" />Capacidad máxima (opcional)
+                      </label>
+                      <input
+                        type="number"
+                        min={0}
+                        value={form.eventCapacity || ""}
+                        onChange={(e) => setForm((f) => ({ ...f, eventCapacity: parseInt(e.target.value) || 0 }))}
+                        placeholder="Sin límite"
+                        className="w-full bg-gray-50 border border-gray-100 rounded-2xl px-4 py-3 text-sm font-bold text-gray-900 focus:outline-none focus:ring-2 focus:ring-purple-200"
+                      />
+                    </div>
+                  </>
                 )}
               </div>
 

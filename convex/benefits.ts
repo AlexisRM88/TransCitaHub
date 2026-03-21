@@ -56,7 +56,8 @@ export const getBenefitsWithStatus = query({
                 ...benefit,
                 status: usesLeft === 0 ? "used" : "available",
                 usesLeft: usesLeft,
-                totalRedemptions: totalRedemptions
+                totalRedemptions: totalRedemptions,
+                type: benefit.type ?? "descuento",
             };
         });
     },
@@ -79,6 +80,11 @@ export const adminCreateBenefit = mutation({
         isSingleUse: v.boolean(),
         maxUses: v.optional(v.number()),
         isLive: v.boolean(),
+        type: v.optional(v.union(v.literal("descuento"), v.literal("actividad"))),
+        eventDate: v.optional(v.string()),
+        eventTime: v.optional(v.string()),
+        eventLocation: v.optional(v.string()),
+        eventCapacity: v.optional(v.number()),
     },
     handler: async (ctx, args) => {
         return ctx.db.insert("benefits", {
@@ -86,12 +92,17 @@ export const adminCreateBenefit = mutation({
             offerLabel: args.offerLabel,
             category: args.category,
             isSingleUse: args.isSingleUse,
-            maxUses: args.maxUses,
+            maxUses: args.maxUses ?? 1,
             isLive: args.isLive,
             lat: 18.2208,
             lng: -66.5901,
             isSponsored: false,
             activeDays: ["Lun", "Mar", "Mie", "Jue", "Vie", "Sab", "Dom"],
+            type: args.type ?? "descuento",
+            eventDate: args.eventDate,
+            eventTime: args.eventTime,
+            eventLocation: args.eventLocation,
+            eventCapacity: args.eventCapacity,
         });
     },
 });
@@ -138,6 +149,11 @@ export const createOffer = mutation({
         category: v.string(),
         isSingleUse: v.boolean(),
         maxUses: v.optional(v.number()),
+        type: v.optional(v.union(v.literal("descuento"), v.literal("actividad"))),
+        eventDate: v.optional(v.string()),
+        eventTime: v.optional(v.string()),
+        eventLocation: v.optional(v.string()),
+        eventCapacity: v.optional(v.number()),
     },
     handler: async (ctx, args) => {
         return ctx.db.insert("benefits", {
@@ -146,12 +162,17 @@ export const createOffer = mutation({
             offerLabel: args.offerLabel,
             category: args.category,
             isSingleUse: args.isSingleUse,
-            maxUses: args.maxUses,
+            maxUses: args.maxUses ?? 1,
             lat: 18.2208,   // Puerto Rico center — placeholder
             lng: -66.5901,
             isSponsored: false,
             activeDays: ["Lun", "Mar", "Mie", "Jue", "Vie", "Sab", "Dom"],
             isLive: false,
+            type: args.type ?? "descuento",
+            eventDate: args.eventDate,
+            eventTime: args.eventTime,
+            eventLocation: args.eventLocation,
+            eventCapacity: args.eventCapacity,
         });
     },
 });
