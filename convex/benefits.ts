@@ -2,6 +2,21 @@ import { query, mutation } from "./_generated/server";
 import { v } from "convex/values";
 import { Doc } from "./_generated/dataModel";
 
+// ── Storage: generate a one-time upload URL ──────────────────────────────────
+export const generateUploadUrl = mutation({
+    handler: async (ctx) => {
+        return await ctx.storage.generateUploadUrl();
+    },
+});
+
+// ── Storage: resolve storageId → public URL ──────────────────────────────────
+export const getImageUrl = query({
+    args: { storageId: v.id("_storage") },
+    handler: async (ctx, args) => {
+        return await ctx.storage.getUrl(args.storageId);
+    },
+});
+
 // Simple Haversine implementation to filter 10km Radius
 function getDistanceFromLatLonInKm(lat1: number, lon1: number, lat2: number, lon2: number) {
     const R = 6371; // Radius of the earth in km
@@ -63,11 +78,15 @@ export const getBenefitsWithStatus = query({
     },
 });
 
-// ── Admin: get ALL benefits ──────────────────────────────────────────────────
+// ── Admin: get ALL benefits (with resolved image URLs) ───────────────────────
 export const getAllBenefitsAdmin = query({
     args: {},
     handler: async (ctx) => {
-        return ctx.db.query("benefits").collect();
+        const benefits = await ctx.db.query("benefits").collect();
+        return Promise.all(benefits.map(async (b) => ({
+            ...b,
+            imageUrl: b.imageStorageId ? await ctx.storage.getUrl(b.imageStorageId) : null,
+        })));
     },
 });
 
@@ -85,6 +104,7 @@ export const adminCreateBenefit = mutation({
         eventTime: v.optional(v.string()),
         eventLocation: v.optional(v.string()),
         eventCapacity: v.optional(v.number()),
+        imageStorageId: v.optional(v.id("_storage")),
     },
     handler: async (ctx, args) => {
         return ctx.db.insert("benefits", {
@@ -103,6 +123,7 @@ export const adminCreateBenefit = mutation({
             eventTime: args.eventTime,
             eventLocation: args.eventLocation,
             eventCapacity: args.eventCapacity,
+            imageStorageId: args.imageStorageId,
         });
     },
 });

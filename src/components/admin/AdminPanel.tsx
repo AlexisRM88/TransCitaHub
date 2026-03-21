@@ -7,7 +7,7 @@ import {
   Users, Tag, FileText, LayoutDashboard,
   ShieldCheck, Zap, ZapOff, Trash2, Plus,
   CheckCircle, X, ChevronRight, Search,
-  TrendingUp, AlertCircle, Calendar, Clock, MapPin
+  TrendingUp, AlertCircle, Calendar, Clock, MapPin, ImagePlus, Loader2
 } from "lucide-react";
 
 type BenefitType = "descuento" | "actividad";
@@ -230,9 +230,13 @@ function BeneficiosSection() {
   const adminCreate = useMutation(api.benefits.adminCreateBenefit);
   const adminToggle = useMutation(api.benefits.adminToggleBenefitLive);
   const adminDelete = useMutation(api.benefits.adminDeleteBenefit);
+  const generateUploadUrl = useMutation(api.benefits.generateUploadUrl);
 
   const [showForm, setShowForm] = useState(false);
   const [saving, setSaving] = useState(false);
+  const [uploading, setUploading] = useState(false);
+  const [imagePreview, setImagePreview] = useState<string | null>(null);
+  const [imageStorageId, setImageStorageId] = useState<string | null>(null);
   const [form, setForm] = useState({
     merchantName: "",
     offerLabel: "",
@@ -244,6 +248,32 @@ function BeneficiosSection() {
     eventTime: "",
     eventLocation: "",
   });
+
+  const handleImageChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    // Preview local
+    setImagePreview(URL.createObjectURL(file));
+    setUploading(true);
+    try {
+      const uploadUrl = await generateUploadUrl();
+      const res = await fetch(uploadUrl, {
+        method: "POST",
+        headers: { "Content-Type": file.type },
+        body: file,
+      });
+      const { storageId } = await res.json();
+      setImageStorageId(storageId);
+    } finally {
+      setUploading(false);
+    }
+  };
+
+  const resetForm = () => {
+    setForm({ merchantName: "", offerLabel: "", category: "Comida", maxUses: 1, isLive: true, type: "descuento", eventDate: "", eventTime: "", eventLocation: "" });
+    setImagePreview(null);
+    setImageStorageId(null);
+  };
 
   const handleCreate = async () => {
     if (!form.merchantName.trim() || !form.offerLabel.trim()) return;
@@ -263,8 +293,9 @@ function BeneficiosSection() {
           eventTime: form.eventTime || undefined,
           eventLocation: form.eventLocation || undefined,
         } : {}),
+        imageStorageId: imageStorageId as any ?? undefined,
       });
-      setForm({ merchantName: "", offerLabel: "", category: "Comida", maxUses: 1, isLive: true, type: "descuento", eventDate: "", eventTime: "", eventLocation: "" });
+      resetForm();
       setShowForm(false);
     } finally {
       setSaving(false);
@@ -294,9 +325,13 @@ function BeneficiosSection() {
       <div className="space-y-2">
         {benefits?.map((b) => (
           <div key={b._id} className={`bg-white rounded-[1.5rem] border-2 p-4 flex items-center gap-3 transition-all ${b.isLive ? "border-green-100" : "border-gray-100"}`}>
-            <div className={`size-9 rounded-xl flex items-center justify-center flex-shrink-0 ${b.isLive ? "bg-green-50 text-primary" : "bg-gray-50 text-gray-300"}`}>
-              <Tag size={16} />
-            </div>
+            {b.imageUrl ? (
+              <img src={b.imageUrl} alt={b.merchantName} className="size-11 rounded-xl object-cover flex-shrink-0" />
+            ) : (
+              <div className={`size-11 rounded-xl flex items-center justify-center flex-shrink-0 ${b.isLive ? "bg-green-50 text-primary" : "bg-gray-50 text-gray-300"}`}>
+                {(b as any).type === "actividad" ? <span className="text-lg">🏃</span> : <Tag size={16} />}
+              </div>
+            )}
             <div className="flex-1 min-w-0">
               <p className="font-black text-gray-900 text-xs leading-tight truncate">{b.merchantName}</p>
               <p className="text-[10px] text-gray-400 font-medium truncate">{b.offerLabel}</p>
@@ -327,7 +362,7 @@ function BeneficiosSection() {
       {/* Create modal */}
       {showForm && (
         <div className="fixed inset-0 z-[130] bg-black/60 backdrop-blur-md flex items-end justify-center animate-in fade-in duration-300">
-          <div className="absolute inset-0" onClick={() => setShowForm(false)} />
+          <div className="absolute inset-0" onClick={() => { setShowForm(false); resetForm(); }} />
           <div className="w-full max-w-lg bg-white rounded-t-[2.5rem] shadow-2xl relative z-10 animate-in slide-in-from-bottom duration-500 flex flex-col max-h-[90vh]">
 
             {/* Fixed header */}
@@ -335,7 +370,7 @@ function BeneficiosSection() {
               <div className="w-10 h-1.5 bg-gray-200 rounded-full mx-auto mb-4" />
               <div className="flex items-center justify-between">
                 <h3 className="text-lg font-black text-gray-900">Nuevo Beneficio Global</h3>
-                <button onClick={() => setShowForm(false)} className="size-9 bg-gray-100 rounded-2xl flex items-center justify-center text-gray-400">
+                <button onClick={() => { setShowForm(false); resetForm(); }} className="size-9 bg-gray-100 rounded-2xl flex items-center justify-center text-gray-400">
                   <X size={18} />
                 </button>
               </div>
@@ -365,6 +400,46 @@ function BeneficiosSection() {
 
             {/* Scrollable body */}
             <div className="overflow-y-auto flex-1 px-6 pb-2 space-y-3">
+
+              {/* Image picker */}
+              <div>
+                <label className="text-[10px] font-black uppercase tracking-widest text-gray-400 block mb-1.5">
+                  Imagen <span className="text-gray-300 normal-case font-medium">(WebP/JPG/PNG · max 2MB · 800×500px recomendado)</span>
+                </label>
+                <label className={`relative flex items-center justify-center w-full rounded-2xl border-2 border-dashed cursor-pointer transition-all overflow-hidden ${
+                  imagePreview ? "border-primary/30 h-36" : "border-gray-200 h-24 hover:border-primary/40 hover:bg-green-50/30"
+                }`}>
+                  {imagePreview ? (
+                    <>
+                      <img src={imagePreview} alt="preview" className="w-full h-full object-cover" />
+                      <div className="absolute inset-0 bg-black/30 flex items-center justify-center opacity-0 hover:opacity-100 transition-opacity">
+                        <p className="text-white text-xs font-black">Cambiar imagen</p>
+                      </div>
+                      {uploading && (
+                        <div className="absolute inset-0 bg-black/50 flex items-center justify-center">
+                          <Loader2 size={24} className="text-white animate-spin" />
+                        </div>
+                      )}
+                    </>
+                  ) : (
+                    <div className="flex flex-col items-center gap-1.5 text-gray-400">
+                      {uploading ? <Loader2 size={22} className="animate-spin text-primary" /> : <ImagePlus size={22} />}
+                      <p className="text-xs font-black">{uploading ? "Subiendo…" : "Toca para subir imagen"}</p>
+                    </div>
+                  )}
+                  <input
+                    type="file"
+                    accept="image/webp,image/jpeg,image/png"
+                    className="sr-only"
+                    onChange={handleImageChange}
+                    disabled={uploading}
+                  />
+                </label>
+                {imageStorageId && !uploading && (
+                  <p className="text-[10px] text-primary font-bold mt-1 ml-1">✓ Imagen lista</p>
+                )}
+              </div>
+
               <input
                 type="text"
                 value={form.merchantName}

@@ -74,6 +74,7 @@ export default defineSchema({
     eventTime: v.optional(v.string()),     // e.g. "6:00 AM"
     eventLocation: v.optional(v.string()), // e.g. "Parque del Tercer Milenio, San Juan"
     eventCapacity: v.optional(v.number()), // max participants
+    imageStorageId: v.optional(v.id("_storage")), // Convex Storage image
   }).index("by_ownerId", ["ownerId"]),
 
   redemptions: defineTable({
