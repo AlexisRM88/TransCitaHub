@@ -12,6 +12,8 @@ import {
 
 type BenefitType = "descuento" | "actividad";
 import { AdminDocumentManager } from "@/components/AdminDocumentManager";
+import { BranchManager } from "@/components/BranchManager";
+import { Id } from "../../../convex/_generated/dataModel";
 
 type AdminTab = "resumen" | "usuarios" | "beneficios" | "documentos";
 
@@ -20,12 +22,19 @@ const CATEGORIES = ["Comida", "Gasolina", "Fitness", "Salud", "Entretenimiento",
 const BASES = ["San Juan", "Bayamón", "Carolina", "Ponce", "Caguas"] as const;
 
 // ── Resumen ──────────────────────────────────────────────────────────────────
-function ResumenSection() {
+const PREVIEW_ROLES = ["RSP", "Patrono", "Negocio", "Staff"] as const;
+
+function ResumenSection({ onPreviewRole }: { onPreviewRole?: (role: string | null) => void }) {
   const profiles = useQuery(api.users.getAllProfiles);
   const benefits = useQuery(api.benefits.getAllBenefitsAdmin);
+  const benefitAnalytics = useQuery(api.benefits.getAllBenefitsAnalytics);
 
   const roleCount = (r: string) => profiles?.filter((p) => p.role === r).length ?? 0;
   const liveCount = benefits?.filter((b) => b.isLive).length ?? 0;
+
+  const sortedAnalytics = benefitAnalytics
+    ? [...benefitAnalytics].sort((a, b) => b.opens7d - a.opens7d)
+    : undefined;
 
   const stats = [
     { label: "RSPs Activos", value: roleCount("RSP"), color: "text-blue-500", bg: "bg-blue-50" },
@@ -66,6 +75,72 @@ function ResumenSection() {
           ))}
         </div>
       </div>
+
+      {/* Benefit Analytics Table */}
+      <div className="bg-white rounded-[2rem] border border-gray-100 overflow-hidden">
+        <div className="px-5 pt-5 pb-3 flex items-center gap-2">
+          <TrendingUp size={14} className="text-green-500" />
+          <h4 className="text-[10px] font-black uppercase tracking-widest text-gray-400">
+            Rendimiento de Beneficios — Últimos 7 días
+          </h4>
+        </div>
+        {!sortedAnalytics ? (
+          <p className="px-5 pb-5 text-xs text-gray-300 font-bold">Cargando...</p>
+        ) : sortedAnalytics.length === 0 ? (
+          <p className="px-5 pb-5 text-xs text-gray-300 font-bold">Sin beneficios aún.</p>
+        ) : (
+          <div className="divide-y divide-gray-50">
+            {sortedAnalytics.map((b) => (
+              <div key={b._id} className="flex items-center justify-between px-5 py-3 hover:bg-gray-50 transition-colors">
+                <div className="flex-1 min-w-0">
+                  <p className="text-sm font-black text-gray-900 truncate">{b.merchantName}</p>
+                  <p className="text-[10px] text-gray-400 font-medium truncate">{b.offerLabel}</p>
+                </div>
+                <div className="flex items-center gap-3 shrink-0 text-right">
+                  <div>
+                    <p className="text-xs font-black text-blue-600">{b.opens7d}</p>
+                    <p className="text-[9px] text-gray-400 uppercase">Aperturas</p>
+                  </div>
+                  <div>
+                    <p className="text-xs font-black text-green-600">{b.totalRedeems}</p>
+                    <p className="text-[9px] text-gray-400 uppercase">Redenc.</p>
+                  </div>
+                  <div>
+                    <p className="text-xs font-black text-orange-500">{b.conversionRate}%</p>
+                    <p className="text-[9px] text-gray-400 uppercase">Conv.</p>
+                  </div>
+                  <span className={`text-[9px] font-black uppercase px-2 py-1 rounded-full ${b.isLive ? "bg-green-100 text-green-600" : "bg-gray-100 text-gray-400"}`}>
+                    {b.isLive ? "Live" : "Off"}
+                  </span>
+                </div>
+              </div>
+            ))}
+          </div>
+        )}
+      </div>
+
+      {/* Preview mode selector */}
+      {onPreviewRole && (
+        <div className="bg-amber-50 border border-amber-100 rounded-[2rem] p-5">
+          <p className="text-[10px] font-black uppercase tracking-widest text-amber-600 mb-3 flex items-center gap-1.5">
+            👁 Previsualizar como Rol
+          </p>
+          <div className="grid grid-cols-2 gap-2">
+            {PREVIEW_ROLES.map((r) => (
+              <button
+                key={r}
+                onClick={() => onPreviewRole(r)}
+                className="py-3 rounded-2xl text-xs font-black uppercase tracking-widest bg-white border border-amber-100 text-amber-700 hover:bg-amber-100 transition-colors active:scale-95"
+              >
+                {r}
+              </button>
+            ))}
+          </div>
+          <p className="text-[9px] text-amber-400 font-medium mt-2 text-center">
+            Verás la interfaz de ese rol con tus propios datos.
+          </p>
+        </div>
+      )}
 
       <div className="bg-gray-950 rounded-[2rem] p-6 text-white">
         <p className="text-[10px] font-black uppercase tracking-widest text-primary mb-3">Versión Beta</p>
@@ -556,6 +631,16 @@ function BeneficiosSection() {
                   <span className={`absolute top-0.5 size-5 bg-white rounded-full shadow transition-all ${form.isLive ? "left-[calc(100%-1.375rem)]" : "left-0.5"}`} />
                 </button>
               </div>
+
+              {/* Branch manager — only shown when editing an existing benefit */}
+              {editingId && (
+                <div className="bg-gray-50 rounded-2xl p-4 border border-gray-100">
+                  <BranchManager
+                    benefitId={editingId as Id<"benefits">}
+                    benefitName={form.merchantName}
+                  />
+                </div>
+              )}
             </div>
 
             {/* Fixed footer */}
@@ -659,7 +744,11 @@ function DocumentosSection() {
 }
 
 // ── Main AdminPanel ──────────────────────────────────────────────────────────
-export function AdminPanel() {
+interface AdminPanelProps {
+  onPreviewRole?: (role: string | null) => void;
+}
+
+export function AdminPanel({ onPreviewRole }: AdminPanelProps = {}) {
   const [activeTab, setActiveTab] = useState<AdminTab>("resumen");
 
   const TABS: { key: AdminTab; label: string; icon: React.ReactNode }[] = [
@@ -702,7 +791,7 @@ export function AdminPanel() {
 
       {/* Content */}
       <div className="animate-in fade-in duration-300">
-        {activeTab === "resumen" && <ResumenSection />}
+        {activeTab === "resumen" && <ResumenSection onPreviewRole={onPreviewRole} />}
         {activeTab === "usuarios" && <UsuariosSection />}
         {activeTab === "beneficios" && <BeneficiosSection />}
         {activeTab === "documentos" && <DocumentosSection />}

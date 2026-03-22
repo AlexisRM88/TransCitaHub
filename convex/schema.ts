@@ -85,6 +85,22 @@ export default defineSchema({
     expiresAt: v.number(), // timestamp
   }).index("by_userId", ["userId"]).index("by_benefitId", ["benefitId"]),
 
+  benefit_branches: defineTable({
+    benefitId: v.id("benefits"),
+    name: v.string(),              // e.g. "Sucursal Plaza Las Américas"
+    address: v.optional(v.string()), // optional street address
+    lat: v.number(),
+    lng: v.number(),
+  }).index("by_benefitId", ["benefitId"]),
+
+  benefit_stats: defineTable({
+    benefitId: v.id("benefits"),
+    date: v.string(),       // "YYYY-MM-DD" — one record per benefit per day
+    opens: v.number(),      // unique opens tracked (deduplicated via localStorage on client)
+    redeems: v.number(),    // redemptions that day (denormalized for fast queries)
+  }).index("by_benefit_date", ["benefitId", "date"])
+    .index("by_date", ["date"]),
+
   employee_documents: defineTable({
     userId: v.optional(v.string()),
     clerkId: v.optional(v.string()), // legacy field, will be removed after migration

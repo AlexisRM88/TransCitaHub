@@ -3,7 +3,9 @@
 import { useState } from "react";
 import { useMutation, useQuery } from "convex/react";
 import { api } from "../../../convex/_generated/api";
-import { Plus, Zap, ZapOff, Trash2, Tag, Store, X, CheckCircle, Calendar, MapPin, Clock, Users } from "lucide-react";
+import { Plus, Zap, ZapOff, Trash2, Tag, Store, X, CheckCircle, Calendar, MapPin, Clock, Users, ChevronDown } from "lucide-react";
+import { BranchManager } from "@/components/BranchManager";
+import { Id } from "../../../convex/_generated/dataModel";
 
 interface NegocioOfertasTabProps {
   userId: string;
@@ -21,6 +23,7 @@ export function NegocioOfertasTab({ userId }: NegocioOfertasTabProps) {
   const [showForm, setShowForm] = useState(false);
   const [saving, setSaving] = useState(false);
   const [deletingId, setDeletingId] = useState<string | null>(null);
+  const [expandedBranchesId, setExpandedBranchesId] = useState<string | null>(null);
 
   const [form, setForm] = useState({
     merchantName: "",
@@ -121,11 +124,11 @@ export function NegocioOfertasTab({ userId }: NegocioOfertasTabProps) {
           </div>
         )}
         {offers?.map((offer) => (
+          <div key={offer._id} className="space-y-0">
           <div
-            key={offer._id}
             className={`bg-white rounded-[1.5rem] border-2 p-5 flex items-center gap-4 transition-all ${
-              offer.isLive ? "border-green-100 shadow-sm shadow-green-50" : "border-gray-100"
-            }`}
+              expandedBranchesId === offer._id ? "rounded-b-none border-b-0" : ""
+            } ${offer.isLive ? "border-green-100 shadow-sm shadow-green-50" : "border-gray-100"}`}
           >
             <div className={`size-11 rounded-2xl flex items-center justify-center flex-shrink-0 ${
               offer.isLive ? "bg-green-50 text-primary" : "bg-gray-50 text-gray-300"
@@ -159,6 +162,19 @@ export function NegocioOfertasTab({ userId }: NegocioOfertasTabProps) {
             </div>
 
             <div className="flex items-center gap-2 flex-shrink-0">
+              {/* Branches toggle */}
+              <button
+                onClick={() => setExpandedBranchesId(expandedBranchesId === offer._id ? null : offer._id)}
+                title="Gestionar sucursales"
+                className={`size-10 rounded-2xl flex items-center justify-center transition-all active:scale-90 ${
+                  expandedBranchesId === offer._id
+                    ? "bg-blue-500 text-white"
+                    : "bg-blue-50 text-blue-400 hover:bg-blue-100"
+                }`}
+              >
+                <MapPin size={16} />
+              </button>
+
               {/* Live toggle */}
               <button
                 onClick={() => toggleLive({ benefitId: offer._id })}
@@ -181,6 +197,17 @@ export function NegocioOfertasTab({ userId }: NegocioOfertasTabProps) {
                 <Trash2 size={16} />
               </button>
             </div>
+          </div>
+
+          {/* Branch manager — inline, collapsible */}
+          {expandedBranchesId === offer._id && (
+            <div className={`bg-white border-2 border-t-0 rounded-b-[1.5rem] px-5 pb-4 ${offer.isLive ? "border-green-100" : "border-gray-100"}`}>
+              <BranchManager
+                benefitId={offer._id as Id<"benefits">}
+                benefitName={offer.merchantName}
+              />
+            </div>
+          )}
           </div>
         ))}
       </div>

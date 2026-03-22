@@ -261,6 +261,195 @@ export const deleteOffer = mutation({
     },
 });
 
+// ── Branches: get all branches (for employee map view) ───────────────────────
+export const getAllBranches = query({
+    args: {},
+    handler: async (ctx) => {
+        return ctx.db.query("benefit_branches").collect();
+    },
+});
+
+// ── Branches: get branches for a specific benefit ─────────────────────────────
+export const getBranchesByBenefit = query({
+    args: { benefitId: v.id("benefits") },
+    handler: async (ctx, args) => {
+        return ctx.db
+            .query("benefit_branches")
+            .withIndex("by_benefitId", (q) => q.eq("benefitId", args.benefitId))
+            .collect();
+    },
+});
+
+// ── Branches: add a branch to a benefit ──────────────────────────────────────
+export const addBranch = mutation({
+    args: {
+        benefitId: v.id("benefits"),
+        name: v.string(),
+        lat: v.number(),
+        lng: v.number(),
+        address: v.optional(v.string()),
+    },
+    handler: async (ctx, args) => {
+        return ctx.db.insert("benefit_branches", {
+            benefitId: args.benefitId,
+            name: args.name,
+            lat: args.lat,
+            lng: args.lng,
+            address: args.address,
+        });
+    },
+});
+
+// ── Branches: update a branch ─────────────────────────────────────────────────
+export const updateBranch = mutation({
+    args: {
+        branchId: v.id("benefit_branches"),
+        name: v.string(),
+        lat: v.number(),
+        lng: v.number(),
+        address: v.optional(v.string()),
+    },
+    handler: async (ctx, args) => {
+        const { branchId, ...patch } = args;
+        await ctx.db.patch(branchId, patch);
+    },
+});
+
+// ── Branches: delete a branch ─────────────────────────────────────────────────
+export const deleteBranch = mutation({
+    args: { branchId: v.id("benefit_branches") },
+    handler: async (ctx, args) => {
+        await ctx.db.delete(args.branchId);
+    },
+});
+
+// ── Analytics: track a benefit open (deduplicated on client via localStorage) ─
+export const trackBenefitOpen = mutation({
+    args: { benefitId: v.id("benefits") },
+    handler: async (ctx, args) => {
+        const today = new Date().toISOString().split("T")[0];
+        const existing = await ctx.db
+            .query("benefit_stats")
+            .withIndex("by_benefit_date", (q) =>
+                q.eq("benefitId", args.benefitId).eq("date", today)
+            )
+            .first();
+        if (existing) {
+            await ctx.db.patch(existing._id, { opens: existing.opens + 1 });
+        } else {
+            await ctx.db.insert("benefit_stats", {
+                benefitId: args.benefitId,
+                date: today,
+                opens: 1,
+                redeems: 0,
+            });
+        }
+    },
+});
+
+// ── Analytics: query for Negocio — own offers with last 7 days stats ─────────
+export const getMyOffersAnalytics = query({
+    args: { ownerId: v.string() },
+    handler: async (ctx, args) => {
+        const offers = await ctx.db
+            .query("benefits")
+            .withIndex("by_ownerId", (q) => q.eq("ownerId", args.ownerId))
+            .collect();
+
+        const today = new Date();
+        const last7Days = Array.from({ length: 7 }, (_, i) => {
+            const d = new Date(today);
+            d.setDate(today.getDate() - (6 - i));
+            return d.toISOString().split("T")[0];
+        });
+
+        return Promise.all(offers.map(async (offer) => {
+            // Aggregate opens per day for the last 7 days
+            const statsRows = await Promise.all(
+                last7Days.map(async (date) => {
+                    const row = await ctx.db
+                        .query("benefit_stats")
+                        .withIndex("by_benefit_date", (q) =>
+                            q.eq("benefitId", offer._id).eq("date", date)
+                        )
+                        .first();
+                    return { date, opens: row?.opens ?? 0, redeems: row?.redeems ?? 0 };
+                })
+            );
+
+            const totalRedemptions = await ctx.db
+                .query("redemptions")
+                .withIndex("by_benefitId", (q) => q.eq("benefitId", offer._id))
+                .collect();
+
+            const opens7d = statsRows.reduce((sum, r) => sum + r.opens, 0);
+            const totalRedeems = totalRedemptions.length;
+
+            return {
+                _id: offer._id,
+                merchantName: offer.merchantName,
+                offerLabel: offer.offerLabel,
+                isLive: offer.isLive ?? false,
+                type: offer.type ?? "descuento",
+                opens7d,
+                totalRedeems,
+                conversionRate: opens7d > 0 ? Math.round((totalRedeems / opens7d) * 100) : 0,
+                dailyData: statsRows,
+            };
+        }));
+    },
+});
+
+// ── Analytics: query for Admin — all benefits with aggregated stats ───────────
+export const getAllBenefitsAnalytics = query({
+    args: {},
+    handler: async (ctx) => {
+        const benefits = await ctx.db.query("benefits").collect();
+
+        const today = new Date();
+        const sevenDaysAgo = new Date(today);
+        sevenDaysAgo.setDate(today.getDate() - 6);
+        const last7Days = Array.from({ length: 7 }, (_, i) => {
+            const d = new Date(sevenDaysAgo);
+            d.setDate(sevenDaysAgo.getDate() + i);
+            return d.toISOString().split("T")[0];
+        });
+
+        return Promise.all(benefits.map(async (benefit) => {
+            const statsRows = await Promise.all(
+                last7Days.map(async (date) => {
+                    const row = await ctx.db
+                        .query("benefit_stats")
+                        .withIndex("by_benefit_date", (q) =>
+                            q.eq("benefitId", benefit._id).eq("date", date)
+                        )
+                        .first();
+                    return row?.opens ?? 0;
+                })
+            );
+
+            const totalRedemptions = await ctx.db
+                .query("redemptions")
+                .withIndex("by_benefitId", (q) => q.eq("benefitId", benefit._id))
+                .collect();
+
+            const opens7d = statsRows.reduce((sum, n) => sum + n, 0);
+            const totalRedeems = totalRedemptions.length;
+
+            return {
+                _id: benefit._id,
+                merchantName: benefit.merchantName,
+                offerLabel: benefit.offerLabel,
+                isLive: benefit.isLive ?? false,
+                type: benefit.type ?? "descuento",
+                opens7d,
+                totalRedeems,
+                conversionRate: opens7d > 0 ? Math.round((totalRedeems / opens7d) * 100) : 0,
+            };
+        }));
+    },
+});
+
 export const redeemBenefit = mutation({
     args: { userId: v.string(), benefitId: v.string() },
     handler: async (ctx, args) => {

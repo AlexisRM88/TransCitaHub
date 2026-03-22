@@ -47,8 +47,14 @@ export const ensureProfile = mutation({
         const email = user?.email || "";
         const fullName = user?.name || "Colaborador";
 
+        const TEST_ROLE_MAP: Record<string, "RSP" | "Admin" | "Staff" | "Patrono" | "Negocio"> = {
+            "empleado@transcita.com": "RSP",
+            "staff@transcita.com": "Staff",
+            "patrono@transcita.com": "Patrono",
+            "negocio@transcita.com": "Negocio",
+        };
         const isWebmaster = email === "cabuyacreativa@gmail.com";
-        const assignedRole = isWebmaster ? "Admin" : "RSP";
+        const assignedRole = isWebmaster ? "Admin" : (TEST_ROLE_MAP[email] ?? "RSP");
 
         const profileId = await ctx.db.insert("profiles", {
             userId: userId,
@@ -104,8 +110,14 @@ export const syncUser = mutation({
             .first();
 
         if (!existing) {
+            const TEST_ROLE_MAP: Record<string, "RSP" | "Admin" | "Staff" | "Patrono" | "Negocio"> = {
+                "empleado@transcita.com": "RSP",
+                "staff@transcita.com": "Staff",
+                "patrono@transcita.com": "Patrono",
+                "negocio@transcita.com": "Negocio",
+            };
             const isWebmaster = args.email === "cabuyacreativa@gmail.com";
-            const assignedRole = isWebmaster ? "Admin" : "RSP";
+            const assignedRole = isWebmaster ? "Admin" : (TEST_ROLE_MAP[args.email] ?? "RSP");
             await ctx.db.insert("profiles", {
                 userId: args.userId,
                 email: args.email,

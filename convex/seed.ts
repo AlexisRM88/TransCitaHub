@@ -36,6 +36,11 @@ export const seed = mutation({
         // Add authorized domain/email
         await ctx.db.insert("authorized_emails", { email: "admin@transcita.com" });
         await ctx.db.insert("authorized_emails", { email: "cabuyacreativa@gmail.com" });
+        // Test accounts — sign up with these emails to get the role automatically
+        await ctx.db.insert("authorized_emails", { email: "empleado@transcita.com" });
+        await ctx.db.insert("authorized_emails", { email: "patrono@transcita.com" });
+        await ctx.db.insert("authorized_emails", { email: "negocio@transcita.com" });
+        await ctx.db.insert("authorized_emails", { email: "staff@transcita.com" });
 
         // Clear existing data to avoid duplicates and schema mismatches in dev
         const oldBenefits = await ctx.db.query("benefits").collect();

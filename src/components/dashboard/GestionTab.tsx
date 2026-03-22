@@ -7,13 +7,14 @@ import { AdminPanel } from "@/components/admin/AdminPanel";
 interface GestionTabProps {
   role: string;
   userId: string;
+  onPreviewRole?: (role: string | null) => void;
 }
 
-export default function GestionTab({ role, userId }: GestionTabProps) {
+export default function GestionTab({ role, userId, onPreviewRole }: GestionTabProps) {
   if (role === "Admin") {
     return (
       <div className="animate-in fade-in slide-in-from-bottom-4 duration-500 pb-10 px-5">
-        <AdminPanel />
+        <AdminPanel onPreviewRole={onPreviewRole} />
       </div>
     );
   }

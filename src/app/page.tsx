@@ -43,6 +43,7 @@ export default function Home() {
   const [isProfileOpen, setIsProfileOpen] = useState(false);
   const [userPueblo, setUserPueblo] = useState("San Juan");
   const [profileProvisioned, setProfileProvisioned] = useState(false);
+  const [previewRole, setPreviewRole] = useState<string | null>(null);
 
   const updateRole = useMutation(api.users.updateRole);
   const updateProfile = useMutation(api.users.updateProfile);
@@ -59,6 +60,8 @@ export default function Home() {
   useEffect(() => {
     if (profile?.base) setUserPueblo(profile.base);
   }, [profile?.base]);
+
+  const effectiveRole = previewRole ?? role;
 
   useEffect(() => {
     if (role === "Negocio") {
@@ -133,6 +136,19 @@ export default function Home() {
   return (
     <div className="min-h-screen bg-[#f8fafc] text-gray-900 pb-28 font-sans">
 
+      {/* Admin preview mode banner */}
+      {previewRole && (
+        <div className="fixed top-0 inset-x-0 z-[200] bg-amber-400 text-amber-900 text-[11px] font-black uppercase tracking-widest text-center py-2.5 flex items-center justify-center gap-3 shadow-md">
+          <span>⚠ Viendo como: {previewRole}</span>
+          <button
+            onClick={() => setPreviewRole(null)}
+            className="bg-amber-900/20 hover:bg-amber-900/30 px-3 py-0.5 rounded-full transition-colors"
+          >
+            Salir
+          </button>
+        </div>
+      )}
+
       {isSettingsOpen && (
         <SettingsModal
           user={user}
@@ -170,15 +186,19 @@ export default function Home() {
         onSettingsClick={() => setIsSettingsOpen(true)}
       />
 
-      <main className="pt-2">
-        {activeTab === "gestion" && (role === "Patrono" || role === "Negocio" || role === "Admin") && userId && (
+      <main className={previewRole ? "pt-10" : "pt-2"}>
+        {activeTab === "gestion" && (effectiveRole === "Patrono" || effectiveRole === "Negocio" || effectiveRole === "Admin") && userId && (
           <Suspense fallback={<TabSpinner />}>
-            <GestionTab role={role!} userId={userId} />
+            <GestionTab
+              role={effectiveRole}
+              userId={userId}
+              onPreviewRole={role === "Admin" ? setPreviewRole : undefined}
+            />
           </Suspense>
         )}
 
         {/* Tab exclusivo Negocio: gestión de ofertas */}
-        {activeTab === "ofertas" && role === "Negocio" && userId && (
+        {activeTab === "ofertas" && effectiveRole === "Negocio" && userId && (
           <NegocioOfertasTab userId={userId} />
         )}
 
@@ -187,7 +207,7 @@ export default function Home() {
         )}
 
         {/* Desarrollo solo visible para Patrono, Admin y RSP — nunca para Negocio */}
-        {activeTab === "desarrollo" && role !== "Negocio" && (
+        {activeTab === "desarrollo" && effectiveRole !== "Negocio" && (
           <Suspense fallback={<TabSpinner />}>
             <DesarrolloTab />
           </Suspense>
@@ -207,7 +227,7 @@ export default function Home() {
         )}
       </main>
 
-      <BottomNav role={role} activeTab={activeTab} setActiveTab={setActiveTab} />
+      <BottomNav role={effectiveRole} activeTab={activeTab} setActiveTab={setActiveTab} />
     </div>
   );
 }
