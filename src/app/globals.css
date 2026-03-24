@@ -35,3 +35,22 @@ body {
     -ms-overflow-style: none;
     scrollbar-width: none;
 }
+
+/* ── iOS: evitar auto-zoom al enfocar inputs ─────────────────────────────
+   Reglas sin @layer tienen mayor cascada que @layer utilities (Tailwind).
+   max(16px, 1em) no reduce fuentes que ya sean >= 16px.              */
+input:not([type="checkbox"]):not([type="radio"]):not([type="range"]),
+select,
+textarea {
+  font-size: max(16px, 1em);
+}
+
+/* Elimina el delay de 300ms en taps (evita el doble-tap zoom en botones) */
+button,
+a,
+input,
+select,
+textarea,
+[role="button"] {
+  touch-action: manipulation;
+}

@@ -1,4 +1,4 @@
-import type { Metadata } from "next";
+import type { Metadata, Viewport } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import { ConvexClientProvider } from "./ConvexClientProvider";
@@ -19,6 +19,15 @@ const geistMono = Geist_Mono({
 export const metadata: Metadata = {
   title: "TransCita Hub",
   description: "Comunidad RSP y TransCiende",
+};
+
+export const viewport: Viewport = {
+  width: "device-width",
+  initialScale: 1,
+  viewportFit: "cover", // respeta el notch del iPhone (safe area)
+  // NO se añade maximumScale ni userScalable:
+  //   - Apple ignora user-scalable desde iOS 10
+  //   - Bloquear el zoom afecta la accesibilidad (WCAG 1.4.4)
 };
 
 export default function RootLayout({
