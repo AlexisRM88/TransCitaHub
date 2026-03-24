@@ -7,7 +7,7 @@ import {
   Users, Tag, FileText, LayoutDashboard,
   ShieldCheck, Zap, ZapOff, Trash2, Plus,
   CheckCircle, X, ChevronRight, Search,
-  TrendingUp, AlertCircle, Calendar, Clock, MapPin, ImagePlus, Loader2
+  TrendingUp, AlertCircle, Calendar, Clock, MapPin, ImagePlus, Loader2, Navigation
 } from "lucide-react";
 
 type BenefitType = "descuento" | "actividad";
@@ -312,6 +312,7 @@ function BeneficiosSection() {
   const [editingId, setEditingId] = useState<string | null>(null); // null = create, string = edit
   const [saving, setSaving] = useState(false);
   const [uploading, setUploading] = useState(false);
+  const [geoLoading, setGeoLoading] = useState(false);
   const [imagePreview, setImagePreview] = useState<string | null>(null);
   const [imageStorageId, setImageStorageId] = useState<string | null>(null);
   const [form, setForm] = useState({
@@ -324,6 +325,8 @@ function BeneficiosSection() {
     eventDate: "",
     eventTime: "",
     eventLocation: "",
+    lat: 18.2208,
+    lng: -66.5901,
   });
 
   const handleImageChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -345,8 +348,24 @@ function BeneficiosSection() {
     }
   };
 
+  const handleGPS = () => {
+    if (!navigator.geolocation) return;
+    setGeoLoading(true);
+    navigator.geolocation.getCurrentPosition(
+      (pos) => {
+        setForm((f) => ({
+          ...f,
+          lat: parseFloat(pos.coords.latitude.toFixed(6)),
+          lng: parseFloat(pos.coords.longitude.toFixed(6)),
+        }));
+        setGeoLoading(false);
+      },
+      () => setGeoLoading(false)
+    );
+  };
+
   const resetForm = () => {
-    setForm({ merchantName: "", offerLabel: "", category: "Comida", maxUses: 1, isLive: true, type: "descuento", eventDate: "", eventTime: "", eventLocation: "" });
+    setForm({ merchantName: "", offerLabel: "", category: "Comida", maxUses: 1, isLive: true, type: "descuento", eventDate: "", eventTime: "", eventLocation: "", lat: 18.2208, lng: -66.5901 });
     setImagePreview(null);
     setImageStorageId(null);
     setEditingId(null);
@@ -359,13 +378,15 @@ function BeneficiosSection() {
     setForm({
       merchantName: b.merchantName,
       offerLabel: b.offerLabel,
-      category: b.category,
+      category: b.category === "Actividad" ? "Comida" : (b.category ?? "Comida"),
       maxUses: b.maxUses ?? 1,
       isLive: b.isLive ?? false,
       type: (b.type ?? "descuento") as BenefitType,
       eventDate: b.eventDate ?? "",
       eventTime: b.eventTime ?? "",
       eventLocation: b.eventLocation ?? "",
+      lat: b.lat ?? 18.2208,
+      lng: b.lng ?? -66.5901,
     });
     setImagePreview(b.imageUrl ?? null);
     setImageStorageId(null); // only set if a new image is uploaded
@@ -385,6 +406,8 @@ function BeneficiosSection() {
         maxUses: uses,
         isLive: form.isLive,
         type: form.type,
+        lat: form.lat,
+        lng: form.lng,
         eventDate: form.eventDate || undefined,
         eventTime: form.eventTime || undefined,
         eventLocation: form.eventLocation || undefined,
@@ -622,6 +645,50 @@ function BeneficiosSection() {
                   </div>
                 </>
               )}
+
+              {/* Coordenadas con GPS */}
+              <div>
+                <label className="text-[10px] font-black uppercase tracking-widest text-gray-400 block mb-1.5 flex items-center gap-1">
+                  <Navigation size={9} />Coordenadas de Ubicación Principal
+                </label>
+                <div className="flex gap-2">
+                  <div className="flex-1">
+                    <label className="text-[9px] text-gray-400 font-bold block mb-1 ml-1">Latitud</label>
+                    <input
+                      type="number"
+                      step="0.000001"
+                      value={form.lat}
+                      onChange={(e) => setForm((f) => ({ ...f, lat: parseFloat(e.target.value) || 18.2208 }))}
+                      className="w-full bg-gray-50 border border-gray-100 rounded-2xl px-3 py-3 text-sm font-bold text-gray-900 focus:outline-none focus:ring-2 focus:ring-primary/20"
+                    />
+                  </div>
+                  <div className="flex-1">
+                    <label className="text-[9px] text-gray-400 font-bold block mb-1 ml-1">Longitud</label>
+                    <input
+                      type="number"
+                      step="0.000001"
+                      value={form.lng}
+                      onChange={(e) => setForm((f) => ({ ...f, lng: parseFloat(e.target.value) || -66.5901 }))}
+                      className="w-full bg-gray-50 border border-gray-100 rounded-2xl px-3 py-3 text-sm font-bold text-gray-900 focus:outline-none focus:ring-2 focus:ring-primary/20"
+                    />
+                  </div>
+                  <div className="flex flex-col justify-end">
+                    <label className="text-[9px] text-transparent font-bold block mb-1 ml-1">GPS</label>
+                    <button
+                      type="button"
+                      onClick={handleGPS}
+                      disabled={geoLoading}
+                      title="Usar mi ubicación actual"
+                      className="size-[46px] rounded-2xl bg-blue-500 text-white flex items-center justify-center active:scale-90 transition-all disabled:opacity-50 shadow-md shadow-blue-200"
+                    >
+                      {geoLoading ? <Loader2 size={18} className="animate-spin" /> : <Navigation size={18} />}
+                    </button>
+                  </div>
+                </div>
+                <p className="text-[10px] text-gray-300 mt-1.5 ml-1">
+                  Coordenada principal del negocio. Usa "Sucursales" para agregar múltiples ubicaciones.
+                </p>
+              </div>
 
               {/* Toggle publicar en vivo */}
               <div className="flex items-center justify-between bg-gray-50 rounded-2xl px-4 py-3 border border-gray-100">

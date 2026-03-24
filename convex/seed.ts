@@ -1,4 +1,5 @@
-import { mutation } from "./_generated/server";
+import { action, internalAction, mutation } from "./_generated/server";
+import { api } from "./_generated/api";
 import { v } from "convex/values";
 
 // Run once to add the 5K activity without wiping existing data
@@ -132,59 +133,73 @@ export const seed = mutation({
             eventCapacity: 200,
         });
 
-        // Seed Profiles for testing
-        const testPatronoId = "user_patrono_test";
-        const testEmployeeId = "user_employee_test";
-        const testNegocioId = "user_negocio_test";
-
-        await ctx.db.insert("profiles", {
-            userId: testPatronoId,
-            fullName: "Alexis Patrono",
-            email: "patrono@transcita.com",
-            role: "Patrono",
-            base: "San Juan",
-            totalTrips: 0,
-            medals: [],
-            companyName: "TransCita Corp",
-        });
-
-        await ctx.db.insert("profiles", {
-            userId: testEmployeeId,
-            fullName: "Juan Empleado",
-            email: "empleado@transcita.com",
-            role: "RSP",
-            base: "San Juan",
-            totalTrips: 150,
-            medals: ["Puntualidad"],
-            companyName: "TransCita Corp",
-        });
-
-        await ctx.db.insert("profiles", {
-            userId: testNegocioId,
-            fullName: "Gerente Snap Fitness",
-            email: "snap@fitness.com",
-            role: "Negocio",
-            base: "Bayamón",
-            totalTrips: 0,
-            medals: [],
-            businessId: "snap-fitness-01",
-        });
-
-        // Seed some progress for the employee
-        await ctx.db.insert("lms_progress", {
-            userId: testEmployeeId,
-            programId: "onboarding",
-            moduleId: "bienvenida",
-            completedAt: Date.now(),
-        });
-
-        await ctx.db.insert("lms_progress", {
-            userId: testEmployeeId,
-            programId: "onboarding",
-            moduleId: "mision",
-            completedAt: Date.now(),
-        });
-
         return "Seeding completed!";
+    },
+});
+
+// Safely add test emails to authorized_emails without deleting any data.
+//   npx convex run seed:authorizeTestEmails
+export const authorizeTestEmails = mutation({
+    handler: async (ctx) => {
+        const testEmails = [
+            "empleado@transcita.com",
+            "patrono@transcita.com",
+            "negocio@transcita.com",
+            "staff@transcita.com",
+            "cabuyacreativa@gmail.com",
+        ];
+        const results = [];
+        for (const email of testEmails) {
+            const existing = await ctx.db
+                .query("authorized_emails")
+                .withIndex("by_email", (q) => q.eq("email", email))
+                .first();
+            if (!existing) {
+                await ctx.db.insert("authorized_emails", { email });
+                results.push({ email, status: "added" });
+            } else {
+                results.push({ email, status: "already authorized" });
+            }
+        }
+        return results;
+    },
+});
+
+// Run once to register test accounts in Convex Auth:
+//   npx convex run seed:createTestUsers
+export const createTestUsers = action({
+    handler: async (ctx) => {
+        const testUsers = [
+            { email: "empleado@transcita.com", name: "RSP Empleado" },
+            { email: "patrono@transcita.com", name: "Patrono Test" },
+            { email: "negocio@transcita.com", name: "Negocio Test" },
+            { email: "staff@transcita.com", name: "Staff Test" },
+        ];
+
+        const results = [];
+        for (const u of testUsers) {
+            try {
+                // Call Convex Auth's signIn action with signUp flow to create the user
+                await ctx.runAction(api.auth.signIn, {
+                    provider: "password",
+                    params: {
+                        flow: "signUp",
+                        email: u.email,
+                        password: "Test1234!",
+                        name: u.name,
+                    },
+                });
+                results.push({ email: u.email, ok: true, status: "created" });
+            } catch (e: any) {
+                // If user already exists, try signing in (just to verify they exist)
+                const msg: string = e.message ?? "";
+                if (msg.includes("already") || msg.includes("exist") || msg.includes("duplicate")) {
+                    results.push({ email: u.email, ok: true, status: "already exists" });
+                } else {
+                    results.push({ email: u.email, ok: false, error: msg.slice(0, 200) });
+                }
+            }
+        }
+        return results;
     },
 });
