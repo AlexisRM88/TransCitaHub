@@ -22,7 +22,8 @@ interface BranchForm {
   mapsUrl: string;
 }
 
-type GeoState = "idle" | "loading" | "success" | "denied" | "unavailable" | "timeout";
+type GeoState = "idle" | "loading" | "success" | "denied" | "unavailable" | "timeout" | "insecure";
+type UrlState = "idle" | "loading" | "success" | "error";
 
 const EMPTY_FORM: BranchForm = { name: "", lat: "", lng: "", address: "", mapsUrl: "" };
 
@@ -56,10 +57,11 @@ function parseGoogleMapsUrl(url: string): { lat: number; lng: number } | null {
 const GEO_MESSAGES: Record<GeoState, { text: string; color: string } | null> = {
   idle: null,
   loading: null,
-  success: { text: "Ubicación capturada", color: "text-green-600" },
-  denied: { text: "Permiso de ubicación denegado. Usa el enlace de Google Maps en su lugar.", color: "text-red-500" },
-  unavailable: { text: "GPS no disponible en este dispositivo.", color: "text-orange-500" },
-  timeout: { text: "Tardó demasiado. Intenta de nuevo o usa un enlace de mapa.", color: "text-orange-500" },
+  success: { text: "Ubicación capturada correctamente.", color: "text-green-600" },
+  denied: { text: "Permiso de ubicación denegado en este navegador. Usa el enlace de Google Maps como alternativa.", color: "text-red-500" },
+  unavailable: { text: "GPS no disponible. Usa el enlace de Google Maps.", color: "text-orange-500" },
+  timeout: { text: "Tardó demasiado. Intenta de nuevo o usa el enlace de mapa.", color: "text-orange-500" },
+  insecure: { text: "El GPS requiere conexión segura (HTTPS). En producción funcionará. Usa el enlace de Google Maps por ahora.", color: "text-blue-500" },
 };
 
 export function BranchManager({ benefitId, benefitName }: BranchManagerProps) {
@@ -73,10 +75,16 @@ export function BranchManager({ benefitId, benefitName }: BranchManagerProps) {
   const [form, setForm] = useState<BranchForm>(EMPTY_FORM);
   const [saving, setSaving] = useState(false);
   const [geoState, setGeoState] = useState<GeoState>("idle");
+  const [urlState, setUrlState] = useState<UrlState>("idle");
   const [deletingId, setDeletingId] = useState<string | null>(null);
 
   // ── GPS ──────────────────────────────────────────────────────────────────────
   const handleGPS = () => {
+    // Check if we're in a secure context (HTTPS or localhost)
+    if (!window.isSecureContext && !window.location.hostname.includes("localhost")) {
+      setGeoState("insecure");
+      return;
+    }
     if (!navigator.geolocation) {
       setGeoState("unavailable");
       return;
@@ -101,9 +109,14 @@ export function BranchManager({ benefitId, benefitName }: BranchManagerProps) {
     );
   };
 
-  // ── Google Maps URL / coordinates paste ──────────────────────────────────────
-  const handleMapsUrl = (value: string) => {
+  // ── Google Maps URL resolver ──────────────────────────────────────────────────
+  const handleMapsUrl = async (value: string) => {
     setForm((f) => ({ ...f, mapsUrl: value }));
+    setUrlState("idle");
+
+    if (!value.trim()) return;
+
+    // Try direct parse first (works for full URLs with coordinates)
     const parsed = parseGoogleMapsUrl(value);
     if (parsed) {
       setForm((f) => ({
@@ -112,7 +125,30 @@ export function BranchManager({ benefitId, benefitName }: BranchManagerProps) {
         lat: parsed.lat.toFixed(6),
         lng: parsed.lng.toFixed(6),
       }));
-      setGeoState("idle");
+      setUrlState("success");
+      return;
+    }
+
+    // For short URLs (goo.gl, maps.app.goo.gl, etc.), resolve server-side
+    if (value.startsWith("http")) {
+      setUrlState("loading");
+      try {
+        const res = await fetch(`/api/resolve-maps?url=${encodeURIComponent(value)}`);
+        const data = await res.json();
+        if (data.lat && data.lng) {
+          setForm((f) => ({
+            ...f,
+            mapsUrl: value,
+            lat: data.lat.toFixed(6),
+            lng: data.lng.toFixed(6),
+          }));
+          setUrlState("success");
+        } else {
+          setUrlState("error");
+        }
+      } catch {
+        setUrlState("error");
+      }
     }
   };
 
@@ -121,6 +157,7 @@ export function BranchManager({ benefitId, benefitName }: BranchManagerProps) {
     setEditingId(null);
     setForm(EMPTY_FORM);
     setGeoState("idle");
+    setUrlState("idle");
     setShowForm(true);
   };
 
@@ -134,6 +171,7 @@ export function BranchManager({ benefitId, benefitName }: BranchManagerProps) {
       mapsUrl: "",
     });
     setGeoState("idle");
+    setUrlState("idle");
     setShowForm(true);
   };
 
@@ -142,6 +180,7 @@ export function BranchManager({ benefitId, benefitName }: BranchManagerProps) {
     setEditingId(null);
     setForm(EMPTY_FORM);
     setGeoState("idle");
+    setUrlState("idle");
   };
 
   const handleSave = async () => {
@@ -330,16 +369,38 @@ export function BranchManager({ benefitId, benefitName }: BranchManagerProps) {
             <label className="text-[9px] font-black uppercase tracking-widest text-green-600 flex items-center gap-1 mb-1.5">
               <Link2 size={9} /> O pega un enlace de Google Maps / Apple Maps
             </label>
-            <input
-              type="url"
-              value={form.mapsUrl}
-              onChange={(e) => handleMapsUrl(e.target.value)}
-              placeholder="https://maps.app.goo.gl/... o https://www.google.com/maps/@..."
-              className="w-full bg-white border border-green-100 rounded-xl px-3 py-2.5 text-xs font-medium text-gray-700 focus:outline-none focus:ring-2 focus:ring-green-200"
-            />
-            {form.mapsUrl && !hasCoords && (
-              <p className="text-[10px] text-orange-500 font-bold mt-1 flex items-center gap-1">
-                <AlertCircle size={10} /> No se pudo extraer la ubicación. Intenta con un enlace diferente o usa GPS.
+            <div className="relative">
+              <input
+                type="url"
+                value={form.mapsUrl}
+                onChange={(e) => handleMapsUrl(e.target.value)}
+                placeholder="https://maps.app.goo.gl/... o https://www.google.com/maps/@..."
+                className={`w-full bg-white rounded-xl px-3 py-2.5 pr-8 text-xs font-medium text-gray-700 focus:outline-none focus:ring-2 border transition-colors ${
+                  urlState === "success" ? "border-green-400 focus:ring-green-200" :
+                  urlState === "error" ? "border-red-300 focus:ring-red-100" :
+                  "border-green-100 focus:ring-green-200"
+                }`}
+              />
+              {/* State icon inside input */}
+              <div className="absolute right-3 top-1/2 -translate-y-1/2">
+                {urlState === "loading" && <Loader2 size={13} className="animate-spin text-green-500" />}
+                {urlState === "success" && <CheckCircle2 size={13} className="text-green-500" />}
+                {urlState === "error" && <AlertCircle size={13} className="text-red-400" />}
+              </div>
+            </div>
+            {urlState === "loading" && (
+              <p className="text-[10px] text-green-600 font-bold mt-1 flex items-center gap-1">
+                <Loader2 size={9} className="animate-spin" /> Resolviendo enlace…
+              </p>
+            )}
+            {urlState === "success" && (
+              <p className="text-[10px] text-green-600 font-bold mt-1 flex items-center gap-1">
+                <CheckCircle2 size={9} /> Coordenadas extraídas correctamente
+              </p>
+            )}
+            {urlState === "error" && (
+              <p className="text-[10px] text-red-500 font-bold mt-1 flex items-center gap-1">
+                <AlertCircle size={9} /> No se pudo extraer la ubicación. Prueba abriendo Google Maps, toca "Compartir" y copia el enlace.
               </p>
             )}
           </div>
