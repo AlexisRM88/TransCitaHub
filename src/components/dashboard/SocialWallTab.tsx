@@ -53,7 +53,7 @@ export function SocialWallTab() {
         <p className="text-sm text-gray-500 font-medium">Conecta con tus compañeros.</p>
       </header>
 
-      <div className="space-y-6">
+      <div className="space-y-6 lg:max-w-2xl">
         {wallPosts.map((post) => (
           <div
             key={post.id}

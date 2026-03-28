@@ -160,7 +160,7 @@ export function BeneficiosTab({ userId }: BeneficiosTabProps) {
             <span className="size-5 bg-purple-50 rounded-lg flex items-center justify-center">🏃</span>
             Actividades
           </h3>
-          <div className="space-y-3">
+          <div className="space-y-3 lg:grid lg:grid-cols-2 lg:gap-4 lg:space-y-0">
             {benefitsList.filter(b => b.type === "actividad").map((activity) => (
               <div key={activity.id} className="bg-gradient-to-br from-purple-50 to-white rounded-[1.5rem] border-2 border-purple-100 p-5 shadow-sm">
                 <div className="flex items-start justify-between mb-3">
@@ -239,7 +239,7 @@ export function BeneficiosTab({ userId }: BeneficiosTabProps) {
           Descuentos
         </h3>
       )}
-      <div className="space-y-4">
+      <div className="space-y-4 lg:grid lg:grid-cols-2 lg:gap-4 lg:space-y-0">
         {benefitsList.filter(b => b.type !== "actividad").map((benefit) => (
           <CouponTimer
             key={benefit.id}

@@ -27,7 +27,7 @@ export function DashboardHeader({ user, profile, onProfileClick, onSettingsClick
   const photoUrl = profile?.photoUrl || user?.image;
 
   return (
-    <header className="flex items-center justify-between p-5 pb-4 bg-white sticky top-0 z-50 shadow-sm">
+    <header className="flex items-center justify-between p-5 pb-4 bg-white sticky top-0 z-50 shadow-sm lg:shadow-none lg:border-b lg:border-gray-100">
       <div className="flex items-center gap-3 cursor-pointer" onClick={onProfileClick}>
         <div className="relative">
           {photoUrl ? (

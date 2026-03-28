@@ -45,7 +45,7 @@ export default function RootLayout({
           <main className="flex-grow">
             {children}
           </main>
-          <footer className="w-full text-center py-4 bg-gray-900 border-t border-gray-800 text-gray-400 text-sm mt-auto">
+          <footer className="hidden lg:block w-full text-center py-4 bg-gray-900 border-t border-gray-800 text-gray-400 text-sm mt-auto">
             Desarrollo con ☕ y ❤️ desde Puerto Rico - <a href="https://www.cabuyacreativa.com" target="_blank" rel="noopener noreferrer" className="hover:text-green-500 transition-colors">Cabuya Creativa</a>
           </footer>
         </ConvexClientProvider>

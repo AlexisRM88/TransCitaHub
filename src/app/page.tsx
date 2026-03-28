@@ -134,11 +134,11 @@ export default function Home() {
   }
 
   return (
-    <div className="min-h-screen bg-[#f8fafc] text-gray-900 pb-28 font-sans">
+    <div className="min-h-screen bg-[#f8fafc] text-gray-900 font-sans lg:flex">
 
       {/* Admin preview mode banner */}
       {previewRole && (
-        <div className="fixed top-0 inset-x-0 z-[200] bg-amber-400 text-amber-900 text-[11px] font-black uppercase tracking-widest text-center py-2.5 flex items-center justify-center gap-3 shadow-md">
+        <div className="fixed top-0 inset-x-0 z-[200] bg-amber-400 text-amber-900 text-[11px] font-black uppercase tracking-widest text-center py-2.5 flex items-center justify-center gap-3 shadow-md lg:left-64">
           <span>⚠ Viendo como: {previewRole}</span>
           <button
             onClick={() => setPreviewRole(null)}
@@ -179,55 +179,60 @@ export default function Home() {
         />
       )}
 
-      <DashboardHeader
-        user={user}
-        profile={profile}
-        onProfileClick={() => setIsProfileOpen(true)}
-        onSettingsClick={() => setIsSettingsOpen(true)}
-      />
-
-      <main className={previewRole ? "pt-10" : "pt-2"}>
-        {activeTab === "gestion" && (effectiveRole === "Patrono" || effectiveRole === "Negocio" || effectiveRole === "Admin") && userId && (
-          <Suspense fallback={<TabSpinner />}>
-            <GestionTab
-              role={effectiveRole}
-              userId={userId}
-              onPreviewRole={role === "Admin" ? setPreviewRole : undefined}
-            />
-          </Suspense>
-        )}
-
-        {/* Tab exclusivo Negocio: gestión de ofertas */}
-        {activeTab === "ofertas" && effectiveRole === "Negocio" && userId && (
-          <NegocioOfertasTab userId={userId} />
-        )}
-
-        {activeTab === "comunidad" && userId && (
-          <BeneficiosTab userId={userId} />
-        )}
-
-        {/* Desarrollo solo visible para Patrono, Admin y RSP — nunca para Negocio */}
-        {activeTab === "desarrollo" && effectiveRole !== "Negocio" && (
-          <Suspense fallback={<TabSpinner />}>
-            <DesarrolloTab />
-          </Suspense>
-        )}
-
-        {activeTab === "perfil" && userId && (
-          <PerfilTab
-            user={user}
-            profile={profile}
-            userId={userId}
-            onViewCarnet={() => setIsProfileOpen(true)}
-          />
-        )}
-
-        {activeTab === "nosotros" && (
-          <SocialWallTab />
-        )}
-      </main>
-
+      {/* Desktop: sidebar (order-first lo posiciona a la izquierda) */}
       <BottomNav role={effectiveRole} activeTab={activeTab} setActiveTab={setActiveTab} />
+
+      <div className="lg:flex-1 lg:min-w-0">
+        <DashboardHeader
+          user={user}
+          profile={profile}
+          onProfileClick={() => setIsProfileOpen(true)}
+          onSettingsClick={() => setIsSettingsOpen(true)}
+        />
+
+        <main className={`pb-28 lg:pb-8 ${previewRole ? "pt-10" : "pt-2"}`}>
+          <div className="lg:max-w-5xl lg:mx-auto lg:px-8">
+            {activeTab === "gestion" && (effectiveRole === "Patrono" || effectiveRole === "Negocio" || effectiveRole === "Admin") && userId && (
+              <Suspense fallback={<TabSpinner />}>
+                <GestionTab
+                  role={effectiveRole}
+                  userId={userId}
+                  onPreviewRole={role === "Admin" ? setPreviewRole : undefined}
+                />
+              </Suspense>
+            )}
+
+            {/* Tab exclusivo Negocio: gestión de ofertas */}
+            {activeTab === "ofertas" && effectiveRole === "Negocio" && userId && (
+              <NegocioOfertasTab userId={userId} />
+            )}
+
+            {activeTab === "comunidad" && userId && (
+              <BeneficiosTab userId={userId} />
+            )}
+
+            {/* Desarrollo solo visible para Patrono, Admin y RSP — nunca para Negocio */}
+            {activeTab === "desarrollo" && effectiveRole !== "Negocio" && (
+              <Suspense fallback={<TabSpinner />}>
+                <DesarrolloTab />
+              </Suspense>
+            )}
+
+            {activeTab === "perfil" && userId && (
+              <PerfilTab
+                user={user}
+                profile={profile}
+                userId={userId}
+                onViewCarnet={() => setIsProfileOpen(true)}
+              />
+            )}
+
+            {activeTab === "nosotros" && (
+              <SocialWallTab />
+            )}
+          </div>
+        </main>
+      </div>
     </div>
   );
 }

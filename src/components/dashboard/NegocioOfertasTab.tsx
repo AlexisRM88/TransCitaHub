@@ -202,7 +202,7 @@ export function NegocioOfertasTab({ userId }: NegocioOfertasTabProps) {
       </div>
 
       {/* Offer list */}
-      <div className="space-y-3">
+      <div className="space-y-3 lg:grid lg:grid-cols-2 lg:gap-4 lg:space-y-0">
         {offers === undefined && (
           <div className="flex justify-center py-10">
             <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-green-500" />
