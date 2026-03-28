@@ -310,6 +310,7 @@ function BeneficiosSection() {
 
   const [showForm, setShowForm] = useState(false);
   const [editingId, setEditingId] = useState<string | null>(null); // null = create, string = edit
+  const [expandedBranchesId, setExpandedBranchesId] = useState<string | null>(null);
   const [saving, setSaving] = useState(false);
   const [uploading, setUploading] = useState(false);
   const [geoLoading, setGeoLoading] = useState(false);
@@ -448,45 +449,64 @@ function BeneficiosSection() {
       <div className="space-y-2">
         {benefits?.map((b) => {
           const imgUrl = (b as any).imageUrl as string | null;
+          const branchesOpen = expandedBranchesId === b._id;
           return (
-            <div
-              key={b._id}
-              onClick={() => openEdit(b)}
-              className={`bg-white rounded-[1.5rem] border-2 p-4 flex items-center gap-3 transition-all cursor-pointer active:scale-[0.98] hover:shadow-md ${b.isLive ? "border-green-100" : "border-gray-100"}`}
-            >
-              {imgUrl ? (
-                <img src={imgUrl} alt={b.merchantName} className="size-11 rounded-xl object-cover flex-shrink-0" />
-              ) : (
-                <div className={`size-11 rounded-xl flex items-center justify-center flex-shrink-0 ${b.isLive ? "bg-green-50 text-primary" : "bg-gray-50 text-gray-300"}`}>
-                  {(b as any).type === "actividad" ? <span className="text-lg">🏃</span> : <Tag size={16} />}
+            <div key={b._id} className="space-y-0">
+              <div
+                onClick={() => openEdit(b)}
+                className={`bg-white border-2 p-4 flex items-center gap-3 transition-all cursor-pointer active:scale-[0.98] hover:shadow-md ${branchesOpen ? "rounded-t-[1.5rem] rounded-b-none border-b-0" : "rounded-[1.5rem]"} ${b.isLive ? "border-green-100" : "border-gray-100"}`}
+              >
+                {imgUrl ? (
+                  <img src={imgUrl} alt={b.merchantName} className="size-11 rounded-xl object-cover flex-shrink-0" />
+                ) : (
+                  <div className={`size-11 rounded-xl flex items-center justify-center flex-shrink-0 ${b.isLive ? "bg-green-50 text-primary" : "bg-gray-50 text-gray-300"}`}>
+                    {(b as any).type === "actividad" ? <span className="text-lg">🏃</span> : <Tag size={16} />}
+                  </div>
+                )}
+                <div className="flex-1 min-w-0">
+                  <p className="font-black text-gray-900 text-xs leading-tight truncate">{b.merchantName}</p>
+                  <p className="text-[10px] text-gray-400 font-medium truncate">{b.offerLabel}</p>
+                  <div className="flex gap-1.5 mt-1 flex-wrap">
+                    <span className="text-[8px] font-black uppercase tracking-wider bg-gray-100 text-gray-400 px-1.5 py-0.5 rounded-full">{b.category}</span>
+                    <span className="text-[8px] font-black uppercase tracking-wider bg-blue-50 text-blue-400 px-1.5 py-0.5 rounded-full">
+                      {b.maxUses ?? 1} {(b.maxUses ?? 1) === 1 ? "uso" : "usos"}
+                    </span>
+                    {b.ownerId && <span className="text-[8px] font-black uppercase tracking-wider bg-orange-50 text-orange-400 px-1.5 py-0.5 rounded-full">Negocio</span>}
+                    {!b.ownerId && <span className="text-[8px] font-black uppercase tracking-wider bg-green-50 text-green-500 px-1.5 py-0.5 rounded-full">Global</span>}
+                  </div>
+                </div>
+                <div className="flex items-center gap-1.5 flex-shrink-0" onClick={(e) => e.stopPropagation()}>
+                  <button
+                    onClick={() => setExpandedBranchesId(branchesOpen ? null : b._id)}
+                    title="Gestionar sucursales"
+                    className={`size-9 rounded-xl flex items-center justify-center transition-all active:scale-90 ${branchesOpen ? "bg-blue-500 text-white" : "bg-blue-50 text-blue-400 hover:bg-blue-100"}`}
+                  >
+                    <MapPin size={15} />
+                  </button>
+                  <button
+                    onClick={() => adminToggle({ benefitId: b._id })}
+                    className={`size-9 rounded-xl flex items-center justify-center transition-all active:scale-90 ${b.isLive ? "bg-green-500 text-white shadow-sm shadow-green-200" : "bg-gray-100 text-gray-400 hover:bg-green-50 hover:text-green-500"}`}
+                  >
+                    {b.isLive ? <Zap size={15} fill="currentColor" /> : <ZapOff size={15} />}
+                  </button>
+                  <button
+                    onClick={() => adminDelete({ benefitId: b._id })}
+                    className="size-9 rounded-xl flex items-center justify-center bg-red-50 text-red-400 hover:bg-red-100 transition-all active:scale-90"
+                  >
+                    <Trash2 size={14} />
+                  </button>
+                </div>
+              </div>
+
+              {/* Sucursales inline colapsable */}
+              {branchesOpen && (
+                <div className={`bg-white border-2 border-t-0 rounded-b-[1.5rem] px-5 pb-4 ${b.isLive ? "border-green-100" : "border-gray-100"}`}>
+                  <BranchManager
+                    benefitId={b._id as Id<"benefits">}
+                    benefitName={b.merchantName}
+                  />
                 </div>
               )}
-              <div className="flex-1 min-w-0">
-                <p className="font-black text-gray-900 text-xs leading-tight truncate">{b.merchantName}</p>
-                <p className="text-[10px] text-gray-400 font-medium truncate">{b.offerLabel}</p>
-                <div className="flex gap-1.5 mt-1 flex-wrap">
-                  <span className="text-[8px] font-black uppercase tracking-wider bg-gray-100 text-gray-400 px-1.5 py-0.5 rounded-full">{b.category}</span>
-                  <span className="text-[8px] font-black uppercase tracking-wider bg-blue-50 text-blue-400 px-1.5 py-0.5 rounded-full">
-                    {b.maxUses ?? 1} {(b.maxUses ?? 1) === 1 ? "uso" : "usos"}
-                  </span>
-                  {b.ownerId && <span className="text-[8px] font-black uppercase tracking-wider bg-orange-50 text-orange-400 px-1.5 py-0.5 rounded-full">Negocio</span>}
-                  {!b.ownerId && <span className="text-[8px] font-black uppercase tracking-wider bg-green-50 text-green-500 px-1.5 py-0.5 rounded-full">Global</span>}
-                </div>
-              </div>
-              <div className="flex items-center gap-1.5 flex-shrink-0" onClick={(e) => e.stopPropagation()}>
-                <button
-                  onClick={() => adminToggle({ benefitId: b._id })}
-                  className={`size-9 rounded-xl flex items-center justify-center transition-all active:scale-90 ${b.isLive ? "bg-green-500 text-white shadow-sm shadow-green-200" : "bg-gray-100 text-gray-400 hover:bg-green-50 hover:text-green-500"}`}
-                >
-                  {b.isLive ? <Zap size={15} fill="currentColor" /> : <ZapOff size={15} />}
-                </button>
-                <button
-                  onClick={() => adminDelete({ benefitId: b._id })}
-                  className="size-9 rounded-xl flex items-center justify-center bg-red-50 text-red-400 hover:bg-red-100 transition-all active:scale-90"
-                >
-                  <Trash2 size={14} />
-                </button>
-              </div>
             </div>
           );
         })}
