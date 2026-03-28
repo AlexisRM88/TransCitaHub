@@ -148,14 +148,14 @@ export function BeneficiosTab({ userId }: BeneficiosTabProps) {
 
   return (
     <div className="animate-in fade-in slide-in-from-bottom-4 duration-500 pb-10 px-5">
-      <header className="mb-8">
+      <header className="mb-8" data-tour="beneficios-header">
         <h2 className="text-2xl font-black text-gray-900 mb-1">Tus Beneficios</h2>
         <p className="text-sm text-gray-500 font-medium tracking-tight">Exclusivos para el equipo TransCita.</p>
       </header>
 
       {/* Activities Section */}
       {benefitsList.filter(b => b.type === "actividad").length > 0 && (
-        <div className="mb-8">
+        <div className="mb-8" data-tour="actividades-section">
           <h3 className="text-xs font-black uppercase tracking-widest text-purple-500 mb-4 flex items-center gap-2">
             <span className="size-5 bg-purple-50 rounded-lg flex items-center justify-center">🏃</span>
             Actividades
@@ -239,7 +239,7 @@ export function BeneficiosTab({ userId }: BeneficiosTabProps) {
           Descuentos
         </h3>
       )}
-      <div className="space-y-4 lg:grid lg:grid-cols-2 lg:gap-4 lg:space-y-0">
+      <div className="space-y-4 lg:grid lg:grid-cols-2 lg:gap-4 lg:space-y-0" data-tour="descuentos-section">
         {benefitsList.filter(b => b.type !== "actividad").map((benefit) => (
           <CouponTimer
             key={benefit.id}

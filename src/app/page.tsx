@@ -13,6 +13,7 @@ import { SettingsModal } from "@/components/dashboard/SettingsModal";
 import { ProfileCardModal } from "@/components/dashboard/ProfileCardModal";
 import { BeneficiosTab } from "@/components/dashboard/BeneficiosTab";
 import { PerfilTab } from "@/components/dashboard/PerfilTab";
+import { useProductTour } from "@/hooks/useProductTour";
 import { SocialWallTab } from "@/components/dashboard/SocialWallTab";
 import { NegocioOfertasTab } from "@/components/dashboard/NegocioOfertasTab";
 
@@ -44,6 +45,12 @@ export default function Home() {
   const [userPueblo, setUserPueblo] = useState("San Juan");
   const [profileProvisioned, setProfileProvisioned] = useState(false);
   const [previewRole, setPreviewRole] = useState<string | null>(null);
+
+  const { startTour } = useProductTour({
+    setActiveTab,
+    setIsSettingsOpen,
+    setIsProfileOpen,
+  });
 
   const updateRole = useMutation(api.users.updateRole);
   const updateProfile = useMutation(api.users.updateProfile);
@@ -167,6 +174,7 @@ export default function Home() {
           }}
           onClose={() => setIsSettingsOpen(false)}
           onSignOut={() => void signOut()}
+          onStartTour={startTour}
         />
       )}
 

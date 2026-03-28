@@ -138,6 +138,7 @@ export function PerfilTab({ user, profile, userId, onViewCarnet }: PerfilTabProp
           </div>
 
           <button
+            data-tour="ver-carnet-btn"
             onClick={onViewCarnet}
             className="w-full p-5 bg-primary text-gray-900 rounded-3xl font-black shadow-lg shadow-green-500/20 active:scale-95 transition-all text-sm uppercase tracking-widest"
           >

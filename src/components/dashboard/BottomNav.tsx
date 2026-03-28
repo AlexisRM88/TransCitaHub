@@ -19,15 +19,18 @@ function NavButton({
   icon,
   active,
   onClick,
+  dataTour,
 }: {
   label: string;
   icon: React.ReactNode;
   active: boolean;
   onClick: () => void;
+  dataTour?: string;
 }) {
   return (
     <button
       onClick={onClick}
+      data-tour={dataTour}
       className={`flex flex-col items-center gap-1.5 transition-all flex-1 lg:flex-row lg:gap-3 lg:px-4 lg:py-3 lg:rounded-xl lg:flex-none ${active ? "text-primary scale-110 lg:scale-100 lg:bg-green-50" : "text-gray-400 lg:hover:bg-gray-50"}`}
     >
       <div className={`p-2 rounded-2xl transition-all lg:p-0 ${active ? "bg-green-50 lg:bg-transparent" : ""}`}>
@@ -73,6 +76,7 @@ export function BottomNav({ role, activeTab, setActiveTab }: BottomNavProps) {
             icon={<User size={26} strokeWidth={activeTab === "perfil" ? 2.5 : 2} />}
             active={activeTab === "perfil"}
             onClick={() => setActiveTab("perfil")}
+            dataTour="nav-perfil"
           />
         </div>
       </nav>
@@ -102,12 +106,14 @@ export function BottomNav({ role, activeTab, setActiveTab }: BottomNavProps) {
             icon={<ShieldCheck size={26} strokeWidth={activeTab === "comunidad" ? 2.5 : 2} />}
             active={activeTab === "comunidad"}
             onClick={() => setActiveTab("comunidad")}
+            dataTour="nav-beneficios"
           />
           <NavButton
             label="Perfil"
             icon={<User size={26} strokeWidth={activeTab === "perfil" ? 2.5 : 2} />}
             active={activeTab === "perfil"}
             onClick={() => setActiveTab("perfil")}
+            dataTour="nav-perfil"
           />
         </div>
       </nav>
@@ -124,6 +130,7 @@ export function BottomNav({ role, activeTab, setActiveTab }: BottomNavProps) {
           icon={<ShieldCheck size={26} strokeWidth={activeTab === "comunidad" ? 2.5 : 2} />}
           active={activeTab === "comunidad"}
           onClick={() => setActiveTab("comunidad")}
+          dataTour="nav-beneficios"
         />
         <NavButton
           label="Desarrollo"
@@ -142,6 +149,7 @@ export function BottomNav({ role, activeTab, setActiveTab }: BottomNavProps) {
           icon={<User size={26} strokeWidth={activeTab === "perfil" ? 2.5 : 2} />}
           active={activeTab === "perfil"}
           onClick={() => setActiveTab("perfil")}
+          dataTour="nav-perfil"
         />
       </div>
     </nav>

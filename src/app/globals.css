@@ -54,3 +54,71 @@ textarea,
 [role="button"] {
   touch-action: manipulation;
 }
+
+/* ── Driver.js Product Tour Overrides ──────────────────────────────────── */
+.transcita-tour-popover.driver-popover {
+  border-radius: 1.5rem;
+  padding: 1.5rem;
+  font-family: 'Inter', sans-serif;
+  max-width: 340px;
+}
+
+.transcita-tour-popover .driver-popover-title {
+  font-weight: 900;
+  font-size: 1rem;
+  color: #111827;
+  letter-spacing: -0.01em;
+}
+
+.transcita-tour-popover .driver-popover-description {
+  font-size: 0.875rem;
+  color: #6b7280;
+  line-height: 1.6;
+  margin-top: 0.5rem;
+}
+
+.transcita-tour-popover .driver-popover-progress-text {
+  font-size: 0.625rem;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color: #9ca3af;
+}
+
+.transcita-tour-popover .driver-popover-prev-btn {
+  font-weight: 800;
+  font-size: 0.7rem;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  border-radius: 1rem;
+  padding: 0.5rem 1rem;
+  color: #6b7280;
+  border: 1px solid #e5e7eb;
+  background: white;
+}
+
+.transcita-tour-popover .driver-popover-next-btn,
+.transcita-tour-popover .driver-popover-close-btn-text {
+  font-weight: 800;
+  font-size: 0.7rem;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  border-radius: 1rem;
+  padding: 0.5rem 1rem;
+  background-color: #008F39;
+  color: white;
+  border: none;
+  text-shadow: none;
+}
+
+.transcita-tour-popover .driver-popover-next-btn:hover,
+.transcita-tour-popover .driver-popover-close-btn-text:hover {
+  background-color: #007a31;
+}
+
+.transcita-tour-popover .driver-popover-arrow-side-left,
+.transcita-tour-popover .driver-popover-arrow-side-right,
+.transcita-tour-popover .driver-popover-arrow-side-top,
+.transcita-tour-popover .driver-popover-arrow-side-bottom {
+  display: block;
+}

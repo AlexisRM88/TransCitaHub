@@ -1,6 +1,6 @@
 "use client";
 
-import { ShieldCheck, LogOut, User } from "lucide-react";
+import { ShieldCheck, LogOut, User, HelpCircle } from "lucide-react";
 
 interface SettingsModalProps {
   user: { image?: string; name?: string; email?: string } | null | undefined;
@@ -11,6 +11,7 @@ interface SettingsModalProps {
   onUpdateRole: (role: string) => void;
   onClose: () => void;
   onSignOut: () => void;
+  onStartTour?: () => void;
 }
 
 const PUEBLOS = ["San Juan", "Bayamón", "Carolina", "Mayagüez", "Ponce", "Caguas", "Guaynabo"];
@@ -25,6 +26,7 @@ export function SettingsModal({
   onUpdateRole,
   onClose,
   onSignOut,
+  onStartTour,
 }: SettingsModalProps) {
   const isDevUser = user?.email === "cabuyacreativa@gmail.com";
 
@@ -62,6 +64,16 @@ export function SettingsModal({
             </div>
 
             <div className="h-px bg-gray-100 my-4" />
+
+            {onStartTour && (
+              <button
+                onClick={onStartTour}
+                className="w-full p-4 bg-primary/10 text-primary rounded-2xl font-black text-sm uppercase tracking-widest flex items-center justify-center gap-2 hover:bg-primary/20 transition-colors"
+              >
+                <HelpCircle size={18} />
+                Recorrido Guiado
+              </button>
+            )}
 
             {isDevUser && (
               <div className="p-4 bg-green-50 rounded-2xl text-left border border-green-100 mb-4 focus-within:ring-2 ring-primary/20 transition-all">

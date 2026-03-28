@@ -54,7 +54,7 @@ export function ProfileCardModal({ user, profile, role, onClose }: ProfileCardMo
   return (
     <div className="fixed inset-0 z-[110] bg-black/80 backdrop-blur-md flex items-center justify-center p-6 animate-in fade-in duration-300">
       <div className="absolute inset-0" onClick={onClose} />
-      <div className="w-full max-w-[340px] max-h-[90vh] bg-white rounded-[2rem] shadow-2xl relative z-10 overflow-hidden border-8 border-white animate-in zoom-in-95 duration-500 flex flex-col">
+      <div data-tour="carnet-modal" className="w-full max-w-[340px] max-h-[90vh] bg-white rounded-[2rem] shadow-2xl relative z-10 overflow-hidden border-8 border-white animate-in zoom-in-95 duration-500 flex flex-col">
 
         {/* Header */}
         <div className="bg-primary p-6 py-4 text-white text-center flex-shrink-0">
