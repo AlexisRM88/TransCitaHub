@@ -15,7 +15,7 @@ export const tourSteps: TourStep[] = [
     popover: {
       title: "Bienvenido a TransCita Hub",
       description:
-        "En 8 pasos rápidos te mostramos todo lo que puedes hacer: beneficios, actividades, descuentos y tu carnet digital. ¡Vamos!",
+        "En 7 pasos rápidos te mostramos todo lo que puedes hacer: beneficios, actividades, descuentos y tu carnet digital. ¡Vamos!",
       align: "center",
     },
   },
@@ -28,17 +28,6 @@ export const tourSteps: TourStep[] = [
         "Aquí accedes a todas tus actividades y descuentos exclusivos como colaborador de TransCita.",
       side: "over",
       align: "center",
-    },
-  },
-  {
-    element: '[data-tour="beneficios-header"]',
-    meta: { tab: "comunidad" },
-    popover: {
-      title: "Tus Beneficios",
-      description:
-        "Esta sección muestra todos los beneficios disponibles para ti: actividades y descuentos exclusivos.",
-      side: "bottom",
-      align: "start",
     },
   },
   {
@@ -69,7 +58,7 @@ export const tourSteps: TourStep[] = [
     popover: {
       title: "Tab de Perfil",
       description:
-        "En tu perfil puedes ver tu progreso, insignias y acceder a tu carnet digital.",
+        "En tu perfil puedes ver tu progreso e insignias. También encontrarás el botón 'Ver Carnet Digital' para abrir tu identificación oficial.",
       side: "over",
       align: "center",
     },
