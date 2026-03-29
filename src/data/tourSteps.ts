@@ -13,9 +13,10 @@ export interface TourStep extends DriveStep {
 export const tourSteps: TourStep[] = [
   {
     popover: {
-      title: "Bienvenido al Tour de TransCita Hub",
+      title: "Bienvenido a TransCita Hub",
       description:
-        "Te mostraremos cómo aprovechar tus beneficios exclusivos y cómo utilizar tu carnet digital. ¡Comencemos!",
+        "En 8 pasos rápidos te mostramos todo lo que puedes hacer: beneficios, actividades, descuentos y tu carnet digital. ¡Vamos!",
+      align: "center",
     },
   },
   {
@@ -25,7 +26,8 @@ export const tourSteps: TourStep[] = [
       title: "Tab de Beneficios",
       description:
         "Aquí accedes a todas tus actividades y descuentos exclusivos como colaborador de TransCita.",
-      side: "top",
+      side: "over",
+      align: "center",
     },
   },
   {
@@ -35,6 +37,8 @@ export const tourSteps: TourStep[] = [
       title: "Tus Beneficios",
       description:
         "Esta sección muestra todos los beneficios disponibles para ti: actividades y descuentos exclusivos.",
+      side: "bottom",
+      align: "start",
     },
   },
   {
@@ -44,6 +48,8 @@ export const tourSteps: TourStep[] = [
       title: "Actividades",
       description:
         "Aquí verás las actividades disponibles. Puedes ver la fecha, hora, lugar y cupo. Presiona 'Inscribirme' para participar.",
+      side: "bottom",
+      align: "start",
     },
   },
   {
@@ -53,6 +59,8 @@ export const tourSteps: TourStep[] = [
       title: "Descuentos Exclusivos",
       description:
         "Estos son tus descuentos exclusivos. Toca una tarjeta para expandirla, ver los detalles y redimir tu beneficio en el comercio.",
+      side: "top",
+      align: "start",
     },
   },
   {
@@ -62,7 +70,8 @@ export const tourSteps: TourStep[] = [
       title: "Tab de Perfil",
       description:
         "En tu perfil puedes ver tu progreso, insignias y acceder a tu carnet digital.",
-      side: "top",
+      side: "over",
+      align: "center",
     },
   },
   {
@@ -72,6 +81,8 @@ export const tourSteps: TourStep[] = [
       title: "Abrir Carnet Digital",
       description:
         "Presiona este botón para abrir tu identificación digital oficial de TransCita.",
+      side: "top",
+      align: "center",
     },
   },
   {
@@ -81,6 +92,16 @@ export const tourSteps: TourStep[] = [
       title: "Tu Carnet Digital",
       description:
         "Esta es tu identificación oficial. Muestra tu foto, nombre, rol, hora oficial de Puerto Rico y tus logros. Muéstralo cuando lo necesites.",
+      side: "left",
+      align: "center",
+    },
+  },
+  {
+    popover: {
+      title: "¡Ya estas listo!",
+      description:
+        "Conoces todo lo esencial de TransCita Hub. Explora tus beneficios, inscribete en actividades y lleva siempre tu carnet digital contigo. ¡Bienvenido al equipo!",
+      align: "center",
     },
   },
 ];

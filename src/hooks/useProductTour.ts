@@ -106,6 +106,7 @@ export function useProductTour({
   const handleDestroyed = useCallback(() => {
     setIsProfileOpen(false);
     driverRef.current = null;
+    localStorage.setItem("hubtranscita_tour_seen", "true");
   }, [setIsProfileOpen]);
 
   const initDriver = useCallback(() => {
@@ -122,7 +123,7 @@ export function useProductTour({
       nextBtnText: "Siguiente \u2192",
       prevBtnText: "\u2190 Anterior",
       doneBtnText: "\u00a1Entendido!",
-      progressText: "{{current}} de {{total}}",
+      progressText: "Paso {{current}} de {{total}}",
       allowClose: true,
       steps: steps.map((step) => {
         const { meta, ...rest } = step;
@@ -137,13 +138,12 @@ export function useProductTour({
     driverObj.drive();
   }, [handleNext, handlePrev, handleDestroyed]);
 
-  const startTour = useCallback(() => {
+  const startTour = useCallback(async () => {
     setIsSettingsOpen(false);
-
-    setTimeout(() => {
-      setActiveTab("comunidad");
-      setTimeout(initDriver, 300);
-    }, 400);
+    await delay(400);
+    setActiveTab("comunidad");
+    await delay(300);
+    initDriver();
   }, [setActiveTab, setIsSettingsOpen, initDriver]);
 
   return { startTour };

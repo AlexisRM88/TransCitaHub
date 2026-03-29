@@ -122,3 +122,9 @@ textarea,
 .transcita-tour-popover .driver-popover-arrow-side-bottom {
   display: block;
 }
+
+/* Fix: Driver.js aplica overflow:hidden al padre del elemento activo.
+   En el nav con scale-110, eso recorta la etiqueta del botón. */
+nav div:has(> .driver-active-element) {
+  overflow: visible !important;
+}
