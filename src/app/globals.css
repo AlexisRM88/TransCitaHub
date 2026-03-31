@@ -130,57 +130,79 @@ textarea,
 /* ── Driver.js Product Tour Overrides ──────────────────────────────────── */
 .transcita-tour-popover.driver-popover {
   border-radius: 1.5rem;
-  padding: 1.5rem;
+  padding: 1.25rem;
   font-family: 'Inter', sans-serif;
-  max-width: 340px;
+  max-width: 320px;
+  border-top: 3px solid var(--primary);
 }
 
 .transcita-tour-popover .driver-popover-title {
   font-weight: 900;
-  font-size: 1rem;
+  font-size: var(--text-body-lg);   /* respeta la escala del sistema */
   color: #111827;
-  letter-spacing: -0.01em;
+  letter-spacing: -0.015em;
+  line-height: 1.25;
 }
 
 .transcita-tour-popover .driver-popover-description {
-  font-size: 0.875rem;
+  font-size: var(--text-body);       /* respeta la escala del sistema */
   color: #6b7280;
-  line-height: 1.6;
-  margin-top: 0.5rem;
+  line-height: 1.55;
+  margin-top: 0.375rem;
+}
+
+/* Footer: progress a la izquierda, botones a la derecha — una sola fila */
+.transcita-tour-popover .driver-popover-footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.5rem;
+  margin-top: 0.875rem;
+  padding-top: 0.75rem;
+  border-top: 1px solid #f3f4f6;
 }
 
 .transcita-tour-popover .driver-popover-progress-text {
-  font-size: 0.625rem;
+  font-size: var(--text-label);      /* respeta la escala del sistema */
   font-weight: 800;
   text-transform: uppercase;
-  letter-spacing: 0.1em;
+  letter-spacing: 0.08em;
   color: #9ca3af;
 }
 
+/* Botones compactos: padding reducido, sin desperdiciar espacio */
 .transcita-tour-popover .driver-popover-prev-btn {
-  font-weight: 800;
-  font-size: 0.7rem;
+  font-weight: 700;
+  font-size: var(--text-label);      /* respeta la escala del sistema */
   text-transform: uppercase;
   letter-spacing: 0.05em;
-  border-radius: 1rem;
-  padding: 0.5rem 1rem;
-  color: #6b7280;
-  border: 1px solid #e5e7eb;
-  background: white;
+  border-radius: 0.75rem;
+  padding: 0.375rem 0.75rem;
+  color: #9ca3af;
+  border: none;
+  background: #f3f4f6;
+  line-height: 1;
+  transition: background 0.15s;
+}
+
+.transcita-tour-popover .driver-popover-prev-btn:hover {
+  background: #e5e7eb;
 }
 
 .transcita-tour-popover .driver-popover-next-btn,
 .transcita-tour-popover .driver-popover-close-btn-text {
   font-weight: 800;
-  font-size: 0.7rem;
+  font-size: var(--text-label);      /* respeta la escala del sistema */
   text-transform: uppercase;
   letter-spacing: 0.05em;
-  border-radius: 1rem;
-  padding: 0.5rem 1rem;
-  background-color: #008F39;
+  border-radius: 0.75rem;
+  padding: 0.375rem 0.875rem;
+  background-color: var(--primary);
   color: white;
   border: none;
   text-shadow: none;
+  line-height: 1;
+  transition: background 0.15s;
 }
 
 .transcita-tour-popover .driver-popover-next-btn:hover,
