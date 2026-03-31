@@ -31,12 +31,12 @@ function NavButton({
     <button
       onClick={onClick}
       data-tour={dataTour}
-      className={`flex flex-col items-center gap-1.5 transition-all flex-1 lg:flex-row lg:gap-3 lg:px-4 lg:py-3 lg:rounded-xl lg:flex-none ${active ? "text-primary scale-110 lg:scale-100 lg:bg-green-50" : "text-gray-400 lg:hover:bg-gray-50"}`}
+      className={`flex flex-col items-center gap-1 transition-all flex-1 min-w-0 overflow-hidden lg:flex-row lg:gap-3 lg:px-4 lg:py-3 lg:rounded-xl lg:flex-none lg:overflow-visible ${active ? "text-primary scale-110 lg:scale-100 lg:bg-green-50" : "text-gray-400 lg:hover:bg-gray-50"}`}
     >
-      <div className={`p-2 rounded-2xl transition-all lg:p-0 ${active ? "bg-green-50 lg:bg-transparent" : ""}`}>
+      <div className={`p-1.5 rounded-2xl transition-all lg:p-0 ${active ? "bg-green-50 lg:bg-transparent" : ""}`}>
         {icon}
       </div>
-      <span className="text-micro-label lg:text-sm lg:tracking-normal lg:font-bold lg:normal-case">{label}</span>
+      <span className="text-micro-label truncate w-full text-center lg:text-sm lg:tracking-normal lg:font-bold lg:normal-case lg:truncate-none lg:w-auto">{label}</span>
     </button>
   );
 }
