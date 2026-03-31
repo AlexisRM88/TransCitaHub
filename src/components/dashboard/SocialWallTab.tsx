@@ -65,7 +65,7 @@ export function SocialWallTab() {
               </div>
               <div>
                 <h4 className="font-black text-gray-900 text-sm leading-tight">{post.author}</h4>
-                <p className="text-[10px] text-gray-400 font-bold uppercase tracking-widest">{post.time} • Público</p>
+                <p className="text-micro-label text-gray-600">{post.time} • Público</p>
               </div>
             </div>
             <div className="px-5 pb-4">
@@ -108,16 +108,16 @@ export function SocialWallTab() {
         <div className="grid grid-cols-2 gap-4">
           <div className="bg-gray-50 p-4 rounded-3xl">
             <p className="text-2xl font-black text-gray-900 leading-tight">2008</p>
-            <p className="text-[10px] font-black uppercase text-gray-400 tracking-widest">Fundado</p>
+            <p className="text-micro-label text-gray-600">Fundado</p>
           </div>
           <div className="bg-gray-50 p-4 rounded-3xl">
             <p className="text-2xl font-black text-gray-900 leading-tight">100%</p>
-            <p className="text-[10px] font-black uppercase text-gray-400 tracking-widest">Local</p>
+            <p className="text-micro-label text-gray-600">Local</p>
           </div>
         </div>
 
         <div className="mt-12 pt-8 border-t border-gray-100 text-center">
-          <p className="text-[10px] font-black uppercase tracking-[0.2em] text-gray-400 mb-4">Información de Contacto</p>
+          <p className="text-micro-label text-gray-600 mb-4">Información de Contacto</p>
           <div className="space-y-4">
             <div className="flex flex-col items-center">
               <p className="text-sm font-black text-gray-900">Alexis Roman</p>

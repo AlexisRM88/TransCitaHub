@@ -97,7 +97,7 @@ export function PerfilTab({ user, profile, userId, onViewCarnet }: PerfilTabProp
             <div className="w-full h-2 bg-gray-100 rounded-full mt-4 overflow-hidden border border-gray-50">
               <div className="h-full bg-primary w-[65%] rounded-full shadow-[0_0_10px_rgba(0,143,57,0.3)]" />
             </div>
-            <p className="text-[10px] font-black text-gray-400 uppercase tracking-widest mt-2">650 / 1000 XP para Nivel 15</p>
+            <p className="text-micro-label text-gray-600 mt-2">650 / 1000 XP para Nivel 15</p>
           </div>
 
           <EmployeeDocuments userId={userId} />
@@ -109,12 +109,12 @@ export function PerfilTab({ user, profile, userId, onViewCarnet }: PerfilTabProp
             <div className="bg-white p-5 rounded-3xl border border-gray-100 shadow-sm transition-all hover:scale-105 active:scale-95">
               <Award className="text-primary mb-3" size={24} />
               <p className="text-2xl font-black text-gray-900 leading-tight">12</p>
-              <p className="text-[10px] font-black uppercase text-gray-400 tracking-widest">Insignias</p>
+              <p className="text-micro-label text-gray-600">Insignias</p>
             </div>
             <div className="bg-white p-5 rounded-3xl border border-gray-100 shadow-sm transition-all hover:scale-105 active:scale-95">
               <Zap className="text-orange-500 mb-3" size={24} />
               <p className="text-2xl font-black text-gray-900 leading-tight">4.9</p>
-              <p className="text-[10px] font-black uppercase text-gray-400 tracking-widest">Calificación</p>
+              <p className="text-micro-label text-gray-600">Calificación</p>
             </div>
           </div>
 
@@ -123,14 +123,14 @@ export function PerfilTab({ user, profile, userId, onViewCarnet }: PerfilTabProp
               <ShieldCheck size={120} />
             </div>
             <div className="relative z-10">
-              <h4 className="text-xs font-black uppercase tracking-widest text-primary mb-2">Resumen de Carrera</h4>
+              <h4 className="text-micro-label text-primary mb-2">Resumen de Carrera</h4>
               <div className="space-y-4">
                 <div className="flex justify-between items-end border-b border-white/10 pb-2">
-                  <span className="text-xs text-gray-400 font-medium">Servicios Realizados</span>
+                  <span className="text-caption text-gray-400 font-medium">Servicios Realizados</span>
                   <span className="text-xl font-black">1,240</span>
                 </div>
                 <div className="flex justify-between items-end border-b border-white/10 pb-2">
-                  <span className="text-xs text-gray-400 font-medium">Antigüedad</span>
+                  <span className="text-caption text-gray-400 font-medium">Antigüedad</span>
                   <span className="text-xl font-black">2.5 Años</span>
                 </div>
               </div>

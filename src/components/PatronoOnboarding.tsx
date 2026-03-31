@@ -121,7 +121,7 @@ export function PatronoOnboarding({ userId }: { userId: string }) {
             <div className="bg-white rounded-3xl p-6 border border-gray-100 shadow-sm mb-6 flex flex-col sm:flex-row items-center gap-6">
                 <div className="flex-1 w-full">
                     <div className="flex justify-between items-end mb-2">
-                        <span className="text-xs font-black uppercase tracking-wider text-gray-400">Progreso del Tour</span>
+                        <span className="text-micro-label text-gray-600">Progreso del Tour</span>
                         <span className="text-lg font-black text-green-500">{progressPercentage}%</span>
                     </div>
                     <div className="h-3 bg-gray-100 rounded-full overflow-hidden">
@@ -170,7 +170,7 @@ export function PatronoOnboarding({ userId }: { userId: string }) {
                                     }`}>
                                         {isCompleted ? <CheckCircle2 size={24} /> : <module.icon size={24} />}
                                     </div>
-                                    <span className="text-[10px] font-black uppercase tracking-widest text-gray-400 bg-gray-50 px-3 py-1 rounded-full">
+                                    <span className="text-micro-label text-gray-600 bg-gray-50 px-3 py-1 rounded-full">
                                         Módulo {index + 1}
                                     </span>
                                 </div>

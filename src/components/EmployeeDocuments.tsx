@@ -53,7 +53,7 @@ export function EmployeeDocuments({ userId }: { userId: string }) {
             </div>
 
             <div className="space-y-3">
-                <p className="text-[10px] font-black text-gray-400 uppercase tracking-widest mb-1">Pre-requisitos</p>
+                <p className="text-micro-label text-gray-600 mb-1">Pre-requisitos</p>
                 {docsList.map((doc, idx) => (
                     <div key={idx} className={`flex items-center justify-between p-3 rounded-2xl border ${doc.value ? 'bg-green-50/30 border-green-100' : 'bg-gray-50 border-gray-100/50'}`}>
                         <span className={`text-sm font-bold ${doc.value ? 'text-gray-900' : 'text-gray-500'}`}>
@@ -63,7 +63,7 @@ export function EmployeeDocuments({ userId }: { userId: string }) {
                             <CheckCircle2 size={20} className="text-green-500" />
                         ) : (
                             <div className="flex items-center gap-1.5 text-orange-400">
-                                <span className="text-[10px] font-black uppercase tracking-wider">Pendiente</span>
+                                <span className="text-micro-label">Pendiente</span>
                                 <AlertCircle size={16} />
                             </div>
                         )}
@@ -71,7 +71,7 @@ export function EmployeeDocuments({ userId }: { userId: string }) {
                 ))}
 
                 <div className="pt-4 mt-4 border-t border-gray-100">
-                    <p className="text-[10px] font-black text-gray-400 uppercase tracking-widest mb-3">Estado Final</p>
+                    <p className="text-micro-label text-gray-600 mb-3">Estado Final</p>
                     <div className={`p-4 rounded-3xl border-2 transition-all flex items-center justify-between ${autorizacion.value ? 'bg-primary/5 border-primary shadow-lg shadow-green-100' : 'bg-gray-50 border-dashed border-gray-200 opacity-60'}`}>
                         <div className="flex items-center gap-3">
                             <div className={`size-10 rounded-xl flex items-center justify-center ${autorizacion.value ? 'bg-primary text-white' : 'bg-gray-200 text-gray-400'}`}>
@@ -82,16 +82,16 @@ export function EmployeeDocuments({ userId }: { userId: string }) {
                             </span>
                         </div>
                         {autorizacion.value ? (
-                            <span className="bg-primary text-gray-900 text-[10px] font-black px-3 py-1 rounded-full uppercase tracking-widest animate-pulse">AUTORIZADO</span>
+                            <span className="bg-primary text-gray-900 text-micro-label px-3 py-1 rounded-full animate-pulse">AUTORIZADO</span>
                         ) : (
-                            <span className="text-[10px] font-black text-gray-400 uppercase tracking-widest">EN PROCESO</span>
+                            <span className="text-micro-label text-gray-600">EN PROCESO</span>
                         )}
                     </div>
                 </div>
             </div>
             
             {progressPerc < 100 && !autorizacion.value && (
-                <p className="text-[10px] text-gray-400 font-medium mt-4 text-center">
+                <p className="text-caption text-gray-600 font-medium mt-4 text-center">
                     Comunícate con Recursos Humanos para entregar los documentos o solicitar tu autorización.
                 </p>
             )}

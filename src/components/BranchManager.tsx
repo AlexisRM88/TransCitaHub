@@ -229,13 +229,13 @@ export function BranchManager({ benefitId, benefitName }: BranchManagerProps) {
     <div className="mt-3 space-y-2">
       {/* Header */}
       <div className="flex items-center justify-between">
-        <p className="text-[10px] font-black uppercase tracking-widest text-gray-400 flex items-center gap-1">
+        <p className="text-micro-label text-gray-600 flex items-center gap-1">
           <MapPin size={10} /> Sucursales {branches !== undefined && `(${branches.length})`}
         </p>
         {!showForm && (
           <button
             onClick={openAddForm}
-            className="text-[10px] font-black uppercase tracking-widest text-green-600 flex items-center gap-1 bg-green-50 px-2.5 py-1 rounded-xl hover:bg-green-100 transition-colors"
+            className="text-micro-label text-green-600 flex items-center gap-1 bg-green-50 px-2.5 py-1 rounded-xl hover:bg-green-100 transition-colors"
           >
             <Plus size={11} /> Añadir
           </button>
@@ -251,16 +251,16 @@ export function BranchManager({ benefitId, benefitName }: BranchManagerProps) {
               className="bg-white border border-gray-100 rounded-2xl px-4 py-3 flex items-center gap-3 shadow-sm"
             >
               {/* Number badge */}
-              <div className="size-7 rounded-xl bg-green-50 text-primary flex items-center justify-center text-[10px] font-black flex-shrink-0">
+              <div className="size-7 rounded-xl bg-green-50 text-primary flex items-center justify-center text-caption font-black flex-shrink-0">
                 {i + 1}
               </div>
 
               <div className="flex-1 min-w-0">
-                <p className="text-xs font-black text-gray-900 truncate">{branch.name}</p>
+                <p className="text-caption font-black text-gray-900 truncate">{branch.name}</p>
                 {branch.address && (
-                  <p className="text-[10px] text-gray-500 font-medium truncate">{branch.address}</p>
+                  <p className="text-caption text-gray-500 font-medium truncate">{branch.address}</p>
                 )}
-                <p className="text-[10px] text-gray-300 font-medium mt-0.5">
+                <p className="text-caption text-gray-300 font-medium mt-0.5">
                   {branch.lat.toFixed(5)}, {branch.lng.toFixed(5)}
                 </p>
               </div>
@@ -301,14 +301,14 @@ export function BranchManager({ benefitId, benefitName }: BranchManagerProps) {
       {branches?.length === 0 && !showForm && (
         <div className="text-center py-3 border border-dashed border-gray-200 rounded-2xl">
           <MapPin size={20} className="text-gray-200 mx-auto mb-1" />
-          <p className="text-[10px] text-gray-300 font-bold">Sin sucursales — añade la primera ubicación.</p>
+          <p className="text-caption text-gray-300 font-bold">Sin sucursales — añade la primera ubicación.</p>
         </div>
       )}
 
       {/* Inline form */}
       {showForm && (
         <div className="bg-green-50 border border-green-100 rounded-2xl p-4 space-y-3">
-          <p className="text-[10px] font-black uppercase tracking-widest text-green-700">
+          <p className="text-micro-label text-green-700">
             {editingId ? "✏️ Editar Sucursal" : `➕ Nueva Sucursal`}
           </p>
 
@@ -333,7 +333,7 @@ export function BranchManager({ benefitId, benefitName }: BranchManagerProps) {
           {/* Divider */}
           <div className="flex items-center gap-2">
             <div className="flex-1 h-px bg-green-100" />
-            <p className="text-[9px] font-black uppercase tracking-widest text-green-400">Ubicación</p>
+            <p className="text-micro-label text-green-400">Ubicación</p>
             <div className="flex-1 h-px bg-green-100" />
           </div>
 
@@ -341,7 +341,7 @@ export function BranchManager({ benefitId, benefitName }: BranchManagerProps) {
           <button
             onClick={handleGPS}
             disabled={geoState === "loading"}
-            className={`w-full flex items-center justify-center gap-2 py-3 rounded-xl text-[11px] font-black uppercase tracking-wider transition-all border ${
+            className={`w-full flex items-center justify-center gap-2 py-3 rounded-xl text-micro-label transition-all border ${
               geoState === "success"
                 ? "bg-green-500 text-white border-green-500 shadow-md shadow-green-200"
                 : "bg-white border-green-200 text-green-700 hover:bg-green-100"
@@ -358,7 +358,7 @@ export function BranchManager({ benefitId, benefitName }: BranchManagerProps) {
 
           {/* GPS feedback message */}
           {geoMsg && geoState !== "success" && (
-            <div className={`flex items-start gap-2 text-[10px] font-bold ${geoMsg.color}`}>
+            <div className={`flex items-start gap-2 text-caption font-bold ${geoMsg.color}`}>
               <AlertCircle size={12} className="flex-shrink-0 mt-0.5" />
               <span>{geoMsg.text}</span>
             </div>
@@ -366,7 +366,7 @@ export function BranchManager({ benefitId, benefitName }: BranchManagerProps) {
 
           {/* Option 2 — paste Google Maps link */}
           <div>
-            <label className="text-[9px] font-black uppercase tracking-widest text-green-600 flex items-center gap-1 mb-1.5">
+            <label className="text-micro-label text-green-600 flex items-center gap-1 mb-1.5">
               <Link2 size={9} /> O pega un enlace de Google Maps / Apple Maps
             </label>
             <div className="relative">
@@ -375,7 +375,7 @@ export function BranchManager({ benefitId, benefitName }: BranchManagerProps) {
                 value={form.mapsUrl}
                 onChange={(e) => handleMapsUrl(e.target.value)}
                 placeholder="https://maps.app.goo.gl/... o https://www.google.com/maps/@..."
-                className={`w-full bg-white rounded-xl px-3 py-2.5 pr-8 text-xs font-medium text-gray-700 focus:outline-none focus:ring-2 border transition-colors ${
+                className={`w-full bg-white rounded-xl px-3 py-2.5 pr-8 text-caption font-medium text-gray-700 focus:outline-none focus:ring-2 border transition-colors ${
                   urlState === "success" ? "border-green-400 focus:ring-green-200" :
                   urlState === "error" ? "border-red-300 focus:ring-red-100" :
                   "border-green-100 focus:ring-green-200"
@@ -389,17 +389,17 @@ export function BranchManager({ benefitId, benefitName }: BranchManagerProps) {
               </div>
             </div>
             {urlState === "loading" && (
-              <p className="text-[10px] text-green-600 font-bold mt-1 flex items-center gap-1">
+              <p className="text-caption text-green-600 font-bold mt-1 flex items-center gap-1">
                 <Loader2 size={9} className="animate-spin" /> Resolviendo enlace…
               </p>
             )}
             {urlState === "success" && (
-              <p className="text-[10px] text-green-600 font-bold mt-1 flex items-center gap-1">
+              <p className="text-caption text-green-600 font-bold mt-1 flex items-center gap-1">
                 <CheckCircle2 size={9} /> Coordenadas extraídas correctamente
               </p>
             )}
             {urlState === "error" && (
-              <p className="text-[10px] text-red-500 font-bold mt-1 flex items-center gap-1">
+              <p className="text-caption text-red-500 font-bold mt-1 flex items-center gap-1">
                 <AlertCircle size={9} /> No se pudo extraer la ubicación. Prueba abriendo Google Maps, toca "Compartir" y copia el enlace.
               </p>
             )}
@@ -407,7 +407,7 @@ export function BranchManager({ benefitId, benefitName }: BranchManagerProps) {
 
           {/* Option 3 — manual coordinates */}
           <div>
-            <label className="text-[9px] font-black uppercase tracking-widest text-green-600 flex items-center gap-1 mb-1.5">
+            <label className="text-micro-label text-green-600 flex items-center gap-1 mb-1.5">
               <MapPin size={9} /> O ingresa coordenadas manualmente
             </label>
             <div className="grid grid-cols-2 gap-2">
@@ -436,7 +436,7 @@ export function BranchManager({ benefitId, benefitName }: BranchManagerProps) {
               href={`https://maps.google.com/?q=${form.lat},${form.lng}`}
               target="_blank"
               rel="noopener noreferrer"
-              className="flex items-center justify-center gap-1.5 py-2 bg-white border border-blue-100 text-blue-500 rounded-xl text-[11px] font-black uppercase tracking-wider hover:bg-blue-50 transition-colors"
+              className="flex items-center justify-center gap-1.5 py-2 bg-white border border-blue-100 text-blue-500 rounded-xl text-micro-label hover:bg-blue-50 transition-colors"
             >
               <ExternalLink size={12} /> Verificar en Google Maps
             </a>
@@ -446,14 +446,14 @@ export function BranchManager({ benefitId, benefitName }: BranchManagerProps) {
           <div className="flex gap-2 pt-1">
             <button
               onClick={handleCancel}
-              className="flex-1 py-2.5 bg-white border border-gray-200 text-gray-400 rounded-xl text-[11px] font-black uppercase tracking-wider flex items-center justify-center gap-1.5 hover:bg-gray-50 transition-colors"
+              className="flex-1 py-2.5 bg-white border border-gray-200 text-gray-600 rounded-xl text-micro-label flex items-center justify-center gap-1.5 hover:bg-gray-50 transition-colors"
             >
               <X size={13} /> Cancelar
             </button>
             <button
               onClick={handleSave}
               disabled={saving || !isFormValid}
-              className="flex-1 py-2.5 bg-green-500 text-white rounded-xl text-[11px] font-black uppercase tracking-wider flex items-center justify-center gap-1.5 shadow-md shadow-green-200 disabled:opacity-50 hover:bg-green-600 transition-colors"
+              className="flex-1 py-2.5 bg-green-500 text-white rounded-xl text-micro-label flex items-center justify-center gap-1.5 shadow-md shadow-green-200 disabled:opacity-50 hover:bg-green-600 transition-colors"
             >
               {saving
                 ? <Loader2 size={13} className="animate-spin" />

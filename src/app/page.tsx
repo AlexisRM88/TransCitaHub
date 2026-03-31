@@ -145,7 +145,7 @@ export default function Home() {
 
       {/* Admin preview mode banner */}
       {previewRole && (
-        <div className="fixed top-0 inset-x-0 z-[200] bg-amber-400 text-amber-900 text-[11px] font-black uppercase tracking-widest text-center py-2.5 flex items-center justify-center gap-3 shadow-md lg:left-64">
+        <div className="fixed top-0 inset-x-0 z-[200] bg-amber-400 text-amber-900 text-micro-label text-center py-2.5 flex items-center justify-center gap-3 shadow-md lg:left-64">
           <span>⚠ Viendo como: {previewRole}</span>
           <button
             onClick={() => setPreviewRole(null)}
@@ -198,7 +198,7 @@ export default function Home() {
           onSettingsClick={() => setIsSettingsOpen(true)}
         />
 
-        <main className={`pb-28 lg:pb-8 ${previewRole ? "pt-10" : "pt-2"}`}>
+        <main className={`pb-36 lg:pb-8 ${previewRole ? "pt-10" : "pt-2"}`}>
           <div className="lg:max-w-5xl lg:mx-auto lg:px-8">
             {activeTab === "gestion" && (effectiveRole === "Patrono" || effectiveRole === "Negocio" || effectiveRole === "Admin") && userId && (
               <Suspense fallback={<TabSpinner />}>

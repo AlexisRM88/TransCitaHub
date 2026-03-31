@@ -41,7 +41,7 @@ export function PatronoEvaluation({ userId }: { userId: string }) {
                     <h2 className="text-2xl font-black text-gray-900">Evaluación de Empleados</h2>
                     <p className="text-sm text-gray-500 font-medium">Monitorea el progreso de adiestramiento de tu equipo.</p>
                 </div>
-                <div className="bg-blue-50 text-blue-700 px-3 py-1 rounded-full text-[10px] font-black uppercase tracking-wider flex items-center gap-1">
+                <div className="bg-blue-50 text-blue-700 px-3 py-1 rounded-full text-micro-label flex items-center gap-1">
                     <Users size={12} /> {employeeProgress.length} Empleados
                 </div>
             </div>
@@ -93,13 +93,13 @@ export function PatronoEvaluation({ userId }: { userId: string }) {
                                     <div className="flex items-center gap-4 mt-1">
                                         <div className="flex items-center gap-1.5">
                                             <Award size={14} className="text-orange-400" />
-                                            <span className="text-[10px] font-bold text-gray-500 uppercase tracking-wider">
+                                            <span className="text-caption font-bold text-gray-500 uppercase tracking-wider">
                                                 {emp.completedModules.length} Módulos completados
                                             </span>
                                         </div>
                                         <div className="flex items-center gap-1.5">
                                             <Clock size={14} className="text-blue-400" />
-                                            <span className="text-[10px] font-bold text-gray-500 uppercase tracking-wider">
+                                            <span className="text-caption font-bold text-gray-500 uppercase tracking-wider">
                                                 Activo hoy
                                             </span>
                                         </div>
@@ -127,15 +127,15 @@ export function PatronoEvaluation({ userId }: { userId: string }) {
                             {expandedEmpId === emp.userId && (
                                 <div className="animate-in fade-in slide-in-from-top-2 duration-300">
                                     <div className="mt-6 pt-4 border-t border-gray-100">
-                                        <h4 className="text-[10px] font-black uppercase tracking-widest text-gray-500 mb-3 flex items-center gap-2">
+                                        <h4 className="text-micro-label text-gray-500 mb-3 flex items-center gap-2">
                                             <Award size={12} /> Adiestramientos Completados ({emp.completedModules.length})
                                         </h4>
                                         {emp.completedModules.length === 0 ? (
-                                            <p className="text-xs text-gray-400 font-medium italic mb-2">Este empleado aún no ha completado ningún adiestramiento.</p>
+                                            <p className="text-xs text-gray-600 font-medium italic mb-2">Este empleado aún no ha completado ningún adiestramiento.</p>
                                         ) : (
                                             <div className="flex flex-wrap gap-2 mb-2">
                                                 {emp.completedModules.map(mod => (
-                                                    <span key={mod} className="bg-orange-50 text-orange-600 px-3 py-1.5 rounded-xl text-[11px] font-black border border-orange-100/50 uppercase tracking-widest">
+                                                    <span key={mod} className="bg-orange-50 text-orange-600 px-3 py-1.5 rounded-xl text-micro-label border border-orange-100/50">
                                                         {mod.replace(/-/g, ' ')}
                                                     </span>
                                                 ))}
@@ -154,7 +154,7 @@ export function PatronoEvaluation({ userId }: { userId: string }) {
             <div className="bg-gray-900 rounded-[2.5rem] p-8 text-white relative overflow-hidden">
                 <div className="relative z-10 flex justify-between items-center">
                     <div>
-                        <p className="text-[10px] font-black uppercase tracking-widest text-gray-400 mb-2">Estado General del Equipo</p>
+                        <p className="text-micro-label text-gray-600 mb-2">Estado General del Equipo</p>
                         <h3 className="text-3xl font-black">78% Completado</h3>
                         <p className="text-xs font-bold text-green-400 mt-1">¡Buen ritmo este mes!</p>
                     </div>

@@ -49,13 +49,13 @@ function ResumenSection({ onPreviewRole }: { onPreviewRole?: (role: string | nul
         {stats.map((s, i) => (
           <div key={i} className={`${s.bg} rounded-[1.5rem] p-5 border border-white`}>
             <p className={`text-3xl font-black ${s.color}`}>{s.value}</p>
-            <p className="text-[10px] font-black uppercase tracking-widest text-gray-500 mt-1">{s.label}</p>
+            <p className="text-micro-label text-gray-600 mt-1">{s.label}</p>
           </div>
         ))}
       </div>
 
       <div className="bg-white rounded-[2rem] border border-gray-100 p-5">
-        <h4 className="text-[10px] font-black uppercase tracking-widest text-gray-400 mb-4 flex items-center gap-2">
+        <h4 className="text-micro-label text-gray-600 mb-4 flex items-center gap-2">
           <TrendingUp size={12} /> Estado del Sistema
         </h4>
         <div className="space-y-3">
@@ -67,7 +67,7 @@ function ResumenSection({ onPreviewRole }: { onPreviewRole?: (role: string | nul
           ].map((item, i) => (
             <div key={i} className="flex items-center justify-between">
               <span className="text-sm font-bold text-gray-600">{item.label}</span>
-              <span className={`flex items-center gap-1 text-[10px] font-black uppercase ${item.ok ? "text-green-500" : "text-red-400"}`}>
+              <span className={`flex items-center gap-1 text-micro-label ${item.ok ? "text-green-500" : "text-red-400"}`}>
                 {item.ok ? <CheckCircle size={14} /> : <AlertCircle size={14} />}
                 {item.ok ? "OK" : "Revisar"}
               </span>
@@ -80,7 +80,7 @@ function ResumenSection({ onPreviewRole }: { onPreviewRole?: (role: string | nul
       <div className="bg-white rounded-[2rem] border border-gray-100 overflow-hidden">
         <div className="px-5 pt-5 pb-3 flex items-center gap-2">
           <TrendingUp size={14} className="text-green-500" />
-          <h4 className="text-[10px] font-black uppercase tracking-widest text-gray-400">
+          <h4 className="text-micro-label text-gray-600">
             Rendimiento de Beneficios — Últimos 7 días
           </h4>
         </div>
@@ -94,22 +94,22 @@ function ResumenSection({ onPreviewRole }: { onPreviewRole?: (role: string | nul
               <div key={b._id} className="flex items-center justify-between px-5 py-3 hover:bg-gray-50 transition-colors">
                 <div className="flex-1 min-w-0">
                   <p className="text-sm font-black text-gray-900 truncate">{b.merchantName}</p>
-                  <p className="text-[10px] text-gray-400 font-medium truncate">{b.offerLabel}</p>
+                  <p className="text-caption text-gray-600 font-medium truncate">{b.offerLabel}</p>
                 </div>
                 <div className="flex items-center gap-3 shrink-0 text-right">
                   <div>
                     <p className="text-xs font-black text-blue-600">{b.opens7d}</p>
-                    <p className="text-[9px] text-gray-400 uppercase">Aperturas</p>
+                    <p className="text-caption text-gray-600 uppercase">Aperturas</p>
                   </div>
                   <div>
                     <p className="text-xs font-black text-green-600">{b.totalRedeems}</p>
-                    <p className="text-[9px] text-gray-400 uppercase">Redenc.</p>
+                    <p className="text-caption text-gray-600 uppercase">Redenc.</p>
                   </div>
                   <div>
                     <p className="text-xs font-black text-orange-500">{b.conversionRate}%</p>
-                    <p className="text-[9px] text-gray-400 uppercase">Conv.</p>
+                    <p className="text-caption text-gray-600 uppercase">Conv.</p>
                   </div>
-                  <span className={`text-[9px] font-black uppercase px-2 py-1 rounded-full ${b.isLive ? "bg-green-100 text-green-600" : "bg-gray-100 text-gray-400"}`}>
+                  <span className={`text-micro-label px-2 py-1 rounded-full ${b.isLive ? "bg-green-100 text-green-600" : "bg-gray-100 text-gray-600"}`}>
                     {b.isLive ? "Live" : "Off"}
                   </span>
                 </div>
@@ -122,7 +122,7 @@ function ResumenSection({ onPreviewRole }: { onPreviewRole?: (role: string | nul
       {/* Preview mode selector */}
       {onPreviewRole && (
         <div className="bg-amber-50 border border-amber-100 rounded-[2rem] p-5">
-          <p className="text-[10px] font-black uppercase tracking-widest text-amber-600 mb-3 flex items-center gap-1.5">
+          <p className="text-micro-label text-amber-600 mb-3 flex items-center gap-1.5">
             👁 Previsualizar como Rol
           </p>
           <div className="grid grid-cols-2 gap-2">
@@ -130,21 +130,21 @@ function ResumenSection({ onPreviewRole }: { onPreviewRole?: (role: string | nul
               <button
                 key={r}
                 onClick={() => onPreviewRole(r)}
-                className="py-3 rounded-2xl text-xs font-black uppercase tracking-widest bg-white border border-amber-100 text-amber-700 hover:bg-amber-100 transition-colors active:scale-95"
+                className="py-3 rounded-2xl text-micro-label bg-white border border-amber-100 text-amber-700 hover:bg-amber-100 transition-colors active:scale-95"
               >
                 {r}
               </button>
             ))}
           </div>
-          <p className="text-[9px] text-amber-400 font-medium mt-2 text-center">
+          <p className="text-caption text-amber-400 font-medium mt-2 text-center">
             Verás la interfaz de ese rol con tus propios datos.
           </p>
         </div>
       )}
 
       <div className="bg-gray-950 rounded-[2rem] p-6 text-white">
-        <p className="text-[10px] font-black uppercase tracking-widest text-primary mb-3">Versión Beta</p>
-        <p className="text-xs text-gray-400 leading-relaxed font-medium">
+        <p className="text-micro-label text-primary mb-3">Versión Beta</p>
+        <p className="text-caption text-gray-600 leading-relaxed font-medium">
           Actualmente en control total del desarrollador. Los cambios se sincronizan con Convex en tiempo real.
           Para dar autonomía a roles, usa el panel de Usuarios.
         </p>
@@ -233,10 +233,10 @@ function UsuariosSection() {
               </div>
               <div className="flex-1 min-w-0">
                 <p className="font-black text-gray-900 text-sm leading-tight truncate">{p.fullName}</p>
-                <p className="text-[10px] text-gray-400 font-medium truncate">{p.email}</p>
+                <p className="text-caption text-gray-600 font-medium truncate">{p.email}</p>
               </div>
               <div className="flex items-center gap-2 flex-shrink-0">
-                <span className={`text-[9px] font-black uppercase tracking-widest px-2.5 py-1 rounded-full border ${ROLE_COLORS[p.role] ?? "bg-gray-50 text-gray-400"}`}>
+                <span className={`text-micro-label px-2.5 py-1 rounded-full border ${ROLE_COLORS[p.role] ?? "bg-gray-50 text-gray-600"}`}>
                   {p.role}
                 </span>
                 <ChevronRight size={14} className={`text-gray-300 transition-transform ${editingId === p.userId ? "rotate-90" : ""}`} />
@@ -248,7 +248,7 @@ function UsuariosSection() {
               <div className="px-4 pb-4 pt-1 border-t border-gray-50 space-y-3 bg-gray-50/50">
                 <div className="grid grid-cols-2 gap-2">
                   <div>
-                    <label className="text-[9px] font-black uppercase tracking-widest text-gray-400 block mb-1">Rol</label>
+                    <label className="text-micro-label text-gray-600 block mb-1">Rol</label>
                     <select
                       value={editRole}
                       onChange={(e) => setEditRole(e.target.value)}
@@ -258,7 +258,7 @@ function UsuariosSection() {
                     </select>
                   </div>
                   <div>
-                    <label className="text-[9px] font-black uppercase tracking-widest text-gray-400 block mb-1">Base</label>
+                    <label className="text-micro-label text-gray-600 block mb-1">Base</label>
                     <select
                       value={editBase}
                       onChange={(e) => setEditBase(e.target.value)}
@@ -272,13 +272,13 @@ function UsuariosSection() {
                   <button
                     onClick={() => handleSave(p.userId)}
                     disabled={saving}
-                    className="flex-1 py-2.5 bg-primary text-white rounded-xl font-black text-xs uppercase tracking-widest disabled:opacity-50 flex items-center justify-center gap-1"
+                    className="flex-1 py-2.5 bg-primary text-white rounded-xl text-micro-label disabled:opacity-50 flex items-center justify-center gap-1"
                   >
                     {saving ? <div className="animate-spin rounded-full h-3 w-3 border-b-2 border-white" /> : <><CheckCircle size={12} /> Guardar</>}
                   </button>
                   <button
                     onClick={() => deleteProfile({ userId: p.userId })}
-                    className="px-4 py-2.5 bg-red-50 text-red-400 rounded-xl font-black text-xs flex items-center gap-1 hover:bg-red-100 transition-colors"
+                    className="px-4 py-2.5 bg-red-50 text-red-400 rounded-xl font-black text-caption flex items-center gap-1 hover:bg-red-100 transition-colors"
                   >
                     <Trash2 size={12} />
                   </button>
@@ -429,12 +429,12 @@ function BeneficiosSection() {
   return (
     <div className="space-y-4">
       <div className="flex items-center justify-between">
-        <p className="text-[10px] font-black uppercase tracking-widest text-gray-400">
+        <p className="text-micro-label text-gray-600">
           {benefits?.length ?? 0} beneficios totales · {benefits?.filter(b => b.isLive).length ?? 0} en vivo
         </p>
         <button
           onClick={openCreate}
-          className="flex items-center gap-1.5 bg-primary text-white px-3 py-2 rounded-xl font-black text-xs uppercase tracking-widest active:scale-95 transition-all"
+          className="flex items-center gap-1.5 bg-primary text-white px-3 py-2 rounded-xl text-micro-label active:scale-95 transition-all"
         >
           <Plus size={14} /> Nuevo
         </button>
@@ -464,15 +464,15 @@ function BeneficiosSection() {
                   </div>
                 )}
                 <div className="flex-1 min-w-0">
-                  <p className="font-black text-gray-900 text-xs leading-tight truncate">{b.merchantName}</p>
-                  <p className="text-[10px] text-gray-400 font-medium truncate">{b.offerLabel}</p>
+                  <p className="font-black text-gray-900 text-caption leading-tight truncate">{b.merchantName}</p>
+                  <p className="text-caption text-gray-600 font-medium truncate">{b.offerLabel}</p>
                   <div className="flex gap-1.5 mt-1 flex-wrap">
-                    <span className="text-[8px] font-black uppercase tracking-wider bg-gray-100 text-gray-400 px-1.5 py-0.5 rounded-full">{b.category}</span>
-                    <span className="text-[8px] font-black uppercase tracking-wider bg-blue-50 text-blue-400 px-1.5 py-0.5 rounded-full">
+                    <span className="text-micro-label bg-gray-100 text-gray-600 px-1.5 py-0.5 rounded-full">{b.category}</span>
+                    <span className="text-micro-label bg-blue-50 text-blue-400 px-1.5 py-0.5 rounded-full">
                       {b.maxUses ?? 1} {(b.maxUses ?? 1) === 1 ? "uso" : "usos"}
                     </span>
-                    {b.ownerId && <span className="text-[8px] font-black uppercase tracking-wider bg-orange-50 text-orange-400 px-1.5 py-0.5 rounded-full">Negocio</span>}
-                    {!b.ownerId && <span className="text-[8px] font-black uppercase tracking-wider bg-green-50 text-green-500 px-1.5 py-0.5 rounded-full">Global</span>}
+                    {b.ownerId && <span className="text-micro-label bg-orange-50 text-orange-400 px-1.5 py-0.5 rounded-full">Negocio</span>}
+                    {!b.ownerId && <span className="text-micro-label bg-green-50 text-green-500 px-1.5 py-0.5 rounded-full">Global</span>}
                   </div>
                 </div>
                 <div className="flex items-center gap-1.5 flex-shrink-0" onClick={(e) => e.stopPropagation()}>
@@ -533,7 +533,7 @@ function BeneficiosSection() {
                 <button
                   type="button"
                   onClick={() => setForm((f) => ({ ...f, type: "descuento" }))}
-                  className={`flex-1 py-3.5 rounded-2xl text-xs font-black uppercase tracking-widest transition-all flex items-center justify-center gap-2 ${
+                  className={`flex-1 py-3.5 rounded-2xl text-micro-label transition-all flex items-center justify-center gap-2 ${
                     form.type === "descuento" ? "bg-primary text-white shadow-md shadow-green-200" : "bg-gray-100 text-gray-400"
                   }`}
                 >
@@ -542,7 +542,7 @@ function BeneficiosSection() {
                 <button
                   type="button"
                   onClick={() => setForm((f) => ({ ...f, type: "actividad" }))}
-                  className={`flex-1 py-3.5 rounded-2xl text-xs font-black uppercase tracking-widest transition-all flex items-center justify-center gap-2 ${
+                  className={`flex-1 py-3.5 rounded-2xl text-micro-label transition-all flex items-center justify-center gap-2 ${
                     form.type === "actividad" ? "bg-purple-500 text-white shadow-md shadow-purple-200" : "bg-gray-100 text-gray-400"
                   }`}
                 >
@@ -556,7 +556,7 @@ function BeneficiosSection() {
 
               {/* Image picker */}
               <div>
-                <label className="text-[10px] font-black uppercase tracking-widest text-gray-400 block mb-1.5">
+                <label className="text-micro-label text-gray-600 block mb-1.5">
                   Imagen <span className="text-gray-300 normal-case font-medium">(WebP/JPG/PNG · max 2MB · 800×500px recomendado)</span>
                 </label>
                 <label className={`relative flex items-center justify-center w-full rounded-2xl border-2 border-dashed cursor-pointer transition-all overflow-hidden ${
@@ -589,7 +589,7 @@ function BeneficiosSection() {
                   />
                 </label>
                 {imageStorageId && !uploading && (
-                  <p className="text-[10px] text-primary font-bold mt-1 ml-1">✓ Imagen lista</p>
+                  <p className="text-caption text-primary font-bold mt-1 ml-1">✓ Imagen lista</p>
                 )}
               </div>
 
@@ -620,7 +620,7 @@ function BeneficiosSection() {
 
               {/* Usos — stepper */}
               <div>
-                <label className="text-[10px] font-black uppercase tracking-widest text-gray-400 block mb-1.5">
+                <label className="text-micro-label text-gray-600 block mb-1.5">
                   {form.type === "actividad" ? "Inscripciones por persona" : "Usos por empleado"}
                 </label>
                 <div className="flex items-center gap-3">
@@ -634,7 +634,7 @@ function BeneficiosSection() {
                   <button type="button" onClick={() => setForm((f) => ({ ...f, maxUses: f.maxUses + 1 }))}
                     className="size-11 rounded-2xl bg-gray-100 text-gray-600 font-black text-xl flex items-center justify-center active:scale-90 transition-all">+</button>
                 </div>
-                <p className="text-[10px] text-gray-300 mt-1.5 text-center">
+                <p className="text-caption text-gray-300 mt-1.5 text-center">
                   {form.maxUses === 1 ? "Una sola vez por empleado" : `${form.maxUses} veces por empleado`}
                 </p>
               </div>
@@ -644,20 +644,20 @@ function BeneficiosSection() {
                 <>
                   <div className="grid grid-cols-2 gap-3">
                     <div>
-                      <label className="text-[10px] font-black uppercase tracking-widest text-gray-400 block mb-1.5 flex items-center gap-1"><Calendar size={9} />Fecha</label>
+                      <label className="text-micro-label text-gray-600 block mb-1.5 flex items-center gap-1"><Calendar size={9} />Fecha</label>
                       <input type="date" value={form.eventDate}
                         onChange={(e) => setForm((f) => ({ ...f, eventDate: e.target.value }))}
                         className="w-full bg-purple-50 border border-purple-100 rounded-2xl px-3 py-3 text-sm font-bold text-gray-900 focus:outline-none focus:ring-2 focus:ring-purple-200" />
                     </div>
                     <div>
-                      <label className="text-[10px] font-black uppercase tracking-widest text-gray-400 block mb-1.5 flex items-center gap-1"><Clock size={9} />Hora</label>
+                      <label className="text-micro-label text-gray-600 block mb-1.5 flex items-center gap-1"><Clock size={9} />Hora</label>
                       <input type="time" value={form.eventTime}
                         onChange={(e) => setForm((f) => ({ ...f, eventTime: e.target.value }))}
                         className="w-full bg-purple-50 border border-purple-100 rounded-2xl px-3 py-3 text-sm font-bold text-gray-900 focus:outline-none focus:ring-2 focus:ring-purple-200" />
                     </div>
                   </div>
                   <div>
-                    <label className="text-[10px] font-black uppercase tracking-widest text-gray-400 block mb-1.5 flex items-center gap-1"><MapPin size={9} />Ubicación</label>
+                    <label className="text-micro-label text-gray-600 block mb-1.5 flex items-center gap-1"><MapPin size={9} />Ubicación</label>
                     <input type="text" value={form.eventLocation}
                       onChange={(e) => setForm((f) => ({ ...f, eventLocation: e.target.value }))}
                       placeholder="Ej: Parque Luis Muñoz Marín, SJ"
@@ -668,12 +668,12 @@ function BeneficiosSection() {
 
               {/* Coordenadas con GPS */}
               <div>
-                <label className="text-[10px] font-black uppercase tracking-widest text-gray-400 block mb-1.5 flex items-center gap-1">
+                <label className="text-micro-label text-gray-600 block mb-1.5 flex items-center gap-1">
                   <Navigation size={9} />Coordenadas de Ubicación Principal
                 </label>
                 <div className="flex gap-2">
                   <div className="flex-1">
-                    <label className="text-[9px] text-gray-400 font-bold block mb-1 ml-1">Latitud</label>
+                    <label className="text-caption text-gray-600 font-bold block mb-1 ml-1">Latitud</label>
                     <input
                       type="number"
                       step="0.000001"
@@ -683,7 +683,7 @@ function BeneficiosSection() {
                     />
                   </div>
                   <div className="flex-1">
-                    <label className="text-[9px] text-gray-400 font-bold block mb-1 ml-1">Longitud</label>
+                    <label className="text-caption text-gray-600 font-bold block mb-1 ml-1">Longitud</label>
                     <input
                       type="number"
                       step="0.000001"
@@ -693,7 +693,7 @@ function BeneficiosSection() {
                     />
                   </div>
                   <div className="flex flex-col justify-end">
-                    <label className="text-[9px] text-transparent font-bold block mb-1 ml-1">GPS</label>
+                    <label className="text-caption text-transparent font-bold block mb-1 ml-1">GPS</label>
                     <button
                       type="button"
                       onClick={handleGPS}
@@ -705,7 +705,7 @@ function BeneficiosSection() {
                     </button>
                   </div>
                 </div>
-                <p className="text-[10px] text-gray-300 mt-1.5 ml-1">
+                <p className="text-caption text-gray-300 mt-1.5 ml-1">
                   Coordenada principal del negocio. Usa "Sucursales" para agregar múltiples ubicaciones.
                 </p>
               </div>
@@ -791,7 +791,7 @@ function DocumentosSection() {
                 </div>
                 <div className="flex-1 min-w-0">
                   <p className="font-black text-gray-900 text-sm leading-tight truncate">{p.fullName}</p>
-                  <p className="text-[10px] text-gray-400 font-medium">{p.base}</p>
+                  <p className="text-caption text-gray-600 font-medium">{p.base}</p>
                 </div>
                 <ChevronRight size={16} className="text-gray-300 flex-shrink-0" />
               </button>
@@ -854,7 +854,7 @@ export function AdminPanel({ onPreviewRole }: AdminPanelProps = {}) {
         </div>
         <div>
           <h2 className="text-xl font-black text-gray-900 leading-tight">Admin Panel</h2>
-          <p className="text-[10px] font-black uppercase tracking-widest text-gray-400">Control total · Beta</p>
+          <p className="text-micro-label text-gray-600">Control total · Beta</p>
         </div>
       </div>
 
@@ -864,7 +864,7 @@ export function AdminPanel({ onPreviewRole }: AdminPanelProps = {}) {
           <button
             key={tab.key}
             onClick={() => setActiveTab(tab.key)}
-            className={`flex-1 flex items-center justify-center gap-1.5 py-2.5 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all ${
+            className={`flex-1 flex items-center justify-center gap-1.5 py-2.5 rounded-xl text-micro-label transition-all ${
               activeTab === tab.key
                 ? "bg-white text-gray-900 shadow-sm"
                 : "text-gray-400 hover:text-gray-600"

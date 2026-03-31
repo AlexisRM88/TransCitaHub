@@ -49,7 +49,7 @@ export function SettingsModal({
 
           <div className="space-y-3">
             <div className="p-4 bg-gray-50 rounded-2xl text-left">
-              <p className="text-[10px] font-black text-gray-400 uppercase tracking-widest mb-1">
+              <p className="text-micro-label text-gray-600 mb-1">
                 Pueblo de Residencia
               </p>
               <select
@@ -77,7 +77,7 @@ export function SettingsModal({
 
             {isDevUser && (
               <div className="p-4 bg-green-50 rounded-2xl text-left border border-green-100 mb-4 focus-within:ring-2 ring-primary/20 transition-all">
-                <p className="text-[10px] font-black text-primary uppercase tracking-widest mb-2 flex items-center gap-2">
+                <p className="text-micro-label text-primary mb-2 flex items-center gap-2">
                   <ShieldCheck size={12} />
                   Dev Role Switcher
                 </p>
@@ -86,7 +86,7 @@ export function SettingsModal({
                     <button
                       key={r}
                       onClick={() => onUpdateRole(r)}
-                      className={`px-3 py-2 rounded-xl text-[10px] font-black uppercase tracking-tight transition-all border ${
+                      className={`px-3 py-2 rounded-xl text-caption font-black uppercase tracking-tight transition-all border ${
                         role === r
                           ? "bg-primary text-gray-900 border-primary shadow-sm"
                           : "bg-white text-gray-400 border-gray-100 hover:border-primary/30"
@@ -96,7 +96,7 @@ export function SettingsModal({
                     </button>
                   ))}
                 </div>
-                <p className="text-[8px] text-primary/60 font-medium mt-2 leading-none">
+                <p className="text-caption text-primary/60 font-medium mt-2 leading-none">
                   Note: Use this to test different dashboard views.
                 </p>
               </div>

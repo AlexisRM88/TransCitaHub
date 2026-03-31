@@ -58,7 +58,7 @@ export function ProfileCardModal({ user, profile, role, onClose }: ProfileCardMo
 
         {/* Header */}
         <div className="bg-primary p-6 py-4 text-white text-center flex-shrink-0">
-          <h4 className="text-[10px] font-black uppercase tracking-[0.2em] opacity-80 mb-1">Puerto Rico</h4>
+          <h4 className="text-micro-label opacity-80 mb-1">Puerto Rico</h4>
           <h3 className="text-sm font-black uppercase tracking-widest leading-tight">
             Representante de Servicio al Pasajero
           </h3>
@@ -80,15 +80,15 @@ export function ProfileCardModal({ user, profile, role, onClose }: ProfileCardMo
 
           {/* Name + role */}
           <div className="text-center w-full space-y-1 mb-4">
-            <p className="text-[10px] font-black text-primary uppercase tracking-widest">Colaborador TransCita</p>
+            <p className="text-micro-label text-primary">Colaborador TransCita</p>
             <h2 className="text-2xl font-black text-gray-900 leading-tight">
               {profile?.fullName?.trim() || user?.name?.trim() || user?.email?.split("@")[0] || "Colaborador"}
             </h2>
             <div className="flex items-center justify-center gap-2 mt-2">
-              <span className="bg-green-50 text-primary text-[10px] font-black px-3 py-1 rounded-full border border-green-100">
+              <span className="bg-green-50 text-primary text-caption font-black px-3 py-1 rounded-full border border-green-100">
                 BASE {(profile?.base || "San Juan").toUpperCase()}
               </span>
-              <span className="bg-gray-50 text-gray-400 text-[10px] font-black px-3 py-1 rounded-full border border-gray-100">
+              <span className="bg-gray-50 text-gray-600 text-caption font-black px-3 py-1 rounded-full border border-gray-100">
                 {roleLabel}-{idSuffix}
               </span>
             </div>
@@ -96,13 +96,13 @@ export function ProfileCardModal({ user, profile, role, onClose }: ProfileCardMo
 
           {/* Puerto Rico Live Clock */}
           <div className="w-full bg-gray-950 rounded-2xl px-5 py-4 mb-6 text-center">
-            <p className="text-[9px] font-black uppercase tracking-widest text-primary mb-1">
+            <p className="text-micro-label text-primary mb-1">
               Hora Oficial · Puerto Rico (AST)
             </p>
             <p className="text-3xl font-black text-white tabular-nums tracking-tight leading-none">
               {prTime}
             </p>
-            <p className="text-[10px] font-medium text-gray-400 mt-1 capitalize">
+            <p className="text-caption font-medium text-gray-600 mt-1 capitalize">
               {prDate}
             </p>
           </div>
@@ -114,7 +114,7 @@ export function ProfileCardModal({ user, profile, role, onClose }: ProfileCardMo
                 <Map size={20} />
               </div>
               <div className="flex-1">
-                <p className="text-[10px] font-black text-gray-400 uppercase tracking-widest leading-none mb-1">Meta Alcanzada</p>
+                <p className="text-micro-label text-gray-600 leading-none mb-1">Meta Alcanzada</p>
                 <p className="text-sm font-black text-gray-900 leading-tight">100 Tramos Completados</p>
               </div>
               <BadgeCheck className="text-primary" size={20} fill="currentColor" fillOpacity={0.1} />
@@ -125,7 +125,7 @@ export function ProfileCardModal({ user, profile, role, onClose }: ProfileCardMo
                 <Moon size={20} />
               </div>
               <div className="flex-1">
-                <p className="text-[10px] font-black text-gray-400 uppercase tracking-widest leading-none mb-1">Especialista</p>
+                <p className="text-micro-label text-gray-600 leading-none mb-1">Especialista</p>
                 <p className="text-sm font-black text-gray-900 leading-tight">Guerrero Nocturno</p>
               </div>
               <BadgeCheck className="text-blue-500" size={20} fill="currentColor" fillOpacity={0.1} />
@@ -136,10 +136,10 @@ export function ProfileCardModal({ user, profile, role, onClose }: ProfileCardMo
                 <Zap size={20} />
               </div>
               <div className="flex-1">
-                <p className="text-[10px] font-black text-gray-400 uppercase tracking-widest leading-none mb-1">Próximo Nivel</p>
+                <p className="text-micro-label text-gray-600 leading-none mb-1">Próximo Nivel</p>
                 <p className="text-sm font-black text-gray-900 leading-tight">50 Turnos Perfectos</p>
               </div>
-              <div className="w-8 h-8 rounded-full border-2 border-orange-100 flex items-center justify-center text-[8px] font-black text-orange-500">
+              <div className="w-8 h-8 rounded-full border-2 border-orange-100 flex items-center justify-center text-caption font-black text-orange-500">
                 80%
               </div>
             </div>

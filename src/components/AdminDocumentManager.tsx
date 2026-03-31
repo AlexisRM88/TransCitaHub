@@ -31,7 +31,7 @@ export function AdminDocumentManager({ userId }: { userId: string }) {
 
     return (
         <div className="mt-4 pt-4 border-t border-gray-100">
-            <h4 className="text-[10px] font-black uppercase tracking-widest text-gray-500 mb-3 flex items-center gap-2">
+            <h4 className="text-micro-label text-gray-500 mb-3 flex items-center gap-2">
                 <FileText size={12} /> Pre-requisitos (Validación)
             </h4>
             <div className="grid grid-cols-1 gap-2">
@@ -60,7 +60,7 @@ export function AdminDocumentManager({ userId }: { userId: string }) {
             </div>
 
             <div className="mt-4 pt-4 border-t border-gray-100">
-                <h4 className="text-[10px] font-black uppercase tracking-widest text-gray-500 mb-3">Acción Final</h4>
+                <h4 className="text-micro-label text-gray-500 mb-3">Acción Final</h4>
                 <div 
                     onClick={(e) => {
                         e.stopPropagation();
@@ -79,7 +79,7 @@ export function AdminDocumentManager({ userId }: { userId: string }) {
                 </div>
             </div>
 
-            <p className="text-[9px] text-gray-400 font-bold mt-4 text-center">
+            <p className="text-caption text-gray-600 font-bold mt-4 text-center">
                 Presiona los documentos para validar. La autorización es el paso final.
             </p>
         </div>

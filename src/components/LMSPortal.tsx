@@ -166,7 +166,7 @@ export function LMSPortal() {
 
                                     <div className="flex-1">
                                         <div className="flex items-center gap-2 mb-1">
-                                            <span className="text-[10px] font-black uppercase tracking-widest text-gray-400">
+                                            <span className="text-micro-label text-gray-600">
                                                 Módulo {index + 1}
                                             </span>
                                             {isUpcoming && <Lock size={12} className="text-gray-400" />}
@@ -247,7 +247,7 @@ export function LMSPortal() {
             <div className="mt-10 bg-gray-900 rounded-[2.5rem] p-8 text-white relative overflow-hidden">
                 <div className="relative z-10 flex justify-between items-center">
                     <div>
-                        <p className="text-[10px] font-black uppercase tracking-widest text-gray-400 mb-2">Total Capacitaciones</p>
+                        <p className="text-micro-label text-gray-600 mb-2">Total Capacitaciones</p>
                         <h3 className="text-4xl font-black">{completedIds.length}</h3>
                         <p className="text-xs font-bold text-green-400 mt-1">¡Sigue creciendo!</p>
                     </div>

@@ -189,15 +189,15 @@ export function NegocioOfertasTab({ userId }: NegocioOfertasTabProps) {
       <div className="flex gap-3">
         <div className="flex-1 bg-green-50 border border-green-100 rounded-2xl p-4 text-center">
           <p className="text-2xl font-black text-primary">{liveCount}</p>
-          <p className="text-[10px] font-black uppercase tracking-widest text-green-700">En Vivo</p>
+          <p className="text-micro-label text-green-700">En Vivo</p>
         </div>
         <div className="flex-1 bg-gray-50 border border-gray-100 rounded-2xl p-4 text-center">
           <p className="text-2xl font-black text-gray-900">{(offers?.length ?? 0) - liveCount}</p>
-          <p className="text-[10px] font-black uppercase tracking-widest text-gray-400">Pausadas</p>
+          <p className="text-micro-label text-gray-600">Pausadas</p>
         </div>
         <div className="flex-1 bg-gray-50 border border-gray-100 rounded-2xl p-4 text-center">
           <p className="text-2xl font-black text-gray-900">{offers?.length ?? 0}</p>
-          <p className="text-[10px] font-black uppercase tracking-widest text-gray-400">Total</p>
+          <p className="text-micro-label text-gray-600">Total</p>
         </div>
       </div>
 
@@ -237,20 +237,20 @@ export function NegocioOfertasTab({ userId }: NegocioOfertasTabProps) {
                 <p className="font-black text-gray-900 text-sm leading-tight truncate">{offer.merchantName}</p>
                 <p className="text-xs text-gray-400 font-medium mt-0.5 truncate">{offer.offerLabel}</p>
                 <div className="flex items-center gap-2 mt-1.5 flex-wrap">
-                  <span className="text-[9px] font-black uppercase tracking-widest bg-gray-100 text-gray-400 px-2 py-0.5 rounded-full">
+                  <span className="text-micro-label bg-gray-100 text-gray-600 px-2 py-0.5 rounded-full">
                     {offer.category}
                   </span>
-                  <span className="text-[9px] font-black uppercase tracking-widest bg-blue-50 text-blue-400 px-2 py-0.5 rounded-full">
+                  <span className="text-micro-label bg-blue-50 text-blue-500 px-2 py-0.5 rounded-full">
                     {offer.maxUses ?? 1} {(offer.maxUses ?? 1) === 1 ? "uso" : "usos"}
                   </span>
                   {(offer as any).type === "actividad" && (
-                    <span className="text-[9px] font-black uppercase tracking-widest bg-purple-50 text-purple-500 px-2 py-0.5 rounded-full">
+                    <span className="text-micro-label bg-purple-50 text-purple-500 px-2 py-0.5 rounded-full">
                       Evento
                     </span>
                   )}
                 </div>
                 {(offer as any).type === "actividad" && (offer as any).eventDate && (
-                  <div className="flex items-center gap-3 mt-2 text-[10px] text-gray-400 font-medium flex-wrap">
+                  <div className="flex items-center gap-3 mt-2 text-caption text-gray-600 font-medium flex-wrap">
                     <span className="flex items-center gap-1"><Calendar size={10} />{(offer as any).eventDate}</span>
                     {(offer as any).eventTime && <span className="flex items-center gap-1"><Clock size={10} />{(offer as any).eventTime}</span>}
                     {(offer as any).eventLocation && <span className="flex items-center gap-1 truncate"><MapPin size={10} />{(offer as any).eventLocation}</span>}
@@ -369,7 +369,7 @@ export function NegocioOfertasTab({ userId }: NegocioOfertasTabProps) {
 
               {/* Image picker */}
               <div>
-                <label className="text-[10px] font-black uppercase tracking-widest text-gray-400 block mb-1.5">
+                <label className="text-micro-label text-gray-600 block mb-1.5">
                   Imagen <span className="text-gray-300 normal-case font-medium">(WebP/JPG/PNG · max 2MB)</span>
                 </label>
                 <label className={`relative flex items-center justify-center w-full rounded-2xl border-2 border-dashed cursor-pointer transition-all overflow-hidden ${
@@ -402,13 +402,13 @@ export function NegocioOfertasTab({ userId }: NegocioOfertasTabProps) {
                   />
                 </label>
                 {imageStorageId && !uploading && (
-                  <p className="text-[10px] text-primary font-bold mt-1 ml-1">✓ Imagen lista</p>
+                  <p className="text-caption text-primary font-bold mt-1 ml-1">✓ Imagen lista</p>
                 )}
               </div>
 
               {/* Nombre */}
               <div>
-                <label className="text-[10px] font-black uppercase tracking-widest text-gray-400 block mb-1.5">
+                <label className="text-micro-label text-gray-600 block mb-1.5">
                   {form.type === "actividad" ? "Nombre del Evento" : "Nombre del Negocio"}
                 </label>
                 <input
@@ -422,7 +422,7 @@ export function NegocioOfertasTab({ userId }: NegocioOfertasTabProps) {
 
               {/* Descripción */}
               <div>
-                <label className="text-[10px] font-black uppercase tracking-widest text-gray-400 block mb-1.5">
+                <label className="text-micro-label text-gray-600 block mb-1.5">
                   {form.type === "actividad" ? "Descripción" : "Descripción de la Oferta"}
                 </label>
                 <input
@@ -437,7 +437,7 @@ export function NegocioOfertasTab({ userId }: NegocioOfertasTabProps) {
               {/* Categoría — solo para descuentos */}
               {form.type === "descuento" && (
                 <div>
-                  <label className="text-[10px] font-black uppercase tracking-widest text-gray-400 block mb-1.5">Categoría</label>
+                  <label className="text-micro-label text-gray-600 block mb-1.5">Categoría</label>
                   <select
                     value={form.category}
                     onChange={(e) => setForm((f) => ({ ...f, category: e.target.value }))}
@@ -450,7 +450,7 @@ export function NegocioOfertasTab({ userId }: NegocioOfertasTabProps) {
 
               {/* Usos */}
               <div>
-                <label className="text-[10px] font-black uppercase tracking-widest text-gray-400 block mb-1.5">
+                <label className="text-micro-label text-gray-600 block mb-1.5">
                   {form.type === "actividad" ? "Inscripciones por persona" : "Usos por empleado"}
                 </label>
                 <div className="flex items-center gap-3">
@@ -472,7 +472,7 @@ export function NegocioOfertasTab({ userId }: NegocioOfertasTabProps) {
                     className="size-11 rounded-2xl bg-gray-100 text-gray-600 font-black text-xl flex items-center justify-center active:scale-90 transition-all"
                   >+</button>
                 </div>
-                <p className="text-[10px] text-gray-300 mt-1.5 text-center">
+                <p className="text-caption text-gray-400 mt-1.5 text-center">
                   {form.maxUses === 1 ? "Una sola vez por empleado" : `${form.maxUses} veces por empleado`}
                 </p>
               </div>
@@ -482,7 +482,7 @@ export function NegocioOfertasTab({ userId }: NegocioOfertasTabProps) {
                 <>
                   <div className="grid grid-cols-2 gap-3">
                     <div>
-                      <label className="text-[10px] font-black uppercase tracking-widest text-gray-400 block mb-1.5 flex items-center gap-1">
+                      <label className="text-micro-label text-gray-600 block mb-1.5 flex items-center gap-1">
                         <Calendar size={9} />Fecha
                       </label>
                       <input
@@ -493,7 +493,7 @@ export function NegocioOfertasTab({ userId }: NegocioOfertasTabProps) {
                       />
                     </div>
                     <div>
-                      <label className="text-[10px] font-black uppercase tracking-widest text-gray-400 block mb-1.5 flex items-center gap-1">
+                      <label className="text-micro-label text-gray-600 block mb-1.5 flex items-center gap-1">
                         <Clock size={9} />Hora
                       </label>
                       <input
@@ -505,7 +505,7 @@ export function NegocioOfertasTab({ userId }: NegocioOfertasTabProps) {
                     </div>
                   </div>
                   <div>
-                    <label className="text-[10px] font-black uppercase tracking-widest text-gray-400 block mb-1.5 flex items-center gap-1">
+                    <label className="text-micro-label text-gray-600 block mb-1.5 flex items-center gap-1">
                       <MapPin size={9} />Ubicación del Evento
                     </label>
                     <input
@@ -517,7 +517,7 @@ export function NegocioOfertasTab({ userId }: NegocioOfertasTabProps) {
                     />
                   </div>
                   <div>
-                    <label className="text-[10px] font-black uppercase tracking-widest text-gray-400 block mb-1.5 flex items-center gap-1">
+                    <label className="text-micro-label text-gray-600 block mb-1.5 flex items-center gap-1">
                       <Users size={9} />Capacidad (opcional)
                     </label>
                     <input
@@ -534,12 +534,12 @@ export function NegocioOfertasTab({ userId }: NegocioOfertasTabProps) {
 
               {/* Coordenadas con GPS */}
               <div>
-                <label className="text-[10px] font-black uppercase tracking-widest text-gray-400 block mb-1.5 flex items-center gap-1">
+                <label className="text-micro-label text-gray-600 block mb-1.5 flex items-center gap-1">
                   <Navigation size={9} />Coordenadas de Ubicación Principal
                 </label>
                 <div className="flex gap-2">
                   <div className="flex-1">
-                    <label className="text-[9px] text-gray-400 font-bold block mb-1 ml-1">Latitud</label>
+                    <label className="text-caption text-gray-600 font-bold block mb-1 ml-1">Latitud</label>
                     <input
                       type="number"
                       step="0.000001"
@@ -549,7 +549,7 @@ export function NegocioOfertasTab({ userId }: NegocioOfertasTabProps) {
                     />
                   </div>
                   <div className="flex-1">
-                    <label className="text-[9px] text-gray-400 font-bold block mb-1 ml-1">Longitud</label>
+                    <label className="text-caption text-gray-600 font-bold block mb-1 ml-1">Longitud</label>
                     <input
                       type="number"
                       step="0.000001"
@@ -559,7 +559,7 @@ export function NegocioOfertasTab({ userId }: NegocioOfertasTabProps) {
                     />
                   </div>
                   <div className="flex flex-col justify-end">
-                    <label className="text-[9px] text-transparent font-bold block mb-1 ml-1">GPS</label>
+                    <label className="text-caption text-transparent font-bold block mb-1 ml-1">GPS</label>
                     <button
                       type="button"
                       onClick={handleGPS}
@@ -571,7 +571,7 @@ export function NegocioOfertasTab({ userId }: NegocioOfertasTabProps) {
                     </button>
                   </div>
                 </div>
-                <p className="text-[10px] text-gray-300 mt-1.5 ml-1">
+                <p className="text-caption text-gray-400 mt-1.5 ml-1">
                   Usa el botón GPS para capturar tu ubicación actual, o agrega sucursales por separado con el botón 📍
                 </p>
               </div>
@@ -580,7 +580,7 @@ export function NegocioOfertasTab({ userId }: NegocioOfertasTabProps) {
               <div className="flex items-center justify-between bg-gray-50 rounded-2xl px-4 py-3 border border-gray-100">
                 <div>
                   <p className="text-sm font-black text-gray-900">Publicar en vivo</p>
-                  <p className="text-[10px] text-gray-400 font-medium">Los empleados podrán ver esta oferta</p>
+                  <p className="text-caption text-gray-600 font-medium">Los empleados podrán ver esta oferta</p>
                 </div>
                 <button
                   type="button"

@@ -40,7 +40,7 @@ export function DashboardHeader({ user, profile, onProfileClick, onSettingsClick
           <div className="absolute bottom-0 right-0 size-3 bg-primary rounded-full border-2 border-white" />
         </div>
         <div>
-          <p className="text-xs font-bold text-gray-400 leading-tight">Hola,</p>
+          <p className="text-caption font-bold text-gray-600 leading-tight">Hola,</p>
           <h2 className="font-black text-gray-900 leading-tight hover:text-primary transition-colors">
             {displayName} 👋
           </h2>

@@ -86,12 +86,12 @@ export function CouponTimer({ benefit, isExpanded, onToggle, activeRedeemingId, 
                 <div className="flex-1 min-w-0">
                     <div className="flex justify-between items-start mb-1">
                         <h4 className="text-gray-900 font-bold truncate pr-3">{benefit.title}</h4>
-                        <span className={`text-[10px] font-bold px-2 py-1 rounded-full flex gap-1 items-center shrink-0 ${benefit.outOfRange ? 'bg-gray-100 text-gray-400' : 'bg-green-100 text-primary'}`}>
-                            <MapPin size={10} /> {benefit.distance}
+                        <span className={`text-caption font-bold px-2 py-1 rounded-full flex gap-1 items-center shrink-0 ${benefit.outOfRange ? 'bg-gray-100 text-gray-600' : 'bg-green-100 text-primary'}`}>
+                            <MapPin size={12} /> {benefit.distance}
                         </span>
                     </div>
                     <p className="text-gray-500 text-xs mb-2 truncate">{benefit.subtitle}</p>
-                    <div className="flex items-center gap-2 text-[10px] text-gray-400">
+                    <div className="flex items-center gap-2 text-caption text-gray-600">
                         {benefit.outOfRange ? (
                             <><ShieldCheck size={12} /> Fuera de rango</>
                         ) : (
@@ -137,7 +137,7 @@ export function CouponTimer({ benefit, isExpanded, onToggle, activeRedeemingId, 
                     </div>
 
                     <div className="flex flex-col items-center text-center px-4 mb-4">
-                        <p className="text-primary text-[11px] font-bold uppercase tracking-widest mb-1.5">TRANSCITA EXCLUSIVE</p>
+                        <p className="text-micro-label text-primary mb-1.5">TRANSCITA EXCLUSIVE</p>
                         <h3 className="text-[28px] font-extrabold text-gray-900 tracking-tight leading-none mb-2">{benefit.subtitle}</h3>
                         <p className="text-gray-500 text-sm">Válido en {benefit.title}</p>
                     </div>
@@ -167,7 +167,7 @@ export function CouponTimer({ benefit, isExpanded, onToggle, activeRedeemingId, 
                                     <div className="flex h-16 w-16 items-center justify-center rounded-2xl bg-[#e6fbf1] border border-green-200/50">
                                         <p className="text-primary text-3xl font-bold tabular-nums">{minutes.toString().padStart(2, "0")}</p>
                                     </div>
-                                    <span className="text-[10px] font-medium text-gray-500 uppercase tracking-widest">Min</span>
+                                    <span className="text-micro-label text-gray-600">Min</span>
                                 </div>
                                 <div className="flex flex-col justify-center pb-8">
                                     <span className="text-primary font-bold text-2xl">:</span>
@@ -176,7 +176,7 @@ export function CouponTimer({ benefit, isExpanded, onToggle, activeRedeemingId, 
                                     <div className="flex h-16 w-16 items-center justify-center rounded-2xl bg-[#e6fbf1] border border-green-400 shadow-[0_4px_15px_rgba(19,236,109,0.3)]">
                                         <p className="text-primary text-3xl font-bold tabular-nums">{seconds.toString().padStart(2, "0")}</p>
                                     </div>
-                                    <span className="text-[10px] font-medium text-gray-500 uppercase tracking-widest">Sec</span>
+                                    <span className="text-micro-label text-gray-600">Sec</span>
                                 </div>
                             </div>
 

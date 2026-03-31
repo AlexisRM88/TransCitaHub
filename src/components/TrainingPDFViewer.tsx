@@ -34,7 +34,7 @@ export function TrainingPDFViewer({ title, pdfUrl, onComplete }: TrainingProps) 
                 </button>
                 <div className="flex flex-col items-center">
                     <h1 className="text-lg font-bold leading-tight tracking-tight text-gray-900">Manual de Seguridad</h1>
-                    <span className="text-[10px] text-gray-500 font-bold uppercase tracking-widest">Módulo 1 de 4</span>
+                    <span className="text-micro-label text-gray-500">Módulo 1 de 4</span>
                 </div>
                 <button className="p-2 rounded-full hover:bg-gray-100 text-gray-600 transition-colors">
                     <MoreVertical size={24} />
@@ -44,7 +44,7 @@ export function TrainingPDFViewer({ title, pdfUrl, onComplete }: TrainingProps) 
             {/* Main Content Area */}
             <main className="flex-1 relative w-full overflow-hidden flex flex-col">
                 {/* Viewer Controls */}
-                <div className="px-5 py-2.5 bg-[#fdfdfd] flex justify-between items-center text-[10px] font-bold text-gray-500 border-b border-gray-100 uppercase tracking-widest">
+                <div className="px-5 py-2.5 bg-[#fdfdfd] flex justify-between items-center text-micro-label text-gray-500 border-b border-gray-100">
                     <span>Página {Math.max(1, Math.ceil(progress / 33))} / 12</span>
                     <div className="flex gap-4 text-gray-400">
                         <button className="hover:text-primary transition-colors"><ZoomOut size={14} /></button>
@@ -100,7 +100,7 @@ export function TrainingPDFViewer({ title, pdfUrl, onComplete }: TrainingProps) 
                             <div className="h-3 bg-[#e2e8f0] rounded-full w-full"></div>
                             <div className="h-3 bg-[#e2e8f0] rounded-full w-[70%]"></div>
                         </div>
-                        <div className="mt-8 p-4 bg-[#fdfaf2] border-l-4 border-[#f0c14b] text-[13px] text-[#5e4905] rounded-r-md">
+                        <div className="mt-8 p-4 bg-[#fdfaf2] border-l-4 border-[#f0c14b] text-body text-[#5e4905] rounded-r-md">
                             <strong className="text-[#a47a16]">Nota Importante:</strong> Nunca comparta sus credenciales de acceso con nadie, ni siquiera con el departamento de TI.
                         </div>
                     </div>
@@ -114,7 +114,7 @@ export function TrainingPDFViewer({ title, pdfUrl, onComplete }: TrainingProps) 
                         <p className="text-xs text-gray-500 max-w-[220px]">Continúe leyendo para desbloquear la evaluación final y obtener sus puntos de recompensa.</p>
                     </div>
 
-                    <div className="h-12 flex items-center justify-center text-[10px] text-gray-400 font-bold tracking-widest uppercase">
+                    <div className="h-12 flex items-center justify-center text-micro-label text-gray-600">
                         Fin de la vista
                     </div>
                 </div>

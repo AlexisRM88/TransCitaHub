@@ -115,21 +115,21 @@ export default function SignInPage() {
         
         {/* Collab attribution */}
         <div className="flex items-center justify-center gap-3 mt-6">
-          <a href="https://transcita.com/" target="_blank" rel="noopener noreferrer" className="flex items-center gap-1.5 text-[11px] font-bold text-gray-500 hover:text-gray-300 transition-colors">
+          <a href="https://transcita.com/" target="_blank" rel="noopener noreferrer" className="flex items-center gap-1.5 text-caption font-bold text-gray-500 hover:text-gray-300 transition-colors">
             <span className="size-6 bg-white/10 border border-white/10 rounded-lg flex items-center justify-center">
               <Car size={13} className="text-white" />
             </span>
             TransCita
           </a>
           <span className="text-gray-700 text-xs font-black">×</span>
-          <a href="https://www.cabuyacreativa.com/" target="_blank" rel="noopener noreferrer" className="flex items-center gap-1.5 text-[11px] font-bold text-gray-500 hover:text-gray-300 transition-colors">
+          <a href="https://www.cabuyacreativa.com/" target="_blank" rel="noopener noreferrer" className="flex items-center gap-1.5 text-caption font-bold text-gray-500 hover:text-gray-300 transition-colors">
             <span className="size-6 bg-white/10 border border-white/10 rounded-lg flex items-center justify-center">
               <MousePointer2 size={13} className="text-white" />
             </span>
             CabuyaCreativa
           </a>
         </div>
-        <p className="text-center text-[10px] text-gray-700 mt-2 font-medium tracking-wide">
+        <p className="text-center text-caption text-gray-700 mt-2 font-medium tracking-wide">
           Un proyecto de TransCita • Solo Personal Autorizado
         </p>
       </div>

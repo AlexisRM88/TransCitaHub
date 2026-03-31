@@ -12,7 +12,7 @@ const NAV_CLASSES =
   "fixed bottom-0 w-full bg-white/95 backdrop-blur-lg border-t border-gray-100 pb-10 pt-4 px-8 z-50 rounded-t-[2.5rem] shadow-[0_-15px_40px_rgba(0,0,0,0.08)] lg:sticky lg:top-0 lg:w-64 lg:h-screen lg:shrink-0 lg:rounded-none lg:border-t-0 lg:border-r lg:pb-0 lg:pt-6 lg:px-3 lg:shadow-none lg:bg-white lg:order-first";
 
 const INNER_CLASSES =
-  "flex justify-between items-center max-w-md mx-auto relative h-12 lg:flex-col lg:items-stretch lg:gap-1 lg:max-w-none lg:h-auto lg:mx-0";
+  "flex justify-between items-center max-w-md mx-auto relative lg:flex-col lg:items-stretch lg:gap-1 lg:max-w-none lg:mx-0";
 
 function NavButton({
   label,
@@ -36,7 +36,7 @@ function NavButton({
       <div className={`p-2 rounded-2xl transition-all lg:p-0 ${active ? "bg-green-50 lg:bg-transparent" : ""}`}>
         {icon}
       </div>
-      <span className="text-[9px] font-black uppercase tracking-widest lg:text-sm lg:tracking-normal lg:font-bold lg:normal-case">{label}</span>
+      <span className="text-micro-label lg:text-sm lg:tracking-normal lg:font-bold lg:normal-case">{label}</span>
     </button>
   );
 }

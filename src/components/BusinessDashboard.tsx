@@ -69,7 +69,7 @@ export function BusinessDashboard({ userId }: { userId: string }) {
                     <h2 className="text-2xl font-black text-gray-900">Dashboard de Negocio</h2>
                     <p className="text-sm text-gray-500 font-medium">Análisis de impacto y rendimiento de tus beneficios.</p>
                 </div>
-                <div className="bg-green-50 text-green-700 px-3 py-1 rounded-full text-[10px] font-black uppercase tracking-wider flex items-center gap-1">
+                <div className="bg-green-50 text-green-700 px-3 py-1 rounded-full text-micro-label flex items-center gap-1">
                     <TrendingUp size={12} /> Live
                 </div>
             </div>
@@ -87,7 +87,7 @@ export function BusinessDashboard({ userId }: { userId: string }) {
                         <div className="size-10 bg-white/60 rounded-2xl flex items-center justify-center mb-4">
                             {stat.icon}
                         </div>
-                        <p className="text-[10px] font-black uppercase tracking-widest text-gray-400 mb-1">{stat.label}</p>
+                        <p className="text-micro-label text-gray-600 mb-1">{stat.label}</p>
                         <h3 className="text-2xl font-black text-gray-900">{stat.value}</h3>
                     </motion.div>
                 ))}
@@ -123,13 +123,13 @@ export function BusinessDashboard({ userId }: { userId: string }) {
                                             className="bg-green-100 rounded-t-xl group-hover:bg-green-500 transition-colors cursor-pointer relative"
                                         >
                                             {val > 0 && (
-                                                <div className="absolute -top-8 left-1/2 -translate-x-1/2 bg-gray-900 text-white text-[10px] font-bold px-2 py-1 rounded opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap">
+                                                <div className="absolute -top-8 left-1/2 -translate-x-1/2 bg-gray-900 text-white text-caption font-bold px-2 py-1 rounded opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap">
                                                     {val}
                                                 </div>
                                             )}
                                         </motion.div>
                                     </div>
-                                    <span className="text-[10px] font-black text-gray-400 uppercase tracking-tighter">
+                                    <span className="text-micro-label text-gray-600 tracking-tighter">
                                         {DAYS[i]}
                                     </span>
                                 </div>
@@ -143,7 +143,7 @@ export function BusinessDashboard({ userId }: { userId: string }) {
             {analytics && analytics.length > 0 && (
                 <div className="bg-white rounded-[2rem] border border-gray-100 shadow-sm overflow-hidden">
                     <div className="px-6 pt-6 pb-3">
-                        <h3 className="font-black text-sm text-gray-900 uppercase tracking-widest">Rendimiento por Oferta</h3>
+                        <h3 className="text-micro-label text-gray-900 text-sm">Rendimiento por Oferta</h3>
                     </div>
                     <div className="divide-y divide-gray-50">
                         {analytics
@@ -153,22 +153,22 @@ export function BusinessDashboard({ userId }: { userId: string }) {
                                 <div key={offer._id} className="flex items-center justify-between px-6 py-4">
                                     <div className="flex-1 min-w-0">
                                         <p className="text-sm font-black text-gray-900 truncate">{offer.merchantName}</p>
-                                        <p className="text-[10px] text-gray-400 font-medium truncate">{offer.offerLabel}</p>
+                                        <p className="text-caption text-gray-600 font-medium truncate">{offer.offerLabel}</p>
                                     </div>
                                     <div className="flex items-center gap-4 text-right shrink-0">
                                         <div>
                                             <p className="text-xs font-black text-blue-600">{offer.opens7d}</p>
-                                            <p className="text-[9px] text-gray-400 uppercase tracking-wider">Aperturas</p>
+                                            <p className="text-caption text-gray-600 uppercase tracking-wider">Aperturas</p>
                                         </div>
                                         <div>
                                             <p className="text-xs font-black text-green-600">{offer.totalRedeems}</p>
-                                            <p className="text-[9px] text-gray-400 uppercase tracking-wider">Redenciones</p>
+                                            <p className="text-caption text-gray-600 uppercase tracking-wider">Redenciones</p>
                                         </div>
                                         <div>
                                             <p className="text-xs font-black text-orange-500">{offer.conversionRate}%</p>
-                                            <p className="text-[9px] text-gray-400 uppercase tracking-wider">Conversión</p>
+                                            <p className="text-caption text-gray-600 uppercase tracking-wider">Conversión</p>
                                         </div>
-                                        <span className={`text-[9px] font-black uppercase px-2 py-1 rounded-full ${offer.isLive ? "bg-green-100 text-green-600" : "bg-gray-100 text-gray-400"}`}>
+                                        <span className={`text-micro-label px-2 py-1 rounded-full ${offer.isLive ? "bg-green-100 text-green-600" : "bg-gray-100 text-gray-600"}`}>
                                             {offer.isLive ? "Live" : "Off"}
                                         </span>
                                     </div>
@@ -180,7 +180,7 @@ export function BusinessDashboard({ userId }: { userId: string }) {
 
             {analytics && analytics.length === 0 && (
                 <div className="bg-gray-50 rounded-[2rem] p-8 text-center">
-                    <p className="text-gray-400 font-bold text-sm">Aún no tienes ofertas creadas.</p>
+                    <p className="text-gray-600 font-bold text-sm">Aún no tienes ofertas creadas.</p>
                     <p className="text-gray-300 text-xs mt-1">Crea tu primera oferta en la sección Gestión.</p>
                 </div>
             )}

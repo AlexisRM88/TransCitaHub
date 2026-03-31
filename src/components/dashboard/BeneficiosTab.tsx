@@ -156,7 +156,7 @@ export function BeneficiosTab({ userId }: BeneficiosTabProps) {
       {/* Activities Section */}
       {benefitsList.filter(b => b.type === "actividad").length > 0 && (
         <div className="mb-8" data-tour="actividades-section">
-          <h3 className="text-xs font-black uppercase tracking-widest text-purple-500 mb-4 flex items-center gap-2">
+          <h3 className="text-micro-label text-purple-500 mb-4 flex items-center gap-2">
             <span className="size-5 bg-purple-50 rounded-lg flex items-center justify-center">🏃</span>
             Actividades
           </h3>
@@ -168,8 +168,8 @@ export function BeneficiosTab({ userId }: BeneficiosTabProps) {
                     <p className="font-black text-gray-900 text-base">{activity.title}</p>
                     <p className="text-sm text-gray-500 font-medium mt-0.5">{activity.subtitle}</p>
                   </div>
-                  <span className={`text-[9px] font-black uppercase tracking-widest px-2.5 py-1 rounded-full ${
-                    activity.usesLeft > 0 ? "bg-purple-500 text-white" : "bg-gray-200 text-gray-400"
+                  <span className={`text-micro-label px-2.5 py-1 rounded-full ${
+                    activity.usesLeft > 0 ? "bg-purple-500 text-white" : "bg-gray-200 text-gray-600"
                   }`}>
                     {activity.usesLeft > 0 ? "Disponible" : "Inscrito"}
                   </span>
@@ -198,7 +198,7 @@ export function BeneficiosTab({ userId }: BeneficiosTabProps) {
                 </div>
                 {/* Nearest branch info for activity */}
                 {activity.nearestBranchName && (
-                  <p className="text-[10px] text-purple-500 font-bold mt-2">
+                  <p className="text-caption text-purple-500 font-bold mt-2">
                     📍 {activity.distance} · {activity.nearestBranchName}
                   </p>
                 )}
@@ -211,7 +211,7 @@ export function BeneficiosTab({ userId }: BeneficiosTabProps) {
                         href={`https://maps.google.com/?q=${br.lat},${br.lng}`}
                         target="_blank"
                         rel="noopener noreferrer"
-                        className="text-[9px] font-black bg-purple-100 text-purple-600 px-2 py-1 rounded-full hover:bg-purple-200 transition-colors"
+                        className="text-micro-label bg-purple-100 text-purple-600 px-2 py-1 rounded-full hover:bg-purple-200 transition-colors"
                       >
                         📍 {br.name}
                       </a>
@@ -234,7 +234,7 @@ export function BeneficiosTab({ userId }: BeneficiosTabProps) {
 
       {/* Discounts Section */}
       {benefitsList.filter(b => b.type !== "actividad").length > 0 && (
-        <h3 className="text-xs font-black uppercase tracking-widest text-primary mb-4 flex items-center gap-2">
+        <h3 className="text-micro-label text-primary mb-4 flex items-center gap-2">
           <span className="size-5 bg-green-50 rounded-lg flex items-center justify-center">🎁</span>
           Descuentos
         </h3>
